@@ -56,40 +56,18 @@ These cohorts support different questions and must not be interchanged.
 | Regional functional analysis | 191 metadata-matched profiles and 17,482 non-zero KOs after three declared exclusions |
 | Functional network | 194 profiles and 17,508 KOs before network feature selection |
 
-## Quick start on Landa Lab
+## Using the workflow
 
-1. Clone the repository and enter it.
+This repository provides the analysis code but does not provide or imply public
+access to the Landa Lab computing infrastructure. Users must download or clone
+the repository and adapt paths, software environments, database locations,
+thread and memory settings, and job-submission procedures to their own computer
+or computing cluster before execution.
 
-   ```bash
-   git clone https://github.com/fjbalvino/mangrove-sediment-biogeography.git
-   cd mangrove-sediment-biogeography
-   ```
-
-2. Create a private local configuration from the template and verify every
-   path. The local file is ignored by Git.
-
-   ```bash
-   cp config/landalab.env.example config/landalab.env
-   ```
-
-3. Run the read-only preflight.
-
-   ```bash
-   python scripts/00_PREFLIGHT_LANDALAB.py \
-     --config config/landalab.env \
-     --scope all \
-     --out preflight.json
-   ```
-
-4. Inspect the dry-run workflow before executing long jobs.
-
-   ```bash
-   bash workflow/01_RUN_TAXONOMIC_PREPROCESSING.sh
-   bash workflow/02_RUN_ENVIRONMENTAL_COVARIATES.sh
-   ```
-
-5. Add `--execute` only after the printed commands, paths and checksums have
-   been reviewed.
+Files such as `config/landalab.env.example` and
+`scripts/00_PREFLIGHT_LANDALAB.py` document the original computational
+environment for provenance. They are neither access credentials nor portable
+defaults and should not be executed unchanged outside that environment.
 
 Detailed instructions are in
 [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). A beginner-oriented
@@ -132,4 +110,3 @@ Citation metadata are provided in [`CITATION.cff`](CITATION.cff). Code is
 released under the [MIT License](LICENSE). Data licenses and third-party terms
 are documented per archived object in the Zenodo record; source datasets retain
 their original licenses and accession-level attribution.
-
