@@ -1,0 +1,37 @@
+{
+  "title": "Global biogeography of mangrove sediment microbiomes: reproducible analysis workflow",
+  "description": "Versioned source code, configuration templates and provenance for taxonomic, environmental, community-assembly and functional analyses of global mangrove sediment microbiomes.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {"name": "Balvino-Olvera, Francisco J."},
+    {"name": "Bustos-Díaz, Edder D."},
+    {"name": "González-González, Irma"},
+    {"name": "Méndez-Castro, Laura Iveth"},
+    {"name": "Sélem-Mojica, Nelly"},
+    {"name": "Jiménez, Diego J."},
+    {"name": "Vázquez-Rosas-Landa, Mirna"}
+  ],
+  "keywords": [
+    "mangrove sediment",
+    "shotgun metagenomics",
+    "microbial biogeography",
+    "community assembly",
+    "KEGG orthologues",
+    "MAGENTA"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/fjbalvino/magenta",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1502944",
+      "relation": "isSupplementTo",
+      "resource_type": "dataset"
+    }
+  ]
+}
+

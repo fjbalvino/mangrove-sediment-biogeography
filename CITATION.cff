@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated manuscript and the archived software release."
+title: "Global biogeography of mangrove sediment microbiomes: reproducible analysis workflow"
+type: software
+version: 0.1.0
+date-released: 2026-09-08
+repository-code: "https://github.com/fjbalvino/mangrove-sediment-biogeography"
+url: "https://github.com/fjbalvino/mangrove-sediment-biogeography"
+license: MIT
+authors:
+  - family-names: "Balvino-Olvera"
+    given-names: "Francisco J."
+  - family-names: "Bustos-Díaz"
+    given-names: "Edder D."
+  - family-names: "González-González"
+    given-names: "Irma"
+  - family-names: "Méndez-Castro"
+    given-names: "Laura Iveth"
+  - family-names: "Sélem-Mojica"
+    given-names: "Nelly"
+  - family-names: "Jiménez"
+    given-names: "Diego J."
+  - family-names: "Vázquez-Rosas-Landa"
+    given-names: "Mirna"
+

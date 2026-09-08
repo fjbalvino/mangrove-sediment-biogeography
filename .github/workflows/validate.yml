@@ -1,0 +1,41 @@
+name: Repository validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Compile Python scripts
+        run: python -m compileall -q scripts
+
+      - name: Parse R scripts
+        shell: Rscript {0}
+        run: |
+          files <- list.files("scripts", pattern = "[.]R$", recursive = TRUE, full.names = TRUE)
+          invisible(lapply(files, parse))
+          cat("R_PARSE_PASS:", length(files), "files\n")
+
+      - name: Check workflow shell syntax
+        run: bash -n workflow/*.sh
+
+      - name: Validate repository contents
+        run: python tools/validate_repository.py
+

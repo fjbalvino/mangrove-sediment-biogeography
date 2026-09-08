@@ -1,0 +1,42 @@
+name: Reproducibility or code problem
+description: Report a script failure, inconsistent result or missing provenance item.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: dropdown
+    id: block
+    attributes:
+      label: Workflow block
+      options:
+        - 00 Preflight
+        - 01 Taxonomic preprocessing
+        - 02 Environmental covariates
+        - 03 Alpha diversity
+        - 04 Beta diversity
+        - 05 Taxonomic core/biogeography
+        - 06 Community assembly
+        - 07 Functional annotation
+        - 08 Functional atlas
+        - 09 Functional regional differentiation
+        - 10 Functional network
+    validations:
+      required: true
+  - type: input
+    id: script
+    attributes:
+      label: Script
+      placeholder: scripts/04_beta_diversity/04C_PERMANOVA_REGIONAL_STRUCTURE.R
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and expected result
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Run provenance
+      description: Include parameters, session information and the relevant log excerpt. Remove private paths or credentials.
+

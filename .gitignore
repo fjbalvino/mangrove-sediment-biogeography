@@ -1,0 +1,49 @@
+# Private machine configuration and credentials
+config/landalab.env
+*.env
+*.pem
+*.key
+.Renviron
+
+# Raw sequencing data and large biological objects
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.fasta.gz
+*.fa.gz
+*.rds
+*.RData
+*.rda
+*.biom
+*.k2d
+
+# Large reference and geospatial assets
+*.tif
+*.tiff
+*.nc
+*.gpkg
+*.shp
+*.shx
+*.dbf
+
+# Local data, caches and generated results
+data/private/
+data/raw/
+data/derived/
+cache/
+results/*
+!results/README.md
+resultados/
+preflight.json
+
+# Runtime products
+nohup.out
+*.pid
+*.log
+__pycache__/
+*.py[cod]
+.Rhistory
+.Rproj.user/
+.DS_Store
+
