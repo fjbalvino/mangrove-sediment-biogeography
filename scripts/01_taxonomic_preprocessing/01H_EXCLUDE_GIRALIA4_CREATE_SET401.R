@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # -*- coding: utf-8 -*-
 
-# Create the manuscript Set401 phyloseq by excluding the four Giralia samples
+# Create the manuscript Set401 phyloseq
 # absent from the frozen analysis metadata.
 # Only samples are removed; the original taxonomic feature space is preserved.
 
