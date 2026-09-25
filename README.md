@@ -45,11 +45,6 @@ Users must download or clone the repository and adapt paths, software
 environments, database locations, thread and memory settings, and job-submission
 procedures to their own computer or computing cluster before execution.
 
-Detailed instructions are in
-[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). A beginner-oriented
-publication checklist is in
-[`docs/GITHUB_ZENODO_GUIDE_ES.md`](docs/GITHUB_ZENODO_GUIDE_ES.md).
-
 ## Reproducibility conventions
 
 - `run_accession` is the canonical sample identifier.
@@ -75,8 +70,7 @@ final accession table are complete.
 This is the manuscript-specific, auditable workflow derived from the broader
 [MAGENTA project repository](https://github.com/fjbalvino/magenta). It freezes
 the scripts and cohort contracts used for the global biogeography study rather
-than importing changing files from MAGENTA. See
-[`docs/RELATIONSHIP_TO_MAGENTA.md`](docs/RELATIONSHIP_TO_MAGENTA.md).
+than importing changing files from MAGENTA.
 
 ## Citation and license
 

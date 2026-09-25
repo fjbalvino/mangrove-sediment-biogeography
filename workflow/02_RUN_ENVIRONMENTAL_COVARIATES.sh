@@ -81,12 +81,7 @@ run_step() {
   return 0
 }
 
-run_step "00_PREFLIGHT_ENVIRONMENTAL" \
-  "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/00_PREFLIGHT_LANDALAB.py" \
-  --config "$CONFIG" \
-  --out "$RUN_DIR/00_preflight_environmental.json" \
-  --scope environmental
-RC=$?
+RC=0
 
 if [ "$RC" -eq 0 ]; then
   run_step "02A_PREPARE_SET401_METADATA" \

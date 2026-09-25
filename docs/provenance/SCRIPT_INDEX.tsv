@@ -1,5 +1,4 @@
 order	block	canonical_file	source_file	role	selection
-00	preflight	scripts/00_PREFLIGHT_LANDALAB.py	00_PREFLIGHT_LANDALAB.py	Read-only server/input validation	Retained from validated package
 01A	taxonomic_preprocessing	scripts/01_taxonomic_preprocessing/01A_ACQUIRE_COHORT_METADATA_ENA_SRA.py	01A_ACQUIRE_COHORT_METADATA_ENA_SRA.py	Acquire and freeze cohort metadata	Latest integrated version
 01B	taxonomic_preprocessing	scripts/01_taxonomic_preprocessing/01B_DOWNLOAD_RAW_READS_ENA_SRA.py	01B_DOWNLOAD_RAW_READS_ENA_SRA.py	Download and verify raw reads	Latest integrated version
 01C	taxonomic_preprocessing	scripts/01_taxonomic_preprocessing/01C_FASTQC_RAW_READS.py	01C_FASTQC_RAW_READS.py	FastQC of raw reads	Latest integrated version

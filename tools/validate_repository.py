@@ -28,7 +28,6 @@ REQUIRED = [
     ROOT / "CITATION.cff",
     ROOT / "DATA_AVAILABILITY.md",
     ROOT / "docs" / "provenance" / "SCRIPT_INDEX.tsv",
-    ROOT / "docs" / "provenance" / "METHODS_CODE_CROSSWALK.tsv",
 ]
 
 

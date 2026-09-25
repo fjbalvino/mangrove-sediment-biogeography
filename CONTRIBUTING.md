@@ -24,7 +24,7 @@ Changes must therefore preserve both reproducibility and provenance.
 - Preserve the distinction among the 401-sample taxonomic cohort, 400-sample
   iCAMP cohort, 194-profile functional atlas/network cohort and 191-profile
   regional functional cohort.
-- Update both provenance tables when a script or manuscript method changes.
+- Update `docs/provenance/SCRIPT_INDEX.tsv` when a canonical script changes.
 
 ## Pull requests
 
