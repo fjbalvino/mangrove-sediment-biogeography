@@ -12,23 +12,10 @@ The code supports taxonomic profiling, environmental covariates, alpha and beta
 diversity, taxonomic biogeography, iCAMP community-assembly inference,
 functional biogeography and KO co-variation network analyses.
 
-## Where the public research objects live
-
-| Resource | Public home | Contents |
-|---|---|---|
-| Source code | This GitHub repository | Scripts, configuration templates, workflow launchers and provenance |
-| Frozen derived data | Zenodo release (DOI pending) | Curated metadata, accession table, count/KO matrices, phyloseq objects, the GTDB R226 genus tree, principal result tables and checksums |
-| Raw reads | NCBI SRA | Public source studies and newly generated reads under BioProject [PRJNA1502944](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1502944) |
-
-Raw FASTQ files, large databases and complete analysis directories are not
-stored in GitHub. This separation keeps the software reviewable while Zenodo
-provides an immutable, DOI-bearing data release and SRA preserves raw reads.
-
 ## Workflow
 
 | Block | Objective | Scripts |
 |---|---|---|
-| 00 | Landa Lab preflight | `scripts/00_PREFLIGHT_LANDALAB.py` |
 | 01 | Metadata, reads, FastQC, fastp, Kraken2, taxonomic matrix and phyloseq | `01A`–`01H` |
 | 02 | Human Footprint, WorldClim, GBIF, SoilGrids and MEOW | `02A`–`02G` |
 | 03 | Hill diversity and environmental GAMs | `03A`–`03D` |
@@ -40,17 +27,13 @@ provides an immutable, DOI-bearing data release and SRA preserves raw reads.
 | 09 | Functional prevalence and regional differentiation | `09A` |
 | 10 | KO annotation and consensus co-variation network | `10A`–`10G` |
 
-The authoritative file list and the Methods-to-code mapping are in
-[`docs/provenance/SCRIPT_INDEX.tsv`](docs/provenance/SCRIPT_INDEX.tsv) and
-[`docs/provenance/METHODS_CODE_CROSSWALK.tsv`](docs/provenance/METHODS_CODE_CROSSWALK.tsv).
-
 ## Analysis cohorts
 
 These cohorts support different questions and must not be interchanged.
 
 | Analysis | Audited cohort |
 |---|---|
-| Taxonomic Set401 | 401 metagenomes after the four declared Giralia exclusions |
+| Taxonomic Set401 | 401 metagenomes |
 | Primary iCAMP | 400 metagenomes, 1,892 genera, 24,692 within-realm pairs and 999 null randomizations |
 | Functional atlas | 194 assembly-quality-filtered profiles and 17,508 KOs |
 | Regional functional analysis | 191 metadata-matched profiles and 17,482 non-zero KOs after three declared exclusions |
@@ -58,16 +41,9 @@ These cohorts support different questions and must not be interchanged.
 
 ## Using the workflow
 
-This repository provides the analysis code but does not provide or imply public
-access to the Landa Lab computing infrastructure. Users must download or clone
-the repository and adapt paths, software environments, database locations,
-thread and memory settings, and job-submission procedures to their own computer
-or computing cluster before execution.
-
-Files such as `config/landalab.env.example` and
-`scripts/00_PREFLIGHT_LANDALAB.py` document the original computational
-environment for provenance. They are neither access credentials nor portable
-defaults and should not be executed unchanged outside that environment.
+Users must download or clone the repository and adapt paths, software
+environments, database locations, thread and memory settings, and job-submission
+procedures to their own computer or computing cluster before execution.
 
 Detailed instructions are in
 [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). A beginner-oriented
@@ -81,8 +57,6 @@ publication checklist is in
   parameters, session information and checksums where implemented.
 - The primary iCAMP inference uses within-realm comparisons; between-realm
   pairs are retained for audit but are not pooled into the primary estimate.
-- The exact GTDB R226 genus tree used by iCAMP has SHA-256
-  `15761713cbfbe4edcf0600bb65afbea0f39cfe6a01a7b111a92aeeba59ffd3fd`.
 - Live GBIF and SoilGrids queries and gridded covariates must be represented by
   frozen caches/assets in the Zenodo release for byte-identical reproduction.
 - The KO network describes robust co-variation among functional features; it
