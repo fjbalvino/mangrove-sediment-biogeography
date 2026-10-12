@@ -21,15 +21,10 @@ suppressPackageStartupMessages({
 
 BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
 OUTPUT_ROOT <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(BASE_DIR, "results"))
-ALPHA_DIR <- Sys.getenv("ALPHA_INPUT_DIR", unset = "")
-if (!nzchar(ALPHA_DIR)) {
-  pointer <- file.path(OUTPUT_ROOT, "LATEST_TAXONOMIC_ALPHA.txt")
-  if (!file.exists(pointer)) stop("Run 03A first or supply ALPHA_INPUT_DIR.", call. = FALSE)
-  ALPHA_DIR <- trimws(readLines(pointer, n = 1L, warn = FALSE))
-}
-METADATA_CSV <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(BASE_DIR, "data", "environmental_metadata.csv"))
+ALPHA_DIR <- Sys.getenv("ALPHA_INPUT_DIR", unset = file.path(OUTPUT_ROOT, "alpha"))
+METADATA_CSV <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(BASE_DIR, "data", "metadata_taxonomic.csv"))
 SCRIPT_ID <- "SHANNON_GAM"
-OUT_DIR <- Sys.getenv("GAM_OUTPUT_DIR", unset = file.path(OUTPUT_ROOT, paste0(SCRIPT_ID, "_", format(Sys.time(), "%Y%m%d_%H%M%S"))))
+OUT_DIR <- Sys.getenv("GAM_OUTPUT_DIR", unset = file.path(OUTPUT_ROOT, "gam"))
 for (subdir in c("plots", "models", "logs", "tables")) {
   dir.create(file.path(OUT_DIR, subdir), recursive = TRUE, showWarnings = FALSE)
 }
@@ -38,7 +33,7 @@ LOG_FILE <- file.path(OUT_DIR, "logs", "SHANNON_GAM.log")
 writeLines(character(), LOG_FILE)
 LATEST_POINTER <- file.path(OUTPUT_ROOT, "LATEST_SHANNON_GAM.txt")
 if (file.exists(LATEST_POINTER)) unlink(LATEST_POINTER)
-SAMPLE_MANIFEST <- Sys.getenv("ALPHA_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_diversity_accessions.txt"))
+SAMPLE_MANIFEST <- Sys.getenv("ALPHA_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_accessions.txt"))
 if (!file.exists(SAMPLE_MANIFEST)) stop("Sample manifest is missing: ", SAMPLE_MANIFEST, call. = FALSE)
 EXPECTED_ACCESSIONS <- trimws(readLines(SAMPLE_MANIFEST, warn = FALSE))
 EXPECTED_ACCESSIONS <- EXPECTED_ACCESSIONS[nzchar(EXPECTED_ACCESSIONS) & !startsWith(EXPECTED_ACCESSIONS, "#")]
@@ -316,7 +311,7 @@ if (anyDuplicated(metadata$run_accession)) {
 datos_raw <- alpha %>%
   left_join(metadata, by = "run_accession") %>%
   mutate(
-    Locality = coalesce(Locality_alpha, Locality_meta)
+    Locality = Locality_meta
   )
 
 if (nrow(datos_raw) != nrow(alpha) ||
@@ -342,7 +337,7 @@ if (nrow(locality_source_conflicts) > 0L) {
   msg(
     "WARNING: ", nrow(locality_source_conflicts),
     " locality labels differ between Figure 2a and the metadata CSV. ",
-    "The Figure 2a locality label is retained."
+    "The external metadata locality label is retained."
   )
 }
 
@@ -626,7 +621,8 @@ write.csv(
   row.names = FALSE
 )
 
-k_check <- mgcv::k.check(m_full)
+set.seed(42)
+k_check <- mgcv::k.check(m_full, n.rep = 400)
 
 k_check_table <- data.frame(
   term = rownames(k_check),

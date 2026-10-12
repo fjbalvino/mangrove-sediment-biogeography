@@ -45,8 +45,7 @@ LATEST_09A_PTR <- file.path(
 )
 
 SCRIPT_TAG <- "05B_REALM_RESTRICTED_TAXA"
-RUN_STAMP  <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR    <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
+OUT_DIR    <- file.path(RESULTS_DIR, SCRIPT_TAG)
 TABLE_DIR  <- file.path(OUT_DIR, "tables")
 PLOT_DIR   <- file.path(OUT_DIR, "plots")
 RDS_DIR    <- file.path(OUT_DIR, "rds")
@@ -271,6 +270,21 @@ if (any(
 )) {
   stopf("El resumen filtrado excede el resumen no filtrado.")
 }
+
+# Global percentages use a common all-detected denominator. Realm-specific
+# percentages above use that realm's observed richness and reads.
+global_restriction_summary <- tibble(
+  scope = c("All detected features", "Features passing global eligibility"),
+  n_features = c(nrow(taxon_audit), sum(taxon_audit$passes_primary_taxon_filter)),
+  n_realm_restricted = c(sum(taxon_audit$realm_restricted_unfiltered),
+                        sum(taxon_audit$realm_restricted_after_primary_filter)),
+  total_reads = c(sum(taxon_audit$total_reads),
+                  sum(taxon_audit$total_reads[taxon_audit$passes_primary_taxon_filter])),
+  realm_restricted_reads = c(sum(taxon_audit$total_reads[taxon_audit$realm_restricted_unfiltered]),
+                            sum(taxon_audit$total_reads[taxon_audit$realm_restricted_after_primary_filter]))
+) %>% mutate(restricted_richness_percent = 100 * n_realm_restricted / n_features,
+             restricted_read_percent = 100 * realm_restricted_reads / total_reads)
+write_tsv(global_restriction_summary, file.path(TABLE_DIR, "09B_global_restriction_summary.tsv"))
 
 # ============================== 5) Grafico ===================================
 

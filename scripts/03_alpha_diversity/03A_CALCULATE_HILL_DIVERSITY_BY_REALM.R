@@ -6,7 +6,7 @@
 # Uses an explicit sample-accession manifest and metadata joined by run_accession.
 # Standardizes profiles to a common read count, calculates Hill q0/q1/q2,
 # and plots metagenome-level q1 distributions. These realm comparisons are
-# descriptive; primary coordinate-site inference is implemented in script 03E.
+# descriptive; primary sampling-site inference is implemented in script 03E.
 
 options(stringsAsFactors = FALSE, scipen = 999)
 
@@ -77,9 +77,9 @@ read_integer_env <- function(name, default = NA_integer_) {
 
 BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
 OUTPUT_ROOT <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(BASE_DIR, "results"))
-INPUT_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_405", unset = file.path(BASE_DIR, "data", "taxonomic_counts.rds"))
-METADATA_CSV <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(BASE_DIR, "data", "environmental_metadata.csv"))
-SAMPLE_MANIFEST <- Sys.getenv("ALPHA_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_diversity_accessions.txt"))
+INPUT_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ", unset = Sys.getenv("MAGENTA_PHYLOSEQ_405", unset = file.path(BASE_DIR, "data", "phyloseq_taxonomic.rds")))
+METADATA_CSV <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(BASE_DIR, "data", "metadata_taxonomic.csv"))
+SAMPLE_MANIFEST <- Sys.getenv("ALPHA_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_accessions.txt"))
 ANALYSIS_ACCESSIONS <- read_accession_file(SAMPLE_MANIFEST, "Taxonomic diversity sample manifest")
 EXPECTED_ANALYSIS_N <- length(ANALYSIS_ACCESSIONS)
 SEED_RAREFACTION <- 42L
@@ -114,7 +114,7 @@ REALM_COLORS <- c(
 )
 
 run_stamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR <- Sys.getenv("ALPHA_OUTPUT_DIR", unset = file.path(OUTPUT_ROOT, paste0("TAXONOMIC_ALPHA_", run_stamp)))
+OUT_DIR <- Sys.getenv("ALPHA_OUTPUT_DIR", unset = file.path(OUTPUT_ROOT, "alpha"))
 dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
 OUT_DIR <- normalizePath(OUT_DIR, mustWork = TRUE)
 msg("Starting taxonomic Hill diversity analysis")
@@ -144,7 +144,7 @@ metadata_raw <- read.csv(
 
 names(metadata_raw) <- trimws(names(metadata_raw))
 
-required_metadata <- c("run_accession", "Country", "REALM")
+required_metadata <- c("run_accession", "Country", "REALM", "sampling_site_id")
 missing_metadata <- setdiff(required_metadata, names(metadata_raw))
 
 if (length(missing_metadata) > 0L) {
@@ -303,19 +303,19 @@ sample_map <- ps_fallback %>%
     PROVINCE_external = normalize_text(PROVINCE),
     lat_external = normalize_numeric(lat),
     lon_external = normalize_numeric(lon),
-    Country = coalesce(Country_external, Country_phyloseq),
-    REALM = coalesce(REALM_external, REALM_phyloseq),
-    Locality = coalesce(Locality_external, Locality_phyloseq),
-    ECOREGION = coalesce(ECOREGION_external, ECOREGION_phyloseq),
-    PROVINCE = coalesce(PROVINCE_external, PROVINCE_phyloseq),
-    lat = coalesce(lat_external, lat_phyloseq),
-    lon = coalesce(lon_external, lon_phyloseq),
+    Country = Country_external,
+    REALM = REALM_external,
+    Locality = Locality_external,
+    ECOREGION = ECOREGION_external,
+    PROVINCE = PROVINCE_external,
+    lat = lat_external,
+    lon = lon_external,
     metadata_resolution = case_when(
       !is.na(Country_external) & !is.na(REALM_external) &
         is.finite(lon_external) ~ "external_metadata_complete",
       !is.na(REALM_external) ~ "external_realm_partially_complete",
       is.na(REALM_external) & !is.na(REALM_phyloseq) ~
-        "phyloseq_fallback_for_realm",
+        "missing_external_realm",
       TRUE ~ "unresolved"
     )
   )
@@ -389,12 +389,10 @@ if (!is.finite(min_depth) || min_depth <= 0) {
 
 set.seed(SEED_RAREFACTION)
 
-ps_rare <- rarefy_even_depth(
-  ps_filtered,
-  sample.size = min_depth,
-  replace = FALSE,
-  rngseed = SEED_RAREFACTION,
-  verbose = FALSE
+already_standardized <- all(library_sizes_before$reads_before_rarefaction == min_depth)
+ps_rare <- if (already_standardized) ps_filtered else rarefy_even_depth(
+  ps_filtered, sample.size = min_depth, replace = FALSE,
+  rngseed = SEED_RAREFACTION, verbose = FALSE
 )
 
 otu <- as(otu_table(ps_rare), "matrix")
@@ -432,28 +430,14 @@ if (length(unexpected_realms) > 0L) {
   )
 }
 
-if (length(missing_realms) > 0L) {
-  stop_with(
-    "Expected REALM labels absent after filtering: ",
-    paste(missing_realms, collapse = ", ")
-  )
-}
-
 # ==============================================================================
 # 5. Order realms west-to-east using unique sampling sites
 # ==============================================================================
 
 site_longitudes <- plot_df %>%
-  filter(is.finite(lat), is.finite(lon)) %>%
-  mutate(
-    site_key = paste(
-      coalesce(Locality, "unknown_locality"),
-      round(lat, 6),
-      round(lon, 6),
-      sep = "|"
-    )
-  ) %>%
-  distinct(REALM, site_key, .keep_all = TRUE)
+  filter(is.finite(lat), is.finite(lon), !is.na(sampling_site_id), nzchar(sampling_site_id)) %>%
+  group_by(REALM, sampling_site_id) %>%
+  summarise(lon = median(lon), .groups = "drop")
 
 realm_longitude_order <- site_longitudes %>%
   group_by(REALM) %>%
@@ -469,7 +453,7 @@ realm_longitude_order <- site_longitudes %>%
   mutate(west_to_east_position = row_number())
 
 missing_longitude_realms <- setdiff(
-  EXPECTED_REALMS,
+  unique(plot_df$REALM),
   realm_longitude_order$REALM
 )
 
@@ -714,8 +698,8 @@ realm_descriptives <- realm_descriptives %>%
   ) %>%
   arrange(REALM)
 
-# Coordinate-site inference is calculated by 03E using valid geographic
-# coordinates only, with a minimum of five sites per realm.
+# Sampling-site inference is calculated by 03E, with a minimum of five
+# resolved sites per realm. Repeated sampling at one locality is not replication.
 
 # ==============================================================================
 # 7. Raincloud plot
@@ -938,6 +922,8 @@ ggsave(
   bg = "white"
 )
 
+saveRDS(p, file.path(OUT_DIR, "Figure_2a_ggplot.rds"))
+
 write.csv(
   plot_df %>%
     select(
@@ -951,6 +937,7 @@ write.csv(
       lat,
       lon,
       metadata_resolution,
+      sampling_site_id,
       q0,
       q1,
       q2
@@ -1006,7 +993,8 @@ summary_lines <- c(
   paste0("Analysis samples: ", n_after),
   paste0("Nonzero taxonomic features: ", ntaxa(ps_filtered)),
   paste0("Standardized read depth: ", min_depth),
-  "Input counts may already be standardized; supplied library sizes are exported.",
+  paste0("Input counts already standardized: ", already_standardized),
+  "Supplied library sizes are exported; equal-depth inputs are not resampled.",
   "Metagenome-level tests describe the plotted distributions; use 03E for primary site-level inference.",
   paste0("Metagenome-level Kruskal-Wallis P: ", kw_test$p.value),
   paste0("Output directory: ", OUT_DIR)

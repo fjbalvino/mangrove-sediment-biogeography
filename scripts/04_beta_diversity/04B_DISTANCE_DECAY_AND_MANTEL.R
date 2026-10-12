@@ -4,8 +4,7 @@
 # Figure 2c — Taxonomic distance–decay
 # Abundance-weighted Bray–Curtis versus incidence-based Sørensen.
 #
-# Inputs: taxonomic counts, geographic metadata, and the sample table
-# produced by the alpha-diversity analysis.
+# Inputs: reference taxonomic counts and corrected geographic metadata.
 #
 # Statistical design:
 #   - deterministic rarefaction to 18,145 reads, matching Figure 2a;
@@ -14,7 +13,7 @@
 #   - Mantel-type sample-label permutations for spatial inference;
 #   - paired metric contrast assessed by permuting the Bray–Curtis minus
 #     Sørensen similarity matrix against geographic distance;
-#   - one-sample-per-coordinate sensitivity to reduce within-site replication;
+#   - one-sample-per-site sensitivity to reduce within-site replication;
 #   - leave-one-study-out sensitivity when a study/BioProject field is present.
 
 options(stringsAsFactors = FALSE, scipen = 999, bitmapType = "cairo")
@@ -41,30 +40,18 @@ N_SITE_BALANCED <- 1000L
 RAREFACTION_DEPTH <- 18145L
 MIN_GEO_KM <- 0.1
 
-EXPECTED_PHYLOSEQ_SAMPLES <- 401L
-EXPECTED_COHORT_SAMPLES <- 345L
-EXPECTED_COHORT_TAXA_NONZERO <- 24038L
+EXPECTED_COHORT_SAMPLES <- 341L
 
 PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
 RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
-METADATA_PATH <- Sys.getenv(
-  "MAGENTA_METADATA_CSV",
-  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
-)
-
-COHORT_POINTER <- file.path(
-  RESULTS_DIR,
-  "LATEST_TAXONOMIC_ALPHA.txt"
-)
-COHORT_FILENAME <- "04a_alpha_diversity_filtered_samplewise.csv"
+PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ", unset = file.path(PROJECT_DIR, "data", "phyloseq_taxonomic.rds"))
+METADATA_PATH <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(PROJECT_DIR, "data", "metadata_taxonomic.csv"))
 
 SCRIPT_ID <- "06"
 SCRIPT_BASENAME <- "TAXONOMIC_DISTANCE_DECAY"
-RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
-OUT_DIR <- file.path(RESULTS_DIR, RUN_NAME)
+RUN_NAME <- SCRIPT_BASENAME
+OUT_DIR <- file.path(RESULTS_DIR, "decay")
 TABLE_DIR <- file.path(OUT_DIR, "tables")
 PLOT_DIR <- file.path(OUT_DIR, "plots")
 RDS_DIR <- file.path(OUT_DIR, "rds")
@@ -195,84 +182,22 @@ log_msg("Canonical phyloseq: ", PHYLOSEQ_PATH)
 log_msg("Canonical metadata: ", METADATA_PATH)
 
 ## -----------------------------------------------------------------------------
-## 2. Resolve and validate the balanced Figure 2a cohort
+## 2. Load and validate the reference dataset
 ## -----------------------------------------------------------------------------
 
-required_files <- c(PHYLOSEQ_PATH, METADATA_PATH, COHORT_POINTER)
+required_files <- c(PHYLOSEQ_PATH, METADATA_PATH)
 missing_files <- required_files[!file.exists(required_files)]
 if (length(missing_files) > 0L) {
-  stopf("Faltan inputs requeridos: %s", paste(missing_files, collapse = "; "))
+  stopf("Missing required inputs: %s", paste(missing_files, collapse = "; "))
 }
-
-cohort_dir <- trimws(readLines(COHORT_POINTER, warn = FALSE, n = 1L))
-if (!nzchar(cohort_dir) || !dir.exists(cohort_dir)) {
-  stopf("El puntero de la cohorte no contiene un directorio válido: %s", COHORT_POINTER)
-}
-
-COHORT_PATH <- file.path(cohort_dir, COHORT_FILENAME)
-if (!file.exists(COHORT_PATH)) {
-  stopf("No se encontró la tabla maestra de la cohorte: %s", COHORT_PATH)
-}
-
-cohort <- data.table::fread(COHORT_PATH, data.table = FALSE, check.names = FALSE)
-if (!"run_accession" %in% names(cohort)) {
-  stopf("La tabla maestra no contiene la llave canónica run_accession.")
-}
-
-cohort$run_accession <- trimws(as.character(cohort$run_accession))
-if (anyNA(cohort$run_accession) || any(!nzchar(cohort$run_accession))) {
-  stopf("La tabla maestra contiene run_accession faltantes o vacíos.")
-}
-if (anyDuplicated(cohort$run_accession)) {
-  duplicated_ids <- unique(cohort$run_accession[duplicated(cohort$run_accession)])
-  stopf(
-    "La tabla maestra contiene run_accession duplicados: %s",
-    paste(head(duplicated_ids, 20L), collapse = ", ")
-  )
-}
-
-cohort_ids <- cohort$run_accession
-if (length(cohort_ids) != EXPECTED_COHORT_SAMPLES) {
-  stopf(
-    "La cohorte canónica debe contener %d muestras, pero contiene %d.",
-    EXPECTED_COHORT_SAMPLES,
-    length(cohort_ids)
-  )
-}
-
-log_msg("Balanced cohort inherited from Figure 2a: n = ", length(cohort_ids))
-log_msg("Cohort table: ", COHORT_PATH)
-
-## -----------------------------------------------------------------------------
-## 3. Load phyloseq and align strictly by run_accession
-## -----------------------------------------------------------------------------
-
 phy0 <- readRDS(PHYLOSEQ_PATH)
-if (!inherits(phy0, "phyloseq")) {
-  stopf("El objeto leído no es de clase phyloseq: %s", PHYLOSEQ_PATH)
+if (!inherits(phy0, "phyloseq")) stopf("The input RDS must contain a phyloseq object.")
+cohort_ids <- sample_names(phy0)
+if (length(cohort_ids) != EXPECTED_COHORT_SAMPLES || anyNA(cohort_ids) ||
+    any(!nzchar(cohort_ids)) || anyDuplicated(cohort_ids)) {
+  stopf("The reference dataset must contain %d uniquely identified profiles.", EXPECTED_COHORT_SAMPLES)
 }
-if (nsamples(phy0) != EXPECTED_PHYLOSEQ_SAMPLES) {
-  stopf(
-    "El phyloseq canónico debe contener %d muestras, pero contiene %d.",
-    EXPECTED_PHYLOSEQ_SAMPLES,
-    nsamples(phy0)
-  )
-}
-if (anyDuplicated(sample_names(phy0))) {
-  stopf("El phyloseq contiene sample_names duplicados.")
-}
-
-missing_in_phyloseq <- setdiff(cohort_ids, sample_names(phy0))
-if (length(missing_in_phyloseq) > 0L) {
-  data.table::fwrite(
-    data.frame(run_accession = missing_in_phyloseq),
-    file.path(TABLE_DIR, "06_cohort_ids_missing_in_phyloseq.csv")
-  )
-  stopf(
-    "%d muestras de la cohorte no están presentes en el phyloseq canónico.",
-    length(missing_in_phyloseq)
-  )
-}
+log_msg("Reference profiles: n = ", length(cohort_ids))
 
 otu_counts <- as(otu_table(phy0), "matrix")
 if (taxa_are_rows(phy0)) otu_counts <- t(otu_counts)
@@ -283,17 +208,6 @@ cohort_taxa_nonzero <- ncol(otu_counts)
 if (nrow(otu_counts) != EXPECTED_COHORT_SAMPLES) {
   stopf("Falló la alineación de filas de la matriz OTU con la cohorte.")
 }
-if (ncol(otu_counts) != EXPECTED_COHORT_TAXA_NONZERO) {
-  stopf(
-    paste0(
-      "La cohorte debe contener %d taxa no nulos, pero contiene %d. ",
-      "Esto sugiere que cambió el objeto o la cohorte canónica."
-    ),
-    EXPECTED_COHORT_TAXA_NONZERO,
-    ncol(otu_counts)
-  )
-}
-
 if (any(!is.finite(otu_counts)) || any(otu_counts < 0)) {
   stopf("La matriz OTU contiene valores no finitos o negativos.")
 }
@@ -316,6 +230,10 @@ if (!"run_accession" %in% names(meta_raw)) {
   stopf("La metadata actual no contiene la llave canónica run_accession.")
 }
 
+if (!setequal(as.character(meta_raw$run_accession), cohort_ids)) {
+  stopf("Metadata accessions must match the reference count object exactly.")
+}
+
 lat_col <- resolve_required_column(
   meta_raw,
   c("lat", "latitude", "decimalLatitude", "latitude_dd"),
@@ -326,13 +244,15 @@ lon_col <- resolve_required_column(
   c("lon", "longitude", "long", "decimalLongitude", "longitude_dd"),
   "de longitud"
 )
+site_col <- resolve_required_column(meta_raw, "sampling_site_id", "sampling_site_id")
 study_col <- resolve_optional_column(
   meta_raw,
-  c("study_accession", "BioProject", "bioproject", "study", "dataset")
+  c("study_id", "study_accession", "BioProject", "bioproject", "study", "dataset")
 )
 
 meta_geo <- data.frame(
   run_accession = trimws(as.character(meta_raw$run_accession)),
+  sampling_site_id = trimws(as.character(meta_raw[[site_col]])),
   latitude = suppressWarnings(as.numeric(meta_raw[[lat_col]])),
   longitude = suppressWarnings(as.numeric(meta_raw[[lon_col]])),
   study_id = if (is.na(study_col)) {
@@ -349,6 +269,7 @@ metadata_audit <- meta_geo %>%
   group_by(run_accession) %>%
   summarise(
     n_metadata_rows = n(),
+    n_unique_sampling_site = n_distinct(sampling_site_id[!is.na(sampling_site_id) & nzchar(sampling_site_id)]),
     n_unique_latitude = n_distinct(round(latitude[is.finite(latitude)], 8L)),
     n_unique_longitude = n_distinct(round(longitude[is.finite(longitude)], 8L)),
     n_unique_study = n_distinct(study_id[!is.na(study_id) & nzchar(study_id)]),
@@ -361,7 +282,7 @@ data.table::fwrite(
 )
 
 coordinate_conflicts <- metadata_audit %>%
-  filter(n_unique_latitude > 1L | n_unique_longitude > 1L)
+  filter(n_unique_sampling_site > 1L | n_unique_latitude > 1L | n_unique_longitude > 1L)
 study_conflicts <- metadata_audit %>% filter(n_unique_study > 1L)
 
 if (nrow(coordinate_conflicts) > 0L) {
@@ -391,6 +312,7 @@ if (nrow(study_conflicts) > 0L) {
 meta_one <- meta_geo %>%
   group_by(run_accession) %>%
   summarise(
+    sampling_site_id = first_non_missing_character(sampling_site_id),
     latitude = first_non_missing_numeric(latitude),
     longitude = first_non_missing_numeric(longitude),
     study_id = first_non_missing_character(study_id),
@@ -429,12 +351,13 @@ if (nrow(invalid_coordinates) > 0L) {
 sample_table <- sample_table %>%
   filter(coordinate_valid) %>%
   mutate(
-    site_id = paste0(
-      sprintf("%.5f", latitude),
-      "_",
-      sprintf("%.5f", longitude)
-    )
+    coordinate_id = paste0(sprintf("%.5f", latitude), "_", sprintf("%.5f", longitude)),
+    site_id = sampling_site_id
   )
+
+if (anyNA(sample_table$site_id) || any(!nzchar(sample_table$site_id))) {
+  stopf("All georeferenced profiles require a resolved sampling_site_id.")
+}
 
 analysis_ids <- sample_table$run_accession
 otu_counts <- otu_counts[analysis_ids, , drop = FALSE]
@@ -449,7 +372,7 @@ data.table::fwrite(
 )
 
 log_msg("Samples with valid coordinates: n = ", length(analysis_ids))
-log_msg("Coordinate-defined sampling sites: n = ", n_distinct(sample_table$site_id))
+log_msg("Sampling sites: n = ", n_distinct(sample_table$site_id))
 
 ## -----------------------------------------------------------------------------
 ## 5. Rarefy counts and calculate Bray–Curtis and Sørensen dissimilarities
@@ -473,7 +396,11 @@ if (length(insufficient_depth) > 0L) {
 }
 
 set.seed(SEED)
-otu_rarefied <- vegan::rrarefy(otu_counts, sample = RAREFACTION_DEPTH)
+otu_rarefied <- if (all(rowSums(otu_counts) == RAREFACTION_DEPTH)) {
+  otu_counts
+} else {
+  vegan::rrarefy(otu_counts, sample = RAREFACTION_DEPTH)
+}
 otu_rarefied <- otu_rarefied[, colSums(otu_rarefied) > 0, drop = FALSE]
 
 if (any(rowSums(otu_rarefied) != RAREFACTION_DEPTH)) {
@@ -702,11 +629,11 @@ site_balanced_summary <- site_balanced_results %>%
 
 data.table::fwrite(
   site_balanced_results,
-  file.path(TABLE_DIR, "06_site_balanced_one_sample_per_coordinate_replicates.csv")
+  file.path(TABLE_DIR, "06_site_balanced_one_sample_per_site_replicates.csv")
 )
 data.table::fwrite(
   site_balanced_summary,
-  file.path(TABLE_DIR, "06_site_balanced_one_sample_per_coordinate_summary.csv")
+  file.path(TABLE_DIR, "06_site_balanced_one_sample_per_site_summary.csv")
 )
 
 study_values <- sort(unique(sample_table$study_id[
@@ -913,11 +840,10 @@ run_summary <- data.frame(
   run_name = RUN_NAME,
   phyloseq_path = PHYLOSEQ_PATH,
   metadata_path = METADATA_PATH,
-  cohort_path = COHORT_PATH,
   phyloseq_samples = nsamples(phy0),
-  balanced_cohort_samples = length(cohort_ids),
+  reference_cohort_samples = length(cohort_ids),
   analysis_samples_with_coordinates = length(analysis_ids),
-  coordinate_defined_sites = n_distinct(sample_table$site_id),
+  sampling_sites = n_distinct(sample_table$site_id),
   cohort_taxa_nonzero_before_rarefaction = cohort_taxa_nonzero,
   taxa_nonzero_after_rarefaction = ncol(otu_rarefied),
   rarefaction_depth = RAREFACTION_DEPTH,
@@ -933,22 +859,25 @@ run_summary <- data.frame(
 )
 
 data.table::fwrite(run_summary, file.path(TABLE_DIR, "06_run_summary.csv"))
+jsonlite::write_json(list(
+  run = run_summary,
+  regression = regression_statistics,
+  metric_contrast = metric_contrast_statistics,
+  site_balanced = site_balanced_summary,
+  n_pairs_within_same_sampling_site = sum(
+    sample_table$site_id[pair_index[, 1L]] == sample_table$site_id[pair_index[, 2L]]
+  ),
+  site_definition = "sampling_site_id from corrected metadata; source coordinates retained",
+  pair_definition = "All profile pairs separated by >0.1 km; balanced sensitivity selects one profile per sampling site"
+), file.path(OUT_DIR, "summary.json"), pretty = TRUE, auto_unbox = TRUE, digits = 16)
 
+
+input_paths <- c(PHYLOSEQ_PATH, METADATA_PATH)
 input_provenance <- data.frame(
-  input = c("phyloseq", "metadata", "cohort_pointer", "cohort_table"),
-  path = c(PHYLOSEQ_PATH, METADATA_PATH, COHORT_POINTER, COHORT_PATH),
-  size_bytes = as.numeric(file.info(c(
-    PHYLOSEQ_PATH,
-    METADATA_PATH,
-    COHORT_POINTER,
-    COHORT_PATH
-  ))$size),
-  modified_time = as.character(file.info(c(
-    PHYLOSEQ_PATH,
-    METADATA_PATH,
-    COHORT_POINTER,
-    COHORT_PATH
-  ))$mtime),
+  input = c("phyloseq", "metadata"),
+  path = input_paths,
+  size_bytes = as.numeric(file.info(input_paths)$size),
+  modified_time = as.character(file.info(input_paths)$mtime),
   stringsAsFactors = FALSE
 )
 data.table::fwrite(input_provenance, file.path(TABLE_DIR, "06_input_provenance.csv"))

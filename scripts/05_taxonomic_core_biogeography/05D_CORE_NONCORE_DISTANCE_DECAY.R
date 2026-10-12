@@ -106,10 +106,34 @@ run_decay_test <- function(core_dissimilarity,
   x_mat <- as.matrix(slope_x)
 
   expected_names <- rownames(pred_mat)
-  if (!identical(rownames(core_mat), expected_names) ||
-      !identical(rownames(non_mat), expected_names) ||
-      !identical(rownames(x_mat), expected_names)) {
-    stopf("Las matrices de %s no estan alineadas.", analysis_name)
+  matrices <- list(core = core_mat, noncore = non_mat,
+                   predictor = pred_mat, slope_predictor = x_mat)
+  if (is.null(expected_names) || anyNA(expected_names) ||
+      anyDuplicated(expected_names) || any(!nzchar(expected_names))) {
+    stopf("%s requires unique, nonmissing locality labels.", analysis_name)
+  }
+  for (matrix_name in names(matrices)) {
+    current <- matrices[[matrix_name]]
+    if (!identical(dim(current), dim(pred_mat)) ||
+        nrow(current) != ncol(current) ||
+        !identical(rownames(current), expected_names) ||
+        !identical(colnames(current), expected_names)) {
+      stopf("The %s matrix is not aligned in %s.", matrix_name, analysis_name)
+    }
+  }
+  if (!identical(dim(pair_keep), dim(pred_mat)) || anyNA(pair_keep)) {
+    stopf("The pair mask is invalid in %s.", analysis_name)
+  }
+  if (any(!is.finite(pred_mat)) || any(pred_mat < 0)) {
+    stopf("Predictor distances must be finite and nonnegative in %s.", analysis_name)
+  }
+  for (matrix_name in c("core", "noncore")) {
+    current <- matrices[[matrix_name]]
+    if (any(!is.finite(current)) || any(current < -1e-12 | current > 1 + 1e-12) ||
+        max(abs(current - t(current))) > 1e-10 ||
+        any(abs(diag(current)) > 1e-10)) {
+      stopf("Invalid Bray-Curtis dissimilarities in %s (%s).", analysis_name, matrix_name)
+    }
   }
 
   mask <- upper.tri(pred_mat) & pair_keep &
@@ -218,7 +242,7 @@ RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR,
 
 METADATA_CSV <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
+  unset = file.path(PROJECT_DIR, "data", "metadata_taxonomic.csv")
 )
 
 SCRIPT_09A_TAG <- "05A_TAXONOMIC_CORE_ASSOCIATED"
@@ -227,8 +251,7 @@ LATEST_09A_PTR <- file.path(
 )
 
 SCRIPT_TAG <- "05D_CORE_NONCORE_DISTANCE_DECAY"
-RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
+OUT_DIR <- file.path(RESULTS_DIR, SCRIPT_TAG)
 TABLE_DIR <- file.path(OUT_DIR, "tables")
 PLOT_DIR <- file.path(OUT_DIR, "plots")
 RDS_DIR <- file.path(OUT_DIR, "rds")
@@ -508,6 +531,16 @@ if (n_discordant_runs > 0L) {
   )
 }
 
+invalid_coordinates <- meta_numeric %>%
+  filter((is.finite(latitude) & (latitude < -90 | latitude > 90)) |
+         (is.finite(longitude) & (longitude < -180 | longitude > 180)))
+if (nrow(invalid_coordinates) > 0L) {
+  write_tsv(invalid_coordinates,
+            file.path(TABLE_DIR, "12_invalid_geographic_coordinates_STOP.tsv"))
+  stopf("Metadata contain %d coordinate records outside geographic bounds; see the audit table.",
+        nrow(invalid_coordinates))
+}
+
 meta_one <- meta_numeric %>%
   group_by(run_accession) %>%
   summarise(across(all_of(numeric_vars), finite_median), .groups = "drop")
@@ -570,7 +603,8 @@ if (anyNA(locality_numeric$locality_id)) {
 
 locality_numeric <- locality_numeric %>%
   mutate(
-    has_coordinates = is.finite(longitude) & is.finite(latitude),
+    has_coordinates = is.finite(longitude) & is.finite(latitude) &
+      longitude >= -180 & longitude <= 180 & latitude >= -90 & latitude <= 90,
     n_complete_climate_predictors = rowSums(
       is.finite(as.matrix(across(all_of(names(CLIMATE_SPECS)))))
     ),

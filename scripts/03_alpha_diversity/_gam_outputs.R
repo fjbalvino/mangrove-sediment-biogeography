@@ -4,12 +4,7 @@ options(stringsAsFactors = FALSE, bitmapType = "cairo")
 suppressPackageStartupMessages({library(ggplot2); library(patchwork); library(mgcv)})
 root <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
 results <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(root, "results"))
-src <- Sys.getenv("GAM_INPUT_DIR", unset = "")
-if (!nzchar(src)) {
-  pointer <- file.path(results, "LATEST_SHANNON_GAM.txt")
-  if (!file.exists(pointer)) stop("Run 03B first or supply GAM_INPUT_DIR.", call. = FALSE)
-  src <- trimws(readLines(pointer, n = 1L, warn = FALSE))
-}
+src <- Sys.getenv("GAM_INPUT_DIR", unset = file.path(results, "gam"))
 out <- Sys.getenv("GAM_FIGURE_OUTPUT_DIR", unset = file.path(src, "manuscript"))
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 read_tab <- function(n) read.csv(file.path(src, "tables", n), check.names = FALSE)
@@ -75,6 +70,7 @@ stopifnot(max(validation$max_abs_effect_difference)<1e-10,max(validation$max_abs
 write.csv(validation,file.path(out,"GAM_curve_validation.csv"),row.names=FALSE)
 
 xlabels <- c(silt_mean="Soil silt content",ph_mean="Soil pH × 10",
+ soc_mean="Soil organic carbon\n(dg/kg)",
  gbif_richness_species_2km="GBIF species richness\n(2 km)",
  bio15="Precipitation seasonality\n(BIO15)",bio3="Isothermality\n(BIO3)",
  bio13="Precipitation of wettest month\n(BIO13)",bio2="Mean diurnal temperature range\n(BIO2)")

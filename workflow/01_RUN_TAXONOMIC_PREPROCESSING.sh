@@ -170,12 +170,13 @@ if [ "$RC" -eq 0 ]; then
 fi
 
 if [ "$RC" -eq 0 ]; then
-  run_step "01H_SELECT_CORE_ANALYSIS_SAMPLES" \
-    "$R_BIN" "$PACKAGE_ROOT/scripts/01_taxonomic_preprocessing/01H_SELECT_CORE_ANALYSIS_SAMPLES.R" \
+  run_step "01H_SELECT_TAXONOMIC_SAMPLES" \
+    "$R_BIN" "$PACKAGE_ROOT/scripts/01_taxonomic_preprocessing/01H_SELECT_TAXONOMIC_SAMPLES.R" \
     --base "$BIOGEOGRAPHY_BASE" \
     --input-rds "$PHYLOSEQ_405" \
-    --output-rds "$PHYLOSEQ_401" \
-    --manifest "${CORE_SAMPLE_MANIFEST:-$PACKAGE_ROOT/config/samples/taxonomic_core_accessions.txt}"
+    --output-rds "${MAGENTA_PHYLOSEQ:-$BIOGEOGRAPHY_BASE/data/phyloseq_taxonomic.rds}" \
+    --manifest "${ALPHA_SAMPLE_MANIFEST:-$PACKAGE_ROOT/config/samples/taxonomic_accessions.txt}" \
+    --metadata "${MAGENTA_METADATA_CSV:-$BIOGEOGRAPHY_BASE/data/metadata_taxonomic.csv}"
   RC=$?
 fi
 

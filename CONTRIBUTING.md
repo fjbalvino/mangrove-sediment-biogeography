@@ -21,7 +21,7 @@ Changes must therefore preserve both reproducibility and provenance.
 - Write a terminal `PASS` or `FAIL` state where the script implements run
   directories.
 - Use `run_accession` as the sample key and validate one-to-one joins.
-- Preserve the distinction among the 401-sample taxonomic cohort, 400-sample
+- Preserve the distinction among the 341-profile taxonomic reference cohort, 400-sample
   iCAMP cohort, 194-profile functional atlas/network cohort and 191-profile
   regional functional cohort.
 - Update `docs/provenance/SCRIPT_INDEX.tsv` when a canonical script changes.

@@ -54,7 +54,7 @@ LOG_DIR="$RUN_DIR/logs"
 
 mkdir -p "$TABLE_DIR" "$DIAG_DIR" "$MANIFEST_DIR" "$LOG_DIR" "$ENVIRONMENTAL_CACHE"
 
-SET401_METADATA="$TABLE_DIR/02A_metadata_set401.csv"
+REFERENCE_METADATA="$TABLE_DIR/02A_metadata_reference.csv"
 HII_METADATA="$TABLE_DIR/02B_metadata_human_footprint.csv"
 CLIMATE_METADATA="$TABLE_DIR/02C_metadata_worldclim.csv"
 GBIF_METADATA="$TABLE_DIR/02D_metadata_gbif.csv"
@@ -84,21 +84,20 @@ run_step() {
 RC=0
 
 if [ "$RC" -eq 0 ]; then
-  run_step "02A_PREPARE_SET401_METADATA" \
-    "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02A_PREPARE_SET401_METADATA.py" \
+  run_step "02A_PREPARE_REFERENCE_METADATA" \
+    "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02A_PREPARE_TAXONOMIC_METADATA.py" \
     --base "$BASE_METADATA" \
-    --out "$SET401_METADATA" \
-    --audit-out "$DIAG_DIR/02A_set401_filter_audit.csv" \
-    --manifest-out "$MANIFEST_DIR/02A_set401_manifest.json" \
-    --expected-input-rows "$EXPECTED_PHYLOSEQ_405_SAMPLES" \
-    --expected-output-rows "$EXPECTED_PHYLOSEQ_401_SAMPLES"
+    --out "$REFERENCE_METADATA" \
+    --audit-out "$DIAG_DIR/02A_reference_filter_audit.csv" \
+    --manifest-out "$MANIFEST_DIR/02A_reference_manifest.json" \
+    --sample-manifest "${ALPHA_SAMPLE_MANIFEST:-$PACKAGE_ROOT/config/samples/taxonomic_accessions.txt}"
   RC=$?
 fi
 
 if [ "$RC" -eq 0 ]; then
   run_step "02B_HUMAN_FOOTPRINT" \
     "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02B_EXTRACT_HUMAN_FOOTPRINT_2020.py" \
-    --base "$SET401_METADATA" \
+    --base "$REFERENCE_METADATA" \
     --human-footprint-tif "$HUMAN_FOOTPRINT_2020_TIF" \
     --out "$HII_METADATA" \
     --diag-out "$DIAG_DIR/02B_human_footprint_diagnostics.csv" \
@@ -177,7 +176,7 @@ if [ "$RC" -eq 0 ]; then
     "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02G_VALIDATE_ENVIRONMENTAL_METADATA.py" \
     --metadata "$MEOW_METADATA" \
     --out-dir "$RUN_DIR/02G_validation" \
-    --expected-rows "$EXPECTED_PHYLOSEQ_401_SAMPLES"
+    --expected-rows 341
   RC=$?
 fi
 

@@ -5,9 +5,11 @@
 # 05A_CLASSIFY_TAXONOMIC_CORE_ASSOCIATED.R
 # Classify realm-supported taxonomic cores and plot their richness/read shares.
 #
-# Inputs: data/taxonomic_core_counts.rds (phyloseq count object) and
-# data/environmental_metadata.csv, joined by run_accession. Metadata must contain
-# Locality and REALM; the input cohort contains mangrove sediment samples.
+# Inputs: data/phyloseq_taxonomic.rds (phyloseq count object) and
+# data/metadata_taxonomic.csv, joined by run_accession. Metadata must contain
+# REALM and core_locality (or Locality when core_locality is absent). Profiles
+# without a resolved locality are retained in the source cohort but excluded
+# from locality-based core calculations and listed in the sampling audit.
 #
 # Counts are pooled within each REALM || Locality unit. Eligibility requires
 # >=50 total reads and detection in >=5 such units. Core-associated taxa occur
@@ -79,18 +81,22 @@ PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
 BASE_DIR <- PROJECT_DIR
 RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-# Taxonomic count object for the 401-metagenome core-analysis cohort.
-PS_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
+# Taxonomic count object for the core-analysis sample manifest.
+PS_RDS <- Sys.getenv("MAGENTA_CORE_PHYLOSEQ", unset = file.path(PROJECT_DIR, "data", "phyloseq_taxonomic.rds"))
+SAMPLE_MANIFEST <- Sys.getenv("CORE_SAMPLE_MANIFEST", unset = file.path(PROJECT_DIR, "config", "samples", "taxonomic_accessions.txt"))
+if (!file.exists(SAMPLE_MANIFEST)) stopf("Core sample manifest not found: %s", SAMPLE_MANIFEST)
+EXPECTED_ACCESSIONS <- trimws(readLines(SAMPLE_MANIFEST, warn = FALSE))
+EXPECTED_ACCESSIONS <- EXPECTED_ACCESSIONS[nzchar(EXPECTED_ACCESSIONS) & !startsWith(EXPECTED_ACCESSIONS, "#")]
+if (!length(EXPECTED_ACCESSIONS) || anyDuplicated(EXPECTED_ACCESSIONS)) stopf("Core sample manifest must contain unique nonempty identifiers.")
 
 # Sample metadata; run_accession is the unique sample key.
 METADATA_CSV <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
+  unset = file.path(PROJECT_DIR, "data", "metadata_taxonomic.csv")
 )
 
 SCRIPT_TAG <- "05A_TAXONOMIC_CORE_ASSOCIATED"
-RUN_STAMP  <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR    <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
+OUT_DIR    <- file.path(RESULTS_DIR, SCRIPT_TAG)
 TABLE_DIR  <- file.path(OUT_DIR, "tables")
 PLOT_DIR   <- file.path(OUT_DIR, "plots")
 RDS_DIR    <- file.path(OUT_DIR, "rds")
@@ -108,7 +114,7 @@ MIN_GLOBAL_LOCALITIES <- 5L
 MIN_REALM_LOCALITIES  <- 3L
 CORE_REALM_PREVALENCE <- 1.0
 CORE_MEAN_REL_ABUND   <- 0.0001  # Proportion: 0.01%, not 0.0001%.
-EXPECTED_N_SAMPLES    <- 401L
+EXPECTED_N_SAMPLES    <- length(EXPECTED_ACCESSIONS)
 
 CORE_COLOUR    <- "#B2182B"
 NONCORE_COLOUR <- "#737373"
@@ -159,7 +165,7 @@ sample_names(ps0) <- ps_run
 meta_raw <- read_csv(METADATA_CSV, show_col_types = FALSE, progress = FALSE)
 
 meta_key_col <- resolve_col(meta_raw, c("run_accession"), "run_accession")
-locality_col <- resolve_col(meta_raw, c("Locality", "locality"), "Locality")
+locality_col <- resolve_col(meta_raw, c("core_locality", "Locality", "locality"), "resolved locality")
 realm_col    <- resolve_col(meta_raw, c("REALM", "Realm", "realm"), "REALM")
 eco_col      <- resolve_col(
   meta_raw,
@@ -188,6 +194,7 @@ meta_audit <- meta_needed %>%
     n_rows = n(),
     n_locality = n_distinct(Locality[!is.na(Locality) & nzchar(Locality)]),
     n_realm = n_distinct(REALM[!is.na(REALM) & nzchar(REALM)]),
+    n_ecological_classes = n_distinct(EcologicalClass[!is.na(EcologicalClass) & nzchar(EcologicalClass)]),
     localities = collapse_unique(Locality),
     realms = collapse_unique(REALM),
     ecological_classes = collapse_unique(EcologicalClass),
@@ -196,7 +203,7 @@ meta_audit <- meta_needed %>%
 
 write_tsv(meta_audit, file.path(TABLE_DIR, "09A_metadata_run_accession_audit.tsv"))
 
-bad_meta <- meta_audit %>% filter(n_locality > 1L | n_realm > 1L)
+bad_meta <- meta_audit %>% filter(n_locality > 1L | n_realm > 1L | n_ecological_classes > 1L)
 if (nrow(bad_meta) > 0L) {
   stopf(
     paste0("Hay %d run_accession con Locality o REALM incompatibles. ",
@@ -228,6 +235,10 @@ if (!identical(meta_aligned$run_accession, sample_names(ps0))) {
   stopf("Fallo la alineacion por run_accession.")
 }
 
+if (!setequal(meta_aligned$run_accession, EXPECTED_ACCESSIONS)) {
+  stopf("The input samples do not match the core sample manifest: %s", SAMPLE_MANIFEST)
+}
+
 if (nrow(meta_aligned) != EXPECTED_N_SAMPLES) {
   stopf(
     "Figure 3 requiere %d metagenomas; el objeto alineado contiene %d.",
@@ -236,9 +247,23 @@ if (nrow(meta_aligned) != EXPECTED_N_SAMPLES) {
   )
 }
 
-if (anyNA(meta_aligned$Locality) || any(!nzchar(meta_aligned$Locality))) {
-  stopf("Hay muestras sin Locality despues del match por run_accession.")
+# Unresolved geographic regions are not independent sampled localities.
+locality_resolved <- !is.na(meta_aligned$Locality) & nzchar(meta_aligned$Locality)
+locality_inclusion <- meta_aligned %>%
+  mutate(included_in_locality_analysis = locality_resolved,
+         reason = if_else(locality_resolved, "Locality identifier available",
+                          "Sampling locality unresolved"))
+write_tsv(locality_inclusion,
+          file.path(TABLE_DIR, "09A_locality_analysis_sample_inclusion.tsv"))
+N_INPUT_SAMPLES <- nrow(meta_aligned)
+N_LOCALITY_UNRESOLVED <- sum(!locality_resolved)
+if (N_LOCALITY_UNRESOLVED > 0L) {
+  msg("Profiles excluded from locality-based analysis: ", N_LOCALITY_UNRESOLVED)
+  meta_aligned <- meta_aligned[locality_resolved, , drop = FALSE]
+  ps0 <- prune_samples(meta_aligned$run_accession, ps0)
+  stopifnot(identical(sample_names(ps0), meta_aligned$run_accession))
 }
+if (!nrow(meta_aligned)) stopf("No profiles have a resolved sampling locality.")
 if (anyNA(meta_aligned$REALM) || any(!nzchar(meta_aligned$REALM))) {
   stopf("Hay muestras sin REALM despues del match por run_accession.")
 }
@@ -601,14 +626,34 @@ figure_summary <- taxon_classification %>%
     metric = recode(
       metric_code,
       richness = "Taxonomic richness",
-      classified_reads = "Classified reads"
+      classified_reads = "Reads in eligible taxa"
     ),
     component = factor(component, levels = c("Core-associated", "Non-core")),
     metric = factor(
       metric,
-      levels = c("Classified reads", "Taxonomic richness")
+      levels = c("Reads in eligible taxa", "Taxonomic richness")
     )
   )
+
+# Preserve the distinction between eligible non-core features and features
+# excluded by the global read/occupancy criteria.
+all_detected_classification <- tibble(
+  taxon_id = colnames(otu_locality),
+  total_reads = as.numeric(global_reads[colnames(otu_locality)]),
+  n_localities = as.integer(n_localities[colnames(otu_locality)]),
+  passes_global_eligibility = colnames(otu_locality) %in% eligible_ids,
+  core_associated = colnames(otu_locality) %in% eligible_ids[is_core],
+  classification = case_when(
+    core_associated ~ "Eligible core-associated",
+    passes_global_eligibility ~ "Eligible non-core",
+    TRUE ~ "Excluded by global eligibility criteria"
+  )
+)
+write_tsv(all_detected_classification, file.path(TABLE_DIR, "09A_all_detected_feature_status.tsv"))
+write_tsv(tibble(input = c("taxonomic_counts", "metadata", "sample_manifest"),
+                 path = c(PS_RDS, METADATA_CSV, SAMPLE_MANIFEST),
+                 md5 = unname(tools::md5sum(c(PS_RDS, METADATA_CSV, SAMPLE_MANIFEST)))),
+          file.path(TABLE_DIR, "09A_input_checksums.tsv"))
 
 # Sensibilidad: core elegible frente a todo lo restante en la tabla detectada.
 all_detected_summary <- tibble(
@@ -728,6 +773,7 @@ parameters <- tibble(
     "classification_unit",
     "primary_denominator",
     "sample_key",
+    "locality_metadata_column",
     "expected_n_samples",
     "bar_label_colour",
     "bar_label_size"
@@ -742,6 +788,7 @@ parameters <- tibble(
     "REALM || Locality; replicate counts summed",
     "Eligible taxa after >=50 reads and >=5 localities",
     "run_accession",
+    locality_col,
     EXPECTED_N_SAMPLES,
     BAR_LABEL_COLOUR,
     BAR_LABEL_SIZE
@@ -758,7 +805,7 @@ core_reads_pct <- figure_summary %>%
 
 run_summary <- tibble(
   item = c(
-    "script", "phyloseq", "metadata", "n_samples", "n_locality_labels",
+    "script", "phyloseq", "metadata", "n_input_samples", "n_locality_unresolved", "n_samples", "n_locality_labels",
     "n_realm_locality_units", "n_locality_labels_spanning_multiple_realms",
     "n_realms", "minimum_realm_localities_to_support_core",
     "n_qualifying_realms", "qualifying_realms",
@@ -768,7 +815,7 @@ run_summary <- tibble(
     "output_directory"
   ),
   value = c(
-    SCRIPT_TAG, PS_RDS, METADATA_CSV, nrow(meta_aligned),
+    SCRIPT_TAG, PS_RDS, METADATA_CSV, N_INPUT_SAMPLES, N_LOCALITY_UNRESOLVED, nrow(meta_aligned),
     n_distinct(meta_aligned$Locality), nrow(otu_locality),
     n_locality_realm_conflicts,
     length(realm_levels), MIN_REALM_LOCALITIES, length(qualifying_realms),
@@ -788,6 +835,7 @@ saveRDS(
   list(
     parameters = parameters,
     metadata_aligned = meta_aligned,
+    sample_inclusion = locality_inclusion,
     taxon_id_harmonization_audit = taxon_id_harmonization_audit,
     locality_realm_assignment_audit = locality_realm_audit,
     locality_metadata = locality_meta,

@@ -4,8 +4,8 @@
 # Site-level regional PERMANOVA for Figure 2d and supplementary results.
 #
 # The script inherits the exact samples and distance matrices produced by
-# 04A_NMDS_AITCHISON_LONGITUDE.R. The primary unit is the coordinate-defined
-# site. Site Aitchison centroids are reconstructed exactly from the Euclidean
+# 04A_NMDS_AITCHISON_LONGITUDE.R. The primary unit is the sampling site defined
+# in the current metadata. Site Aitchison centroids are reconstructed from the Euclidean
 # sample-distance geometry. A deterministic within-site medoid is used only for
 # the Bray-Curtis sensitivity analysis. Aitchison is the primary metric.
 
@@ -33,11 +33,12 @@ LOCO_PERMUTATIONS <- 999L
 STUDY_BLOCK_PERMUTATIONS <- 9999L
 MIN_SITES_PER_LEVEL <- 5L
 
-EXPECTED_ANALYSIS_SAMPLES <- 327L
-EXPECTED_COORDINATE_SITES <- 130L
-
 PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
 RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
+METADATA_PATH <- Sys.getenv(
+  "MAGENTA_METADATA_CSV",
+  unset = file.path(PROJECT_DIR, "data", "metadata_taxonomic.csv")
+)
 
 PANEL_D_POINTER <- file.path(
   RESULTS_DIR,
@@ -47,8 +48,7 @@ PANEL_D_OBJECT_NAME <- file.path("rds", "05_panel_d_analysis_objects.rds")
 
 SCRIPT_ID <- "07"
 SCRIPT_BASENAME <- "TAXONOMIC_PERMANOVA"
-RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
+RUN_NAME <- "beta_regional"
 
 OUT_DIR <- file.path(RESULTS_DIR, RUN_NAME)
 TABLE_DIR <- file.path(OUT_DIR, "tables")
@@ -202,19 +202,23 @@ if (anyNA(sample_table$run_accession) || anyDuplicated(sample_table$run_accessio
   stopf("sample_table contiene run_accession faltantes o duplicados.")
 }
 if (anyNA(sample_table$site_id)) stopf("sample_table contiene site_id faltantes.")
-if (nrow(sample_table) != EXPECTED_ANALYSIS_SAMPLES) {
-  stopf(
-    "Se esperaban %d muestras del panel D; se encontraron %d.",
-    EXPECTED_ANALYSIS_SAMPLES,
-    nrow(sample_table)
-  )
+metadata_identity <- data.table::fread(METADATA_PATH, data.table = FALSE,
+  na.strings = c("", "NA", "NaN", "NULL"))
+identity_columns <- c("run_accession", "sampling_site_id", "study_id")
+if (!all(identity_columns %in% names(metadata_identity))) {
+  stopf("La metadata actual requiere run_accession, sampling_site_id y study_id.")
 }
-if (dplyr::n_distinct(sample_table$site_id) != EXPECTED_COORDINATE_SITES) {
-  stopf(
-    "Se esperaban %d sitios del panel D; se encontraron %d.",
-    EXPECTED_COORDINATE_SITES,
-    dplyr::n_distinct(sample_table$site_id)
-  )
+if (anyDuplicated(metadata_identity$run_accession)) {
+  stopf("La metadata actual contiene run_accession duplicados.")
+}
+metadata_rows <- match(sample_table$run_accession, metadata_identity$run_accession)
+if (anyNA(metadata_rows)) stopf("Panel D contiene muestras ausentes de la metadata actual.")
+current_site_id <- clean_character(metadata_identity$sampling_site_id[metadata_rows])
+current_study_id <- clean_character(metadata_identity$study_id[metadata_rows])
+if (anyNA(current_site_id) ||
+    !identical(clean_character(sample_table$site_id), current_site_id) ||
+    !identical(clean_character(sample_table$study_id), current_study_id)) {
+  stopf("Los sitios o estudios del Panel D no coinciden con la metadata actual; repita 04A.")
 }
 
 analysis_ids <- sample_table$run_accession
@@ -234,7 +238,7 @@ for (matrix_name in c("aitchison_matrix", "bray_matrix")) {
 
 log_msg("Panel D object: ", PANEL_D_OBJECT_PATH)
 log_msg("Samples inherited from panel D: n = ", nrow(sample_table))
-log_msg("Coordinate-defined localities: n = ", dplyr::n_distinct(sample_table$site_id))
+log_msg("Sampling sites: n = ", dplyr::n_distinct(sample_table$site_id))
 
 ## -----------------------------------------------------------------------------
 ## 3. Build independent site-level analysis units
@@ -447,6 +451,7 @@ test_one_distance <- function(
     n_sites = length(indices),
     n_levels = nlevels(group),
     df = ad$Df[1L],
+    residual_df = ad$Df[match("Residual", rownames(ad))],
     F = ad$F[1L],
     R2 = ad$R2[1L],
     p_value = ad$`Pr(>F)`[1L],
@@ -557,6 +562,7 @@ primary_results <- dplyr::bind_rows(primary_results) %>%
     n_levels,
     eligible_levels,
     df,
+    residual_df,
     F,
     R2,
     p_value,
@@ -1112,12 +1118,12 @@ run_summary <- data.frame(
   run_name = RUN_NAME,
   panel_d_object = PANEL_D_OBJECT_PATH,
   n_samples = nrow(sample_table),
-  n_coordinate_sites = nrow(site_table),
+  n_sampling_sites = nrow(site_table),
   factors_requested = paste(factors_to_test, collapse = " | "),
   factors_evaluated = paste(unique(primary_results$factor), collapse = " | "),
   primary_metric = "Aitchison",
   sensitivity_metric = "Bray-Curtis",
-  primary_unit = "coordinate_site_Aitchison_centroid",
+  primary_unit = "sampling_site_Aitchison_centroid",
   min_sites_per_level = MIN_SITES_PER_LEVEL,
   primary_permutations = PRIMARY_PERMUTATIONS,
   balanced_iterations = N_BALANCED_ITERATIONS,

@@ -30,32 +30,18 @@ NMDS_TRYMAX <- 500L
 LONGITUDE_GAM_K <- 30L
 GRID_N <- 220L
 
-EXPECTED_PHYLOSEQ_SAMPLES <- 401L
-EXPECTED_COHORT_SAMPLES <- 345L
-EXPECTED_ANALYSIS_SAMPLES <- 327L
-EXPECTED_COORDINATE_SITES <- 130L
-EXPECTED_COHORT_TAXA_NONZERO <- 24038L
+EXPECTED_COHORT_SAMPLES <- 341L
 
 PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
 RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
-METADATA_PATH <- Sys.getenv(
-  "MAGENTA_METADATA_CSV",
-  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
-)
-COHORT_POINTER <- file.path(
-  RESULTS_DIR,
-  "LATEST_TAXONOMIC_ALPHA.txt"
-)
-COHORT_FILENAME <- "04a_alpha_diversity_filtered_samplewise.csv"
+PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ", unset = file.path(PROJECT_DIR, "data", "phyloseq_taxonomic.rds"))
+METADATA_PATH <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(PROJECT_DIR, "data", "metadata_taxonomic.csv"))
 
 SCRIPT_ID <- "05"
 SCRIPT_BASENAME <- "TAXONOMIC_NMDS"
-RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
-
-OUT_DIR <- file.path(RESULTS_DIR, RUN_NAME)
+RUN_NAME <- SCRIPT_BASENAME
+OUT_DIR <- file.path(RESULTS_DIR, "nmds")
 TABLE_DIR <- file.path(OUT_DIR, "tables")
 PLOT_DIR <- file.path(OUT_DIR, "plots")
 RDS_DIR <- file.path(OUT_DIR, "rds")
@@ -197,67 +183,22 @@ log_msg("Phyloseq: ", PHYLOSEQ_PATH)
 log_msg("Metadata: ", METADATA_PATH)
 
 ## -----------------------------------------------------------------------------
-## 2. Load the diversity analysis sample set
+## 2. Load and validate the reference dataset
 ## -----------------------------------------------------------------------------
 
-required_files <- c(PHYLOSEQ_PATH, METADATA_PATH, COHORT_POINTER)
+required_files <- c(PHYLOSEQ_PATH, METADATA_PATH)
 missing_files <- required_files[!file.exists(required_files)]
 if (length(missing_files) > 0L) {
-  stopf("Faltan inputs requeridos: %s", paste(missing_files, collapse = "; "))
+  stopf("Missing required inputs: %s", paste(missing_files, collapse = "; "))
 }
-
-cohort_dir <- trimws(readLines(COHORT_POINTER, warn = FALSE, n = 1L))
-if (!nzchar(cohort_dir) || !dir.exists(cohort_dir)) {
-  stopf("Puntero de cohorte inválido: %s", COHORT_POINTER)
-}
-
-COHORT_PATH <- file.path(cohort_dir, COHORT_FILENAME)
-if (!file.exists(COHORT_PATH)) {
-  stopf("No existe la tabla maestra de la cohorte: %s", COHORT_PATH)
-}
-
-cohort <- data.table::fread(COHORT_PATH, data.table = FALSE, check.names = FALSE)
-if (!"run_accession" %in% names(cohort)) {
-  stopf("La tabla maestra no contiene run_accession.")
-}
-
-cohort$run_accession <- clean_character(cohort$run_accession)
-if (anyNA(cohort$run_accession) || anyDuplicated(cohort$run_accession)) {
-  stopf("La tabla maestra contiene run_accession faltantes o duplicados.")
-}
-
-cohort_ids <- cohort$run_accession
-if (length(cohort_ids) != EXPECTED_COHORT_SAMPLES) {
-  stopf(
-    "La cohorte debe contener %d muestras; se encontraron %d.",
-    EXPECTED_COHORT_SAMPLES,
-    length(cohort_ids)
-  )
-}
-
-## -----------------------------------------------------------------------------
-## 3. Load phyloseq and construct the analysis count matrix
-## -----------------------------------------------------------------------------
-
 phy0 <- readRDS(PHYLOSEQ_PATH)
-if (!inherits(phy0, "phyloseq")) stopf("El RDS no contiene un objeto phyloseq.")
-if (nsamples(phy0) != EXPECTED_PHYLOSEQ_SAMPLES) {
-  stopf(
-    "El phyloseq debe contener %d muestras; contiene %d.",
-    EXPECTED_PHYLOSEQ_SAMPLES,
-    nsamples(phy0)
-  )
+if (!inherits(phy0, "phyloseq")) stopf("The input RDS must contain a phyloseq object.")
+cohort_ids <- sample_names(phy0)
+if (length(cohort_ids) != EXPECTED_COHORT_SAMPLES || anyNA(cohort_ids) ||
+    any(!nzchar(cohort_ids)) || anyDuplicated(cohort_ids)) {
+  stopf("The reference dataset must contain %d uniquely identified profiles.", EXPECTED_COHORT_SAMPLES)
 }
-if (anyDuplicated(sample_names(phy0))) stopf("sample_names contiene duplicados.")
-
-missing_in_phyloseq <- setdiff(cohort_ids, sample_names(phy0))
-if (length(missing_in_phyloseq) > 0L) {
-  data.table::fwrite(
-    data.frame(run_accession = missing_in_phyloseq),
-    file.path(TABLE_DIR, "05_cohort_ids_missing_in_phyloseq.csv")
-  )
-  stopf("Hay %d accesiones ausentes en el phyloseq.", length(missing_in_phyloseq))
-}
+log_msg("Reference profiles: n = ", length(cohort_ids))
 
 otu_counts <- as(otu_table(phy0), "matrix")
 if (taxa_are_rows(phy0)) otu_counts <- t(otu_counts)
@@ -265,13 +206,6 @@ otu_counts <- otu_counts[cohort_ids, , drop = FALSE]
 otu_counts <- otu_counts[, colSums(otu_counts) > 0, drop = FALSE]
 cohort_taxa_nonzero <- ncol(otu_counts)
 
-if (cohort_taxa_nonzero != EXPECTED_COHORT_TAXA_NONZERO) {
-  stopf(
-    "La cohorte debe contener %d taxa no nulos; contiene %d.",
-    EXPECTED_COHORT_TAXA_NONZERO,
-    cohort_taxa_nonzero
-  )
-}
 if (any(!is.finite(otu_counts)) || any(otu_counts < 0)) {
   stopf("La matriz de conteos contiene valores no finitos o negativos.")
 }
@@ -294,6 +228,10 @@ if (!"run_accession" %in% names(meta_raw)) {
   stopf("La metadata no contiene run_accession.")
 }
 
+if (!setequal(as.character(meta_raw$run_accession), cohort_ids)) {
+  stopf("Metadata accessions must match the reference count object exactly.")
+}
+
 lat_col <- resolve_required_column(
   meta_raw,
   c("lat", "latitude", "decimalLatitude", "latitude_dd"),
@@ -312,9 +250,10 @@ ecoregion_col <- resolve_optional_column(
   c("Ecoregion", "ECOREGION", "ecoregion")
 )
 country_col <- resolve_optional_column(meta_raw, c("Country", "COUNTRY", "country"))
+site_col <- resolve_required_column(meta_raw, "sampling_site_id", "sampling_site_id")
 study_col <- resolve_optional_column(
   meta_raw,
-  c("study_accession", "BioProject", "bioproject", "study", "dataset")
+  c("study_id", "study_accession", "BioProject", "bioproject", "study", "dataset")
 )
 
 optional_character <- function(df, column_name) {
@@ -323,6 +262,7 @@ optional_character <- function(df, column_name) {
 
 meta_work <- data.frame(
   run_accession = clean_character(meta_raw$run_accession),
+  sampling_site_id = trimws(as.character(meta_raw[[site_col]])),
   latitude = suppressWarnings(as.numeric(meta_raw[[lat_col]])),
   longitude = suppressWarnings(as.numeric(meta_raw[[lon_col]])),
   REALM_raw = clean_character(meta_raw[[realm_col]]),
@@ -341,6 +281,7 @@ metadata_audit <- meta_work %>%
   dplyr::group_by(run_accession) %>%
   dplyr::summarise(
     n_metadata_rows = dplyr::n(),
+    n_unique_sampling_site = n_distinct(sampling_site_id[!is.na(sampling_site_id) & nzchar(sampling_site_id)]),
     n_unique_latitude = n_unique_numeric(latitude),
     n_unique_longitude = n_unique_numeric(longitude),
     n_unique_realm = n_unique_character(REALM_raw),
@@ -358,7 +299,7 @@ data.table::fwrite(
 
 identity_conflicts <- metadata_audit %>%
   dplyr::filter(
-    n_unique_latitude > 1L |
+    n_unique_sampling_site > 1L | n_unique_latitude > 1L |
       n_unique_longitude > 1L |
       n_unique_realm > 1L |
       n_unique_province > 1L |
@@ -384,6 +325,7 @@ if (nrow(identity_conflicts) > 0L) {
 meta_one <- meta_work %>%
   dplyr::group_by(run_accession) %>%
   dplyr::summarise(
+    sampling_site_id = first_non_missing_character(sampling_site_id),
     latitude = first_non_missing_numeric(latitude),
     longitude = first_non_missing_numeric(longitude),
     REALM_raw = first_non_missing_character(REALM_raw),
@@ -426,28 +368,16 @@ if (nrow(excluded_samples) > 0L) {
 sample_table <- sample_table %>%
   dplyr::filter(coordinate_valid, realm_valid) %>%
   dplyr::mutate(
-    site_id = paste0(
-      sprintf("%.5f", latitude),
-      "_",
-      sprintf("%.5f", longitude)
-    )
+    coordinate_id = paste0(sprintf("%.5f", latitude), "_", sprintf("%.5f", longitude)),
+    site_id = sampling_site_id
   )
 
+if (anyNA(sample_table$site_id) || any(!nzchar(sample_table$site_id))) {
+  stopf("All georeferenced profiles require a resolved sampling_site_id.")
+}
+
 analysis_ids <- sample_table$run_accession
-if (length(analysis_ids) != EXPECTED_ANALYSIS_SAMPLES) {
-  stopf(
-    "El panel D debe usar %d muestras con coordenadas y REALM; se encontraron %d.",
-    EXPECTED_ANALYSIS_SAMPLES,
-    length(analysis_ids)
-  )
-}
-if (dplyr::n_distinct(sample_table$site_id) != EXPECTED_COORDINATE_SITES) {
-  stopf(
-    "Se esperaban %d sitios definidos por coordenadas; se encontraron %d.",
-    EXPECTED_COORDINATE_SITES,
-    dplyr::n_distinct(sample_table$site_id)
-  )
-}
+if (length(analysis_ids) < 3L) stopf("Fewer than three georeferenced profiles remain.")
 
 realm_levels <- c(
   "Central Indo-Pacific",
@@ -457,7 +387,7 @@ realm_levels <- c(
   "Tropical Eastern Pacific",
   "Western Indo-Pacific"
 )
-sample_table$REALM <- factor(sample_table$REALM, levels = realm_levels)
+sample_table$REALM <- droplevels(factor(sample_table$REALM, levels = realm_levels))
 sample_table <- sample_table[match(analysis_ids, sample_table$run_accession), , drop = FALSE]
 
 data.table::fwrite(
@@ -470,7 +400,7 @@ realm_counts <- sample_table %>%
   dplyr::left_join(
     sample_table %>%
       dplyr::distinct(REALM, site_id) %>%
-      dplyr::count(REALM, name = "n_coordinate_sites", .drop = FALSE),
+      dplyr::count(REALM, name = "n_sampling_sites", .drop = FALSE),
     by = "REALM"
   )
 data.table::fwrite(realm_counts, file.path(TABLE_DIR, "05_REALM_counts.csv"))
@@ -491,7 +421,11 @@ if (length(below_depth) > 0L) {
 }
 
 set.seed(SEED)
-otu_rarefied <- vegan::rrarefy(otu_counts, sample = RAREFACTION_DEPTH)
+otu_rarefied <- if (all(rowSums(otu_counts) == RAREFACTION_DEPTH)) {
+  otu_counts
+} else {
+  vegan::rrarefy(otu_counts, sample = RAREFACTION_DEPTH)
+}
 otu_rarefied <- otu_rarefied[, colSums(otu_rarefied) > 0, drop = FALSE]
 if (any(rowSums(otu_rarefied) != RAREFACTION_DEPTH)) {
   stopf("La rarefacción no produjo exactamente %d lecturas por muestra.", RAREFACTION_DEPTH)
@@ -706,7 +640,7 @@ p_panel_d <- ggplot() +
   ) +
   scale_fill_manual(
     values = realm_colors,
-    drop = FALSE,
+    drop = TRUE,
     name = "Marine realm"
   ) +
   labs(
@@ -797,11 +731,10 @@ run_summary <- data.frame(
   run_name = RUN_NAME,
   phyloseq_path = PHYLOSEQ_PATH,
   metadata_path = METADATA_PATH,
-  cohort_path = COHORT_PATH,
   phyloseq_samples = nsamples(phy0),
-  balanced_cohort_samples = length(cohort_ids),
+  reference_cohort_samples = length(cohort_ids),
   analysis_samples = length(analysis_ids),
-  coordinate_defined_sites = dplyr::n_distinct(sample_table$site_id),
+  sampling_sites = dplyr::n_distinct(sample_table$site_id),
   cohort_taxa_nonzero = cohort_taxa_nonzero,
   taxa_nonzero_after_rarefaction = ncol(otu_rarefied),
   rarefaction_depth = RAREFACTION_DEPTH,
@@ -818,6 +751,14 @@ run_summary <- data.frame(
   stringsAsFactors = FALSE
 )
 data.table::fwrite(run_summary, file.path(TABLE_DIR, "05_run_summary.csv"))
+jsonlite::write_json(list(
+  run = run_summary,
+  nmds = nmds_statistics,
+  realm_counts = realm_counts,
+  longitude_gam = longitude_gam_statistics,
+  site_definition = "sampling_site_id from corrected metadata; source coordinates retained"
+), file.path(OUT_DIR, "summary.json"), pretty = TRUE, auto_unbox = TRUE, digits = 16)
+
 
 analysis_bundle <- list(
   sample_table = sample_table,
@@ -831,8 +772,7 @@ analysis_bundle <- list(
     seed = SEED,
     rarefaction_depth = RAREFACTION_DEPTH,
     clr_pseudocount = CLR_PSEUDOCOUNT,
-    cohort_path = COHORT_PATH,
-    phyloseq_path = PHYLOSEQ_PATH,
+      phyloseq_path = PHYLOSEQ_PATH,
     metadata_path = METADATA_PATH
   )
 )
@@ -843,9 +783,9 @@ saveRDS(
 )
 saveRDS(p_panel_d, file.path(RDS_DIR, "05_Figure_2d_ggplot_object.rds"))
 
-input_paths <- c(PHYLOSEQ_PATH, METADATA_PATH, COHORT_POINTER, COHORT_PATH)
+input_paths <- c(PHYLOSEQ_PATH, METADATA_PATH)
 input_provenance <- data.frame(
-  input = c("phyloseq", "metadata", "cohort_pointer", "cohort_table"),
+  input = c("phyloseq", "metadata"),
   path = input_paths,
   size_bytes = as.numeric(file.info(input_paths)$size),
   modified_time = as.character(file.info(input_paths)$mtime),
@@ -856,7 +796,7 @@ data.table::fwrite(input_provenance, file.path(TABLE_DIR, "05_input_provenance.c
 writeLines(capture.output(sessionInfo()), file.path(LOG_DIR, "05_sessionInfo.txt"))
 
 log_msg("Analysis samples: ", nrow(plot_data))
-log_msg("Coordinate-defined sites: ", dplyr::n_distinct(plot_data$site_id))
+log_msg("Sampling sites: ", dplyr::n_distinct(plot_data$site_id))
 log_msg("Aitchison NMDS stress: ", sprintf("%.6f", nmds$stress))
 log_msg("Figure: ", file.path(PLOT_DIR, "Figure_2d_global_taxonomic_composition.png"))
 writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)

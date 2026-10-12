@@ -6,8 +6,11 @@
 #
 # Inputs
 # ------
-# data/taxonomic_core_counts.rds: phyloseq counts with run_accession, REALM,
+# data/icamp_taxonomic_counts.rds: the separate iCAMP input with run_accession, REALM,
 # EcologicalClass and genus annotations.
+# Its embedded metadata are the metadata used in the reported analysis.
+# The retained result used 400 metagenomes, 1,892 genera and 999 randomizations;
+# it was not rerun with the taxonomic diversity/core cohort.
 # data/genus_phylogeny_GTDB_R226_bac120.newick: external bacterial genus tree
 # derived from the GTDB R226 bac120 reference phylogeny, with branch lengths.
 # The reference file used for the manuscript has 1,905 tips and SHA-256:
@@ -204,7 +207,7 @@ collapse_unique <- function(x, sep = "; ") {
 
 resolve_phyloseq_path <- function(requested) {
   if (!file.exists(requested)) {
-    stopf("Phyloseq input does not exist: %s. Supply --phyloseq PATH or MAGENTA_PHYLOSEQ_401.",
+    stopf("Phyloseq input does not exist: %s. Supply --phyloseq PATH or ICAMP_PHYLOSEQ.",
           requested)
   }
   normalizePath(requested, winslash = "/", mustWork = TRUE)
@@ -692,7 +695,7 @@ print_help <- function() {
     "  Rscript scripts/06_community_assembly/06A_ICAMP_GENUS_COMMUNITY_ASSEMBLY.R --smoke_test 1",
     "",
     "Main options:",
-    "  --phyloseq PATH          Default BASE/data/taxonomic_core_counts.rds",
+    "  --phyloseq PATH          Default ICAMP_PHYLOSEQ or BASE/data/icamp_taxonomic_counts.rds",
     "  --tree PATH              Default BASE/data/genus_phylogeny_GTDB_R226_bac120.newick",
     "  --base PATH              Default BIOGEOGRAPHY_BASE or current directory",
     "  --results_dir PATH       Default BIOGEOGRAPHY_RESULTS or BASE/results",
@@ -731,8 +734,7 @@ RESULTS_DIR <- get_arg(
 
 PS_REQUESTED <- get_arg(
   "--phyloseq",
-  Sys.getenv("MAGENTA_PHYLOSEQ_401",
-             Sys.getenv("PS_RDS_IN", file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds")))
+  Sys.getenv("ICAMP_PHYLOSEQ", file.path(PROJECT_DIR, "data", "icamp_taxonomic_counts.rds"))
 )
 TREE_DEFAULT <- file.path(
   PROJECT_DIR, "data", "genus_phylogeny_GTDB_R226_bac120.newick"

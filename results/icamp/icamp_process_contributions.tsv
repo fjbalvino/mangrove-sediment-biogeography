@@ -1,0 +1,8 @@
+process	mean_fraction	mean_percent	within_realm_pairs	source
+heterogeneous_selection	0.09812573	9.812573	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary
+homogeneous_selection	0.03372473	3.372473	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary
+dispersal_limitation	0.26726199	26.726199	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary
+homogenizing_dispersal	0.12946459	12.946459	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary
+drift_weak_selection_or_undominated	0.47142296	47.142296	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary
+selection_total	0.13185046	13.185046	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary
+not_assigned_to_selection	0.86814954	86.814954	24692	iCAMP_supplementary_tables_MAGENTA.xlsx; S2_Primary

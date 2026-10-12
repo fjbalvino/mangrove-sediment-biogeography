@@ -5,19 +5,15 @@ options(stringsAsFactors = FALSE, scipen = 8)
 suppressPackageStartupMessages(library(phyloseq))
 root <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
 results <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(root, "results"))
-alpha_dir <- Sys.getenv("ALPHA_INPUT_DIR", unset = "")
-if (!nzchar(alpha_dir)) {
-  pointer <- file.path(results, "LATEST_TAXONOMIC_ALPHA.txt")
-  if (!file.exists(pointer)) stop("Run 03A first or supply ALPHA_INPUT_DIR.", call. = FALSE)
-  alpha_dir <- trimws(readLines(pointer, n = 1L, warn = FALSE))
-}
+alpha_dir <- Sys.getenv("ALPHA_INPUT_DIR", unset = file.path(results, "alpha"))
 out <- Sys.getenv("DOMINANCE_OUTPUT_DIR", unset = file.path(alpha_dir, "dominance"))
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
-ps_path <- Sys.getenv("MAGENTA_PHYLOSEQ_405", unset = file.path(root, "data", "taxonomic_counts.rds"))
+ps_path <- Sys.getenv("MAGENTA_PHYLOSEQ", unset = Sys.getenv("MAGENTA_PHYLOSEQ_405", unset = file.path(root, "data", "phyloseq_taxonomic.rds")))
 ps <- readRDS(ps_path)
 meta <- read.csv(file.path(alpha_dir, "04a_alpha_diversity_filtered_samplewise.csv"), check.names = FALSE)
-meta <- meta[is.finite(meta$lat) & is.finite(meta$lon) & abs(meta$lat) <= 90 & abs(meta$lon) <= 180 & !is.na(meta$REALM), ]
-meta$site_id <- paste0(sprintf("%.5f", meta$lat), "_", sprintf("%.5f", meta$lon))
+stopifnot("sampling_site_id" %in% names(meta))
+meta <- meta[is.finite(meta$lat) & is.finite(meta$lon) & abs(meta$lat) <= 90 & abs(meta$lon) <= 180 & !is.na(meta$REALM) & !is.na(meta$sampling_site_id) & nzchar(meta$sampling_site_id), ]
+meta$site_id <- meta$sampling_site_id
 pm <- as(sample_data(ps), "data.frame")
 stopifnot("run_accession" %in% names(pm), !anyNA(pm$run_accession), !anyDuplicated(pm$run_accession), !anyDuplicated(meta$run_accession))
 ix <- match(meta$run_accession, pm$run_accession)
@@ -28,7 +24,7 @@ counts<-as(otu_table(ps),'matrix');if(taxa_are_rows(ps))counts<-t(counts)
 counts<-counts[meta$.ps_sample_id,,drop=FALSE];counts<-counts[,colSums(counts)>0,drop=FALSE]
 tt<-as(tax_table(ps),'matrix')[colnames(counts),,drop=FALSE]
 write.csv(data.frame(run_accession=meta$run_accession, supplied_reads=rowSums(counts)), file.path(out, 'dominance_input_library_sizes.csv'), row.names=FALSE)
-stopifnot(nrow(counts)==327L,length(unique(meta$site_id))==130L,all(rowSums(counts)>0),all(is.finite(counts)),all(counts>=0))
+stopifnot(nrow(counts)>0L,all(rowSums(counts)>0),all(is.finite(counts)),all(counts>=0))
 tax_clean<-tt;tax_clean[is.na(tax_clean)]<-'<missing>'
 key<-apply(tax_clean,1,paste,collapse='|')
 annotation_counts<-t(rowsum(t(counts),group=key,reorder=FALSE))
@@ -36,8 +32,10 @@ first<-match(colnames(annotation_counts),key)
 taxonomy<-data.frame(annotation_key=colnames(annotation_counts),representative_feature_id=colnames(counts)[first],tt[first,,drop=FALSE],n_source_features=as.numeric(table(factor(key,levels=colnames(annotation_counts)))),check.names=FALSE,row.names=NULL)
 stopifnot(max(abs(rowSums(annotation_counts)-rowSums(counts)))==0)
 codes<-c('Central Indo-Pacific'='CIP','Indo-Pacific'='IP','Temperate Northern Atlantic'='TNA','Tropical Atlantic'='TA','Tropical Eastern Pacific'='TEP','Western Indo-Pacific'='WIP')
-realm_order<-c('Temperate Northern Atlantic','Tropical Eastern Pacific','Tropical Atlantic','Indo-Pacific','Western Indo-Pacific','Central Indo-Pacific')
+ord <- read.csv(file.path(alpha_dir,'04a_realm_longitude_order_west_to_east.csv'))
+realm_order <- ord$REALM[order(ord$west_to_east_position)]
 gr<-split(seq_len(nrow(meta)),meta$site_id)
+stopifnot(all(vapply(gr,function(i)length(unique(meta$REALM[i]))==1L,logical(1))))
 site_meta<-do.call(rbind,lapply(gr,function(i)data.frame(site_id=meta$site_id[i[1]],REALM=meta$REALM[i[1]],n_metagenomes=length(i))))
 row.names(site_meta)<-NULL
 all_sample<-list();all_site<-list();all_summary<-list();tops<-list()
@@ -60,8 +58,8 @@ for(method in c('retained_taxonomic_features','identical_taxonomic_annotation_gr
   }
 }
 write_out<-function(x,n)write.csv(x,file.path(out,n),row.names=FALSE,na='')
-write_out(do.call(rbind,all_sample),'dominance_C3_samplewise327.csv')
-write_out(do.call(rbind,all_site),'dominance_C3_coordinate_site_medians130.csv')
+write_out(do.call(rbind,all_sample),'dominance_C3_samplewise.csv')
+write_out(do.call(rbind,all_site),'dominance_C3_site_medians.csv')
 summary<-do.call(rbind,all_summary);top<-do.call(rbind,tops)
 write_out(summary,'dominance_C3_descriptive_by_realm.csv')
 write_out(top,'dominance_top3_annotation_groups_site_balanced.csv')
@@ -70,7 +68,7 @@ compact$median_C3_percent<-100*compact$median_site_C3
 compact$lower_quartile_percent<-100*compact$lower_quartile
 compact$upper_quartile_percent<-100*compact$upper_quartile
 compact$C3_median_IQR_percent<-sprintf('%.2f (%.2f–%.2f)',compact$median_C3_percent,compact$lower_quartile_percent,compact$upper_quartile_percent)
-write_out(compact,'dominance_C3_compact_six_realms.csv')
+write_out(compact,'dominance_C3_compact_realms.csv')
 write_out(taxonomy,'dominance_taxonomy_annotation_group_map.csv')
 mapping<-data.frame(feature_id=colnames(counts),annotation_key=key,tt,check.names=FALSE)
 write_out(mapping,'dominance_retained_feature_taxonomy_map.csv')
@@ -82,7 +80,7 @@ capture.output(sessionInfo(), file = file.path(out, "sessionInfo.txt"))
 writeLines(c(
   "C3 is the sum of the three largest within-profile relative abundances.",
   "Features with identical complete taxonomic annotations are combined; unresolved labels are retained.",
-  "Each coordinate site contributes the median C3 of its metagenomes to realm summaries.",
+  "Each resolved sampling site contributes the median C3 of its metagenomes to realm summaries.",
   "Realm-leading identities are ranked separately by the mean relative abundance across equally weighted site means.",
   "The sum of realm-leading mean abundances and the median per-profile C3 are distinct summaries.",
   "These analyses use the supplied count matrix; library sizes are exported, and no new rarefaction is applied."

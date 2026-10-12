@@ -4,7 +4,7 @@
 # Supplementary dbRDA and variance partitioning for Figure 2.
 #
 # Response: site-centroid Aitchison distances reconstructed from the exact
-# sample geometry used by Panel D (327 metagenomes; 130 coordinate sites).
+# sample geometry used by Panel D and sampling-site identifiers in the metadata.
 # Explanatory blocks: environmental PCA, spatial structure, and marine realm.
 # Study/BioProject is evaluated as a conditioning sensitivity because its
 # contribution may be inseparable from geography in public-data compilations.
@@ -31,8 +31,6 @@ suppressPackageStartupMessages({
 SEED <- 12345L
 PERMUTATIONS <- 9999L
 CLR_PSEUDOCOUNT_EXPECTED <- 1
-EXPECTED_PANEL_D_SAMPLES <- 327L
-EXPECTED_COORDINATE_SITES <- 130L
 MIN_COMPLETE_SITES <- 50L
 ENV_PCA_CUMULATIVE_TARGET <- 0.90
 MAX_ENV_PCS <- 8L
@@ -43,7 +41,7 @@ PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWo
 RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 METADATA_PATH <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
+  unset = file.path(PROJECT_DIR, "data", "metadata_taxonomic.csv")
 )
 
 PANEL_D_POINTER <- file.path(
@@ -54,8 +52,7 @@ PANEL_D_OBJECT_NAME <- file.path("rds", "05_panel_d_analysis_objects.rds")
 
 SCRIPT_ID <- "08"
 SCRIPT_BASENAME <- "TAXONOMIC_VARIATION_PARTITIONING"
-RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
+RUN_NAME <- "vpa"
 
 OUT_DIR <- file.path(RESULTS_DIR, RUN_NAME)
 TABLE_DIR <- file.path(OUT_DIR, "tables")
@@ -248,6 +245,8 @@ fit_dbrda_block <- function(
 
   adj_r2 <- suppressWarnings(vegan::RsquareAdj(model)$adj.r.squared)
   raw_r2 <- suppressWarnings(vegan::RsquareAdj(model)$r.squared)
+  if (length(adj_r2) != 1L) adj_r2 <- NA_real_
+  if (length(raw_r2) != 1L) raw_r2 <- NA_real_
 
   model_rank <- if (is.null(model$CCA)) 0L else model$CCA$rank
   condition_rank <- if (is.null(model$pCCA)) 0L else model$pCCA$rank
@@ -361,20 +360,7 @@ sample_table$site_id <- clean_character(sample_table$site_id)
 if (anyNA(sample_table$run_accession) || anyDuplicated(sample_table$run_accession)) {
   stopf("run_accession contiene faltantes o duplicados en Panel D.")
 }
-if (nrow(sample_table) != EXPECTED_PANEL_D_SAMPLES) {
-  stopf(
-    "Se esperaban %d muestras; se encontraron %d.",
-    EXPECTED_PANEL_D_SAMPLES,
-    nrow(sample_table)
-  )
-}
-if (dplyr::n_distinct(sample_table$site_id) != EXPECTED_COORDINATE_SITES) {
-  stopf(
-    "Se esperaban %d sitios; se encontraron %d.",
-    EXPECTED_COORDINATE_SITES,
-    dplyr::n_distinct(sample_table$site_id)
-  )
-}
+if (anyNA(sample_table$site_id)) stopf("Panel D contiene sitios no resueltos.")
 
 if (!is.null(panel_d$parameters$clr_pseudocount) &&
     panel_d$parameters$clr_pseudocount != CLR_PSEUDOCOUNT_EXPECTED) {
@@ -408,6 +394,22 @@ metadata_raw <- data.table::fread(
 )
 if (!"run_accession" %in% names(metadata_raw)) {
   stopf("La metadata actual no contiene run_accession.")
+}
+identity_columns <- c("sampling_site_id", "study_id")
+if (!all(identity_columns %in% names(metadata_raw))) {
+  stopf("La metadata actual requiere sampling_site_id y study_id.")
+}
+if (anyDuplicated(metadata_raw$run_accession)) {
+  stopf("La metadata actual contiene run_accession duplicados.")
+}
+metadata_rows <- match(sample_table$run_accession, metadata_raw$run_accession)
+if (anyNA(metadata_rows)) stopf("Panel D contiene muestras ausentes de la metadata actual.")
+current_site_id <- clean_character(metadata_raw$sampling_site_id[metadata_rows])
+current_study_id <- clean_character(metadata_raw$study_id[metadata_rows])
+if (anyNA(current_site_id) ||
+    !identical(sample_table$site_id, current_site_id) ||
+    !identical(clean_character(sample_table$study_id), current_study_id)) {
+  stopf("Los sitios o estudios del Panel D no coinciden con la metadata actual; repita 04A.")
 }
 
 environment_aliases <- list(
@@ -1503,7 +1505,7 @@ writeLines(
 )
 
 writeLines(c(
-  "Taxonomic variation partitioning across coordinate-defined sampling sites.",
+  "Taxonomic variation partitioning across metadata-defined sampling sites.",
   "Site identity, geometry and samples read from the synchronized Panel D object.",
   "Official adespatial::dbmem retained; package version recorded in run summary and sessionInfo.",
   "Shared fractions follow vegan: [e] is space + realm and [f] is environment + realm.",

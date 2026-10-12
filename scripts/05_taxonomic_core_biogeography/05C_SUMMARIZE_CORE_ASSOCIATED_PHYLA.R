@@ -70,8 +70,7 @@ LATEST_09A_PTR <- file.path(
 )
 
 SCRIPT_TAG <- "05C_CORE_ASSOCIATED_PHYLA"
-RUN_STAMP  <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR    <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
+OUT_DIR    <- file.path(RESULTS_DIR, SCRIPT_TAG)
 TABLE_DIR  <- file.path(OUT_DIR, "tables")
 PLOT_DIR   <- file.path(OUT_DIR, "plots")
 RDS_DIR    <- file.path(OUT_DIR, "rds")
@@ -85,7 +84,7 @@ LATEST_PTR <- file.path(RESULTS_DIR, paste0("LATEST_", SCRIPT_TAG, ".txt"))
 # ============================= 2) Parametros =================================
 
 TOP_N_PHYLA <- 5L
-MIN_LABEL_PERCENT <- 4
+MIN_LABEL_PERCENT <- 10
 EXPECTED_MIN_REALM_LOCALITIES <- 3L
 BAR_LABEL_COLOUR <- "black"
 BAR_LABEL_SIZE   <- 4.8

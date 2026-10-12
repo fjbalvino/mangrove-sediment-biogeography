@@ -30,7 +30,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--id-col", default="run_accession")
     parser.add_argument("--lat-col", default="lat")
     parser.add_argument("--lon-col", default="lon")
-    parser.add_argument("--expected-rows", type=int, default=401)
+    parser.add_argument("--expected-rows", type=int, default=341)
     parser.add_argument("--allow-missing-meow", action="store_true")
     return parser.parse_args()
 
@@ -49,6 +49,8 @@ def main() -> int:
     if not path.is_file():
         raise FileNotFoundError(path)
     metadata = pd.read_csv(path, low_memory=False)
+    if "ph_mean" not in metadata and "phh2o_mean" in metadata:
+        metadata["ph_mean"] = metadata["phh2o_mean"]
     required = [args.id_col, args.lat_col, args.lon_col, *GAM_COLUMNS, *MEOW_COLUMNS]
     missing_columns = [column for column in required if column not in metadata.columns]
     if missing_columns:
@@ -58,7 +60,8 @@ def main() -> int:
         raise ValueError("run_accession debe ser completo y único")
     lat = pd.to_numeric(metadata[args.lat_col], errors="coerce")
     lon = pd.to_numeric(metadata[args.lon_col], errors="coerce")
-    invalid_coordinates = lat.isna() | lon.isna() | ~lat.between(-90, 90) | ~lon.between(-180, 180)
+    missing_coordinates = lat.isna() & lon.isna()
+    invalid_coordinates = (lat.isna() ^ lon.isna()) | (lat.notna() & lon.notna() & (~lat.between(-90, 90) | ~lon.between(-180, 180)))
     if invalid_coordinates.any():
         raise ValueError(f"{int(invalid_coordinates.sum())} coordenadas WGS84 inválidas")
     if args.expected_rows > 0 and len(metadata) != args.expected_rows:
@@ -109,6 +112,7 @@ def main() -> int:
         "n_realms": int(metadata["REALM"].nunique(dropna=True)),
         "primary_key": args.id_col,
         "coordinate_crs": "EPSG:4326",
+        "n_missing_coordinate_pairs": int(missing_coordinates.sum()),
     }
     (out_dir / "02G_validation_summary.json").write_text(
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n",

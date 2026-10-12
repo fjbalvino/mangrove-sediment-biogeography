@@ -4,6 +4,9 @@
 # 06B_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY.R
 #
 # Robustness analysis for the completed genus-level iCAMP run.
+# This script uses the metadata stored in that run's prepared-input RDS.
+# The reported analysis is retained without rerunning it on the current
+# taxonomic diversity/core cohort (400 metagenomes; 24,692 within-realm pairs).
 #
 # Primary claim tested
 # --------------------
