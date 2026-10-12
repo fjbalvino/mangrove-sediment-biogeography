@@ -1,61 +1,56 @@
 #!/usr/bin/env Rscript
 
 # =============================================================================
-# 08B_ICAMP_GENUS_COMMUNITY_ASSEMBLY.R
+# 06A_ICAMP_GENUS_COMMUNITY_ASSEMBLY.R
+# Estimate bacterial genus-level assembly contributions using iCAMP.
 #
-# iCAMP analysis adapted to Biogeografia_2026 / MAGENTA.
+# Inputs
+# ------
+# data/taxonomic_core_counts.rds: phyloseq counts with run_accession, REALM,
+# EcologicalClass and genus annotations.
+# data/genus_phylogeny_GTDB_R226_bac120.newick: external bacterial genus tree
+# derived from the GTDB R226 bac120 reference phylogeny, with branch lengths.
+# The reference file used for the manuscript has 1,905 tips and SHA-256:
+# 15761713cbfbe4edcf0600bb65afbea0f39cfe6a01a7b111a92aeeba59ffd3fd
+# The tree is an independent input, not a tree inferred from Kraken assignments.
+# Supply a different external Newick with --tree PATH when needed.
 #
-# Canonical full analysis
-# -----------------------
-# - Input: /data/Magenta/
-#          phyloseq_MAGENTA_EcologicalClass_MangroveSedimentOnly_TX1_3_OK.rds
-# - Tree: resultados/trees/genus_tree_export_20260827_143716/
-#         genus_phylogeny_MAGs_1807tips.newick
-# - Canonical sample key: run_accession
-# - Ecological subset: EcologicalClass == "Mangrove sediment"
-# - Taxonomic level: genus
-# - Regional metacommunity: REALM
-# - Primary prevalence filter: genus detected in >= 10 samples
-# - Abundance filter: none by default (all eligible genera)
-# - Phylogenetic metric: bMNTD
-# - Significance index: RC (RCbMNTD + RCbray, as in the supplied workflow)
-# - Randomizations: 999
-# - Minimum bin size: 24
+# Name matching removes genus prefixes, punctuation and case differences.
+# Ambiguous tree-tip keys are excluded. This is name harmonization, not a
+# validated taxonomic synonym crosswalk or a test of phylogenetic niche signal.
+# Inspect tables/08B_genus_tree_matching.tsv and 08B_tree_tip_key_audit.tsv.
 #
-# Smoke test
-# ----------
-# --smoke_test 1 selects up to three samples per marine realm with the highest
-# proportion of genus-assigned counts represented in the supplied tree. It
-# retains up to 60 eligible genera, uses prevalence >= 3, five randomizations,
-# two workers and bin.size.limit = 12. It exercises the complete iCAMP call.
+# Primary settings
+# ----------------
+# EcologicalClass == "Mangrove sediment"; metacommunities defined by REALM;
+# genus prevalence >=10 retained samples; no abundance rank cap; bMNTD with RC;
+# 999 randomizations; minimum bin size 24; seed 42.
+# Tree coverage is the fraction of all genus-assigned counts matched to
+# unambiguous tree tips, calculated BEFORE genus-prevalence filtering. Samples
+# with coverage <0.50 are excluded. Coverage is not the classified-read fraction
+# of a complete metagenome. Outputs separate within-realm and between-realm pairs;
+# the manuscript reports the within-realm summary.
 #
-# Tree policy
-# -----------
-# iCAMP requires a genuine phylogenetic tree whose tips represent genera.
-# This script will use --tree PATH, then a matching phy_tree embedded in the
-# phyloseq, then a short list of exact canonical candidate paths. It will not
-# construct an artificial tree from taxonomic ranks.
+# --smoke_test 1 selects up to three high-coverage samples per realm and up to
+# 60 genera (prevalence >=3), with five randomizations and minimum bin size 12.
+# --preflight_only 1 prepares and validates inputs without running the null model.
 #
 # Main outputs
 # ------------
-# tables/08B_icamp_pairwise_processes.tsv.gz (annotated by geographic scope)
-# tables/08B_icamp_process_summary.tsv (separate within/between-realm summaries)
-# tables/08B_icamp_process_summary_all_pairs.tsv
+# tables/08B_icamp_pairwise_processes.tsv.gz
 # tables/08B_icamp_process_summary_within_realm.tsv
 # tables/08B_icamp_process_summary_between_realm_pair.tsv
-# tables/08B_icamp_pair_structure_validation.tsv
-# tables/08B_icamp_realm_pair_counts.tsv
+# tables/08B_tree_coverage_by_sample.tsv
 # tables/08B_genus_tree_matching.tsv
 # tables/08B_parameters.tsv
 # rds/08B_icamp_cm_result_genus.rds
 # rds/08B_prepared_icamp_inputs.rds
-# logs/08B_run.log
-# STATUS.txt
+# logs/08B_run.log; STATUS.txt
 # =============================================================================
 
 options(stringsAsFactors = FALSE, scipen = 999, warn = 1)
 
-SCRIPT_VERSION <- "2.2.0"
+SCRIPT_VERSION <- "2.3.0"
 ICAMP_PROCESS_NAMES <- c(
   "heterogeneous_selection", "homogeneous_selection",
   "dispersal_limitation", "homogenizing_dispersal",
@@ -103,7 +98,7 @@ sha256_file <- function(path) {
   if (!nzchar(executable) || is.na(path) || !file.exists(path)) {
     return(NA_character_)
   }
-  output <- suppressWarnings(system2(executable, path, stdout = TRUE,
+  output <- suppressWarnings(system2(executable, shQuote(path), stdout = TRUE,
                                      stderr = TRUE))
   if (length(output) == 0L) return(NA_character_)
   value <- strsplit(output[1L], "[[:space:]]+")[[1L]][1L]
@@ -207,91 +202,24 @@ collapse_unique <- function(x, sep = "; ") {
   if (length(x) == 0L) NA_character_ else paste(x, collapse = sep)
 }
 
-resolve_phyloseq_path <- function(requested, explicitly_requested) {
-  if (file.exists(requested)) {
-    return(normalizePath(requested, winslash = "/", mustWork = TRUE))
+resolve_phyloseq_path <- function(requested) {
+  if (!file.exists(requested)) {
+    stopf("Phyloseq input does not exist: %s. Supply --phyloseq PATH or MAGENTA_PHYLOSEQ_401.",
+          requested)
   }
-  if (explicitly_requested) {
-    stopf("Requested phyloseq file does not exist: %s", requested)
-  }
-
-  fallback <- c(
-    "/data/Magenta/phyloseq_MAGENTA_EcologicalClass_MangroveSedimentOnly_TX1_3_OK.rds",
-    paste0(
-      "/home/fjbalvino/Biogeografia_2026/resultados/03_CLEAN_NORMALIZED_DATA/",
-      "03_ps_BA_filtered_counts_FIXED_metadata_TX1_3_OK_",
-      "EcologicalClass_MangroveSedimentOnly.rds"
-    )
-  )
-  hit <- fallback[file.exists(fallback)]
-  if (length(hit) == 0L) {
-    stopf(
-      "Canonical phyloseq was not found at %s or either documented fallback.",
-      requested
-    )
-  }
-  normalizePath(hit[1L], winslash = "/", mustWork = TRUE)
+  normalizePath(requested, winslash = "/", mustWork = TRUE)
 }
 
-resolve_tree <- function(tree_arg, ps, base_dir, genus_keys) {
-  if (!is.na(tree_arg) && nzchar(tree_arg)) {
-    if (!file.exists(tree_arg)) stopf("Tree file does not exist: %s", tree_arg)
-    tree <- ape::read.tree(tree_arg)
-    return(list(
-      tree = tree,
-      source = "external_newick_argument",
-      path = normalizePath(tree_arg, winslash = "/", mustWork = TRUE)
-    ))
+resolve_tree <- function(tree_arg) {
+  if (is.na(tree_arg) || !nzchar(tree_arg) || !file.exists(tree_arg)) {
+    stop("An external genus-level Newick tree is required. Supply --tree PATH or TREE_FILE.",
+         call. = FALSE)
   }
-
-  embedded <- phyloseq::phy_tree(ps, errorIfNULL = FALSE)
-  if (!is.null(embedded)) {
-    embedded_tip_keys <- stats::na.omit(genus_key(embedded$tip.label))
-    embedded_keys <- unique(embedded_tip_keys)
-    embedded_overlap <- sum(embedded_keys %in% genus_keys)
-    duplicated_key_fraction <- if (length(embedded_tip_keys) == 0L) {
-      1
-    } else {
-      1 - length(embedded_keys) / length(embedded_tip_keys)
-    }
-    if (embedded_overlap >= 10L && duplicated_key_fraction <= 0.02) {
-      return(list(
-        tree = embedded,
-        source = "phyloseq_embedded_genus_matching",
-        path = NA_character_
-      ))
-    }
-    warnf(
-      paste(
-        "The embedded phy_tree overlaps %d genus key(s), with %.1f%%",
-        "duplicated genus keys, and appears to be at another taxonomic",
-        "resolution; checking external candidates."
-      ),
-      embedded_overlap, 100 * duplicated_key_fraction
-    )
-  }
-
-  candidates <- c(
-    "/data/Magenta/data/trees/gtdb_tree_pruned_genus_named.nwk",
-    "/data/Magenta/trees/gtdb_tree_pruned_genus_named.nwk",
-    "/data/Magenta/results/gtdb_tree_pruned_genus_named.nwk",
-    file.path(base_dir, "data", "gtdb_tree_pruned_genus_named.nwk")
+  list(
+    tree = ape::read.tree(tree_arg),
+    source = "external_newick_argument",
+    path = normalizePath(tree_arg, winslash = "/", mustWork = TRUE)
   )
-  hit <- candidates[file.exists(candidates)]
-  if (length(hit) > 0L) {
-    path <- normalizePath(hit[1L], winslash = "/", mustWork = TRUE)
-    return(list(
-      tree = ape::read.tree(path),
-      source = "canonical_candidate_newick",
-      path = path
-    ))
-  }
-
-  stop(paste(
-    "No genus-level phylogenetic tree was found.",
-    "Supply --tree /absolute/path/gtdb_tree_pruned_genus_named.nwk.",
-    "An artificial taxonomy-derived tree will not be used for iCAMP."
-  ), call. = FALSE)
 }
 
 validate_tree <- function(tree) {
@@ -761,20 +689,13 @@ summarise_dominant_process <- function(pairwise, group_cols = character()) {
 print_help <- function() {
   cat(paste(
     "Usage:",
-    "  Rscript 08B_ICAMP_GENUS_COMMUNITY_ASSEMBLY.R --smoke_test 1",
+    "  Rscript scripts/06_community_assembly/06A_ICAMP_GENUS_COMMUNITY_ASSEMBLY.R --smoke_test 1",
     "",
     "Main options:",
-    paste0(
-      "  --phyloseq PATH          Default /data/Magenta/",
-      "phyloseq_MAGENTA_EcologicalClass_MangroveSedimentOnly_TX1_3_OK.rds"
-    ),
-    paste0(
-      "  --tree PATH              Default BASE/resultados/trees/",
-      "genus_tree_export_20260827_143716/",
-      "genus_phylogeny_MAGs_1807tips.newick"
-    ),
-    "  --base PATH              Default /home/fjbalvino/Biogeografia_2026",
-    "  --results_dir PATH       Default BASE/resultados",
+    "  --phyloseq PATH          Default BASE/data/taxonomic_core_counts.rds",
+    "  --tree PATH              Default BASE/data/genus_phylogeny_GTDB_R226_bac120.newick",
+    "  --base PATH              Default BIOGEOGRAPHY_BASE or current directory",
+    "  --results_dir PATH       Default BIOGEOGRAPHY_RESULTS or BASE/results",
     "  --meta_group_var NAME    Default REALM",
     "  --analysis_label TEXT    Optional filesystem-safe run label",
     "  --smoke_test 0|1         Default 0",
@@ -785,8 +706,8 @@ print_help <- function() {
     "  --bin_size_limit INT     Full default 24",
     "  --nworker INT            Full default min(20, detected cores - 1)",
     "  --sig_index NAME         Default RC; sensitivity alternative SES.RC",
-    "  --min_sample_tree_coverage NUM  Default 0.80",
-    "  --filter_samples_by_tree_coverage 0|1  Default 0",
+    "  --min_sample_tree_coverage NUM  Default 0.50",
+    "  --filter_samples_by_tree_coverage 0|1  Default 1",
     "  --allow_low_tree_coverage 0|1   Default 0",
     sep = "\n"
   ))
@@ -802,31 +723,21 @@ if ("--help" %in% args || "-h" %in% args) {
   quit(save = "no", status = 0L)
 }
 
-BASE_DIR <- get_arg(
-  "--base",
-  Sys.getenv("BIOGEOGRAPHY_BASE", "/home/fjbalvino/Biogeografia_2026")
+PROJECT_DIR <- get_arg("--base", Sys.getenv("BIOGEOGRAPHY_BASE", "."))
+BASE_DIR <- PROJECT_DIR
+RESULTS_DIR <- get_arg(
+  "--results_dir", Sys.getenv("BIOGEOGRAPHY_RESULTS", file.path(PROJECT_DIR, "results"))
 )
-RESULTS_DIR <- get_arg("--results_dir", file.path(BASE_DIR, "resultados"))
 
-PHYLOSEQ_EXPLICIT <- any(args == "--phyloseq") ||
-  any(startsWith(args, "--phyloseq=")) || nzchar(Sys.getenv("PS_RDS_IN", ""))
 PS_REQUESTED <- get_arg(
   "--phyloseq",
-  Sys.getenv(
-    "PS_RDS_IN",
-    paste0(
-      "/data/Magenta/",
-      "phyloseq_MAGENTA_EcologicalClass_MangroveSedimentOnly_TX1_3_OK.rds"
-    )
-  )
+  Sys.getenv("MAGENTA_PHYLOSEQ_401",
+             Sys.getenv("PS_RDS_IN", file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds")))
 )
 TREE_DEFAULT <- file.path(
-  BASE_DIR, "resultados", "trees", "genus_tree_export_20260827_143716",
-  "genus_phylogeny_MAGs_1807tips.newick"
+  PROJECT_DIR, "data", "genus_phylogeny_GTDB_R226_bac120.newick"
 )
-CANONICAL_TREE_SHA256 <- paste0(
-  "197d6db91f02aa9f89f9710943ecc2fa124ea18ec278fda22130f1b587e28711"
-)
+CANONICAL_TREE_SHA256 <- "15761713cbfbe4edcf0600bb65afbea0f39cfe6a01a7b111a92aeeba59ffd3fd"
 TREE_ARG <- get_arg("--tree", Sys.getenv("TREE_FILE", TREE_DEFAULT))
 
 SMOKE_TEST <- as_flag(get_arg("--smoke_test", Sys.getenv("SMOKE_TEST", "0")))
@@ -843,10 +754,10 @@ ALLOW_LOW_TREE_COVERAGE <- as_flag(get_arg(
   "--allow_low_tree_coverage", "0"
 ))
 FILTER_SAMPLES_BY_TREE_COVERAGE <- as_flag(get_arg(
-  "--filter_samples_by_tree_coverage", "0"
+  "--filter_samples_by_tree_coverage", "1"
 ))
 MIN_SAMPLE_TREE_COVERAGE <- as.numeric(get_arg(
-  "--min_sample_tree_coverage", "0.80"
+  "--min_sample_tree_coverage", "0.50"
 ))
 
 ANALYSIS_LABEL <- clean_chr(get_arg("--analysis_label", ""))
@@ -1025,8 +936,8 @@ main <- function() {
     }
   }
 
-  cat("[1/9] Resolving and reading canonical phyloseq...\n")
-  ps_path <- resolve_phyloseq_path(PS_REQUESTED, PHYLOSEQ_EXPLICIT)
+  cat("[1/9] Resolving and reading taxonomic counts...\n")
+  ps_path <- resolve_phyloseq_path(PS_REQUESTED)
   ps <- readRDS(ps_path)
   if (!inherits(ps, "phyloseq")) {
     stop("Input RDS is not a phyloseq object.", call. = FALSE)
@@ -1047,7 +958,7 @@ main <- function() {
     stop("run_accession is missing or duplicated in sample_data.", call. = FALSE)
   }
 
-  cat("[2/9] Applying canonical ecological and accession filters...\n")
+  cat("[2/9] Applying ecological-class and accession filters...\n")
   keep <- rep(TRUE, nrow(metadata))
   filter_reason <- rep("retained", nrow(metadata))
   if (FILTER_ECOLOGICAL_CLASS) {
@@ -1062,7 +973,7 @@ main <- function() {
   }
   excluded_accession <- metadata$run_accession %in% EXCLUDE_RUNS
   keep[excluded_accession] <- FALSE
-  filter_reason[excluded_accession] <- "canonical_excluded_accession"
+  filter_reason[excluded_accession] <- "excluded_accession"
 
   sample_audit <- data.frame(
     phyloseq_sample_id = metadata$.phyloseq_sample_id,
@@ -1101,7 +1012,7 @@ main <- function() {
   }
   if (nrow(metadata) < 10L) stop("Fewer than 10 realm-assigned samples remain.", call. = FALSE)
 
-  cat("    Samples after canonical filters: ", nrow(metadata), "\n", sep = "")
+  cat("    Samples after ecological-class and accession filters: ", nrow(metadata), "\n", sep = "")
   cat("    Metacommunities: ",
       paste(sort(unique(metadata$meta_group)), collapse = "; "), "\n", sep = "")
 
@@ -1125,9 +1036,7 @@ main <- function() {
   }
 
   cat("[4/9] Resolving genus phylogeny and matching genus identifiers...\n")
-  tree_result <- resolve_tree(
-    TREE_ARG, ps, BASE_DIR, genus_result$genus_map$genus_key
-  )
+  tree_result <- resolve_tree(TREE_ARG)
   tree <- tree_result$tree
   validate_tree(tree)
   tree_sha256 <- sha256_file(tree_result$path)
@@ -1140,7 +1049,7 @@ main <- function() {
   if (canonical_tree_in_use &&
       (is.na(tree_sha256) || tree_sha256 != CANONICAL_TREE_SHA256)) {
     stopf(
-      "Canonical genus tree SHA-256 mismatch. Expected %s; observed %s.",
+      "GTDB reference genus tree SHA-256 mismatch. Expected %s; observed %s.",
       CANONICAL_TREE_SHA256,
       ifelse(is.na(tree_sha256), "unavailable", tree_sha256)
     )
@@ -1172,6 +1081,7 @@ main <- function() {
   }
 
   n_samples_before_tree_coverage_filter <- nrow(comm)
+  # Coverage uses all genus-assigned counts before the prevalence filter.
   genus_assigned_count <- rowSums(comm)
   tree_matched_count <- rowSums(comm[, matched_keys, drop = FALSE])
   tree_coverage_fraction <- tree_matched_count / genus_assigned_count
@@ -1473,6 +1383,15 @@ main <- function() {
     ),
     stringsAsFactors = FALSE
   )
+  parameters <- rbind(parameters, data.frame(
+    parameter = c("tree_coverage_denominator", "genus_name_matching", "undominated_definition"),
+    value = c(
+      "All genus-assigned counts before genus-prevalence filtering",
+      "Normalized genus names; ambiguous tree-tip keys excluded; no synonym crosswalk",
+      "Drift, weak selection or other undominated processes"
+    ),
+    stringsAsFactors = FALSE
+  ))
   write_tsv(parameters, file.path(TABLES_DIR, "08B_parameters.tsv"))
   capture.output(sessionInfo(), file = file.path(LOGS_DIR, "08B_sessionInfo.txt"))
 

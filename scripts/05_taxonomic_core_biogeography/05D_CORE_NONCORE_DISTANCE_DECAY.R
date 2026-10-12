@@ -2,29 +2,19 @@
 # -*- coding: utf-8 -*-
 
 # ==============================================================================
-# Script 12: FIG3CD_CORE_NONCORE_DISTANCE_DECAY_SET401.R
-# Proyecto: Biogeografia_2026 / MAGENTA
+# 05D_CORE_NONCORE_DISTANCE_DECAY.R
+# Compare geographic and climatic distance-decay of core and non-core taxa.
 #
-# Objetivo:
-#   Generar los paneles 3c y 3d comparando el decaimiento geografico y
-#   ambiental de las fracciones taxonomicas core-associated y non-core.
+# Uses core membership and pooled REALM || Locality counts from 05A. Bray-Curtis
+# dissimilarity is calculated separately for each fraction after normalizing
+# its counts within each locality. Geographic distance is Haversine distance
+# between locality centroids; pairs <=0.1 km apart are excluded. Climatic distance
+# is Euclidean distance across standardized BIO1, BIO2, BIO3, BIO13 and BIO15 for
+# localities with complete observations.
 #
-# Decisiones metodologicas:
-#   1) No recalcula el core. Reutiliza exactamente la clasificacion armonizada
-#      del ultimo run 09A.
-#   2) La unidad analitica es REALM || Locality, coherente con la unidad usada
-#      para clasificar el core; los replicados ya fueron sumados por 09A.
-#   3) Bray-Curtis se calcula por separado despues de normalizar cada fraccion
-#      dentro de cada localidad.
-#   4) La distancia geografica es Haversine entre centroides de localidad; se
-#      excluyen pares separados por <= 0.1 km.
-#   5) La distancia ambiental es Euclidiana entre BIO1, BIO2, BIO3, BIO13 y
-#      BIO15 estandarizados entre localidades con datos completos.
-#   6) Mantel y los contrastes pareados de pendientes usan las mismas 9,999
-#      permutaciones de etiquetas de localidad. Los P de LM entre pares no se
-#      usan para inferencia.
-#   7) Se exportan paneles individuales sin titulo ni letra, ademas de una
-#      composicion conjunta para inspeccion.
+# Mantel tests and paired slope comparisons use the same 9,999 locality-label
+# permutations. Ordinary linear-model P values for sample pairs are not used
+# for inference because the pairs are not independent observations.
 # ==============================================================================
 
 options(stringsAsFactors = FALSE, scipen = 999, bitmapType = "cairo")
@@ -222,20 +212,21 @@ run_decay_test <- function(core_dissimilarity,
 
 # ============================== 2) Rutas =====================================
 
-BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-RESULTS_DIR <- file.path(BASE_DIR, "resultados")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
+BASE_DIR <- PROJECT_DIR
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
 METADATA_CSV <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
+  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
 )
 
-SCRIPT_09A_TAG <- "09A_FIG3A_TAXONOMIC_CORE_BARS_SET401"
+SCRIPT_09A_TAG <- "05A_TAXONOMIC_CORE_ASSOCIATED"
 LATEST_09A_PTR <- file.path(
   RESULTS_DIR, paste0("LATEST_", SCRIPT_09A_TAG, ".txt")
 )
 
-SCRIPT_TAG <- "12_FIG3CD_CORE_NONCORE_DISTANCE_DECAY_SET401"
+SCRIPT_TAG <- "05D_CORE_NONCORE_DISTANCE_DECAY"
 RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 OUT_DIR <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
 TABLE_DIR <- file.path(OUT_DIR, "tables")
@@ -440,7 +431,7 @@ msg("09A eligible taxa: ", length(eligible_ids))
 msg("Core-associated taxa: ", length(core_ids))
 msg("Non-core taxa: ", length(noncore_ids))
 
-# ====================== 5) Metadata numerica actual ==========================
+# ====================== 5) Numeric environmental metadata ==========================
 
 meta_raw <- read_csv(METADATA_CSV, show_col_types = FALSE, progress = FALSE)
 

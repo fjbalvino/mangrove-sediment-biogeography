@@ -1,5 +1,5 @@
 package	purpose
-phyloseq	canonical taxonomic object and ecological analyses
+phyloseq	taxonomic count objects and ecological analyses
 data.table	large Kraken2 count and taxdump tables
 vegan	ordination, PERMANOVA, Mantel, dbRDA
 mgcv	Shannon generalized additive model
@@ -11,7 +11,7 @@ readr	table import/export
 patchwork	multi-panel figures
 scales	figure scales
 ape	phylogenetic tree handling
-iCAMP	community assembly; validated version 1.8.6
+iCAMP	community assembly; reference analysis version 1.8.6
 adespatial	distance-based Moran eigenvector maps for taxonomic dbRDA
 geosphere	great-circle geographic distances
 permute	restricted permutation designs

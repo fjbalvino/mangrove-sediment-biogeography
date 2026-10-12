@@ -170,11 +170,12 @@ if [ "$RC" -eq 0 ]; then
 fi
 
 if [ "$RC" -eq 0 ]; then
-  run_step "01H_CREATE_SET401" \
-    "$R_BIN" "$PACKAGE_ROOT/scripts/01_taxonomic_preprocessing/01H_EXCLUDE_GIRALIA4_CREATE_SET401.R" \
+  run_step "01H_SELECT_CORE_ANALYSIS_SAMPLES" \
+    "$R_BIN" "$PACKAGE_ROOT/scripts/01_taxonomic_preprocessing/01H_SELECT_CORE_ANALYSIS_SAMPLES.R" \
     --base "$BIOGEOGRAPHY_BASE" \
     --input-rds "$PHYLOSEQ_405" \
-    --output-rds "$PHYLOSEQ_401"
+    --output-rds "$PHYLOSEQ_401" \
+    --manifest "${CORE_SAMPLE_MANIFEST:-$PACKAGE_ROOT/config/samples/taxonomic_core_accessions.txt}"
   RC=$?
 fi
 

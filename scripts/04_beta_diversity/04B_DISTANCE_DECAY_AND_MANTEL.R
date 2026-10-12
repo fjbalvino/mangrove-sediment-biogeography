@@ -4,10 +4,8 @@
 # Figure 2c — Taxonomic distance–decay
 # Abundance-weighted Bray–Curtis versus incidence-based Sørensen.
 #
-# Canonical inputs (2026-08-17):
-#   - phyloseq: /data/Magenta/phyloseq_MAGENTA.rds (401 metagenomes)
-#   - metadata: /data/Magenta/data/metadata/Metadata_2026_copia.csv
-#   - balanced cohort: inherited from Figure 2a, Guadeloupe Set #18 (332 samples)
+# Inputs: taxonomic counts, geographic metadata, and the sample table
+# produced by the alpha-diversity analysis.
 #
 # Statistical design:
 #   - deterministic rarefaction to 18,145 reads, matching Figure 2a;
@@ -34,7 +32,7 @@ suppressPackageStartupMessages({
 })
 
 ## -----------------------------------------------------------------------------
-## 1. Canonical configuration
+## 1. Analysis configuration
 ## -----------------------------------------------------------------------------
 
 SEED <- 12345L
@@ -44,26 +42,26 @@ RAREFACTION_DEPTH <- 18145L
 MIN_GEO_KM <- 0.1
 
 EXPECTED_PHYLOSEQ_SAMPLES <- 401L
-EXPECTED_COHORT_SAMPLES <- 332L
-EXPECTED_COHORT_TAXA_NONZERO <- 24030L
+EXPECTED_COHORT_SAMPLES <- 345L
+EXPECTED_COHORT_TAXA_NONZERO <- 24038L
 
-PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-RESULTS_DIR <- file.path(PROJECT_DIR, "resultados")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = "/data/Magenta/phyloseq_MAGENTA.rds")
+PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
 METADATA_PATH <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
+  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
 )
 
 COHORT_POINTER <- file.path(
   RESULTS_DIR,
-  "LATEST_04_ALPHA_DIVERSITY_HILL_SET18_PANEL_A.txt"
+  "LATEST_TAXONOMIC_ALPHA.txt"
 )
 COHORT_FILENAME <- "04a_alpha_diversity_filtered_samplewise.csv"
 
 SCRIPT_ID <- "06"
-SCRIPT_BASENAME <- "MANTEL_DDP_ANALYSIS_PANEL_C_SET18"
+SCRIPT_BASENAME <- "TAXONOMIC_DISTANCE_DECAY"
 RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
 OUT_DIR <- file.path(RESULTS_DIR, RUN_NAME)
@@ -81,9 +79,8 @@ invisible(lapply(
 
 LATEST_POINTER <- file.path(
   RESULTS_DIR,
-  paste0("LATEST_", SCRIPT_ID, "_", SCRIPT_BASENAME, ".txt")
+  paste0("LATEST_", SCRIPT_BASENAME, ".txt")
 )
-writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 
 LOG_FILE <- file.path(LOG_DIR, paste0(SCRIPT_ID, "_panel_c.log"))
 sink(LOG_FILE, split = TRUE)
@@ -247,7 +244,7 @@ log_msg("Balanced cohort inherited from Figure 2a: n = ", length(cohort_ids))
 log_msg("Cohort table: ", COHORT_PATH)
 
 ## -----------------------------------------------------------------------------
-## 3. Load canonical phyloseq and align strictly by run_accession
+## 3. Load phyloseq and align strictly by run_accession
 ## -----------------------------------------------------------------------------
 
 phy0 <- readRDS(PHYLOSEQ_PATH)
@@ -670,7 +667,10 @@ data.table::fwrite(
 site_groups <- split(seq_len(nrow(sample_table)), sample_table$site_id)
 set.seed(SEED + 200L)
 site_balanced_results <- bind_rows(lapply(seq_len(N_SITE_BALANCED), function(i) {
-  selected <- vapply(site_groups, function(z) sample(z, 1L), integer(1L))
+  selected <- vapply(site_groups, function(z) z[sample.int(length(z), 1L)], integer(1L))
+  # R sample(z, 1) samples 1:z for numeric singleton; select its position.
+  stopifnot(length(unique(sample_table$site_id[selected])) == length(site_groups),
+            setequal(sample_table$site_id[selected], names(site_groups)))
   out <- extract_distance_decay_stats(
     indices = selected,
     bray_matrix = bray_matrix,
@@ -838,10 +838,7 @@ p_ddp <- ggplot(
     limits = c(0, 1),
     expand = expansion(mult = c(0, 0.015))
   ) +
-  labs(
-    tag = "c",
-    title = "Taxonomic distance–decay"
-  ) +
+  labs(tag = "c") +
   guides(color = "none") +
   theme_classic(base_size = 11) +
   theme(
@@ -968,4 +965,5 @@ log_msg(
   sprintf("%.6f", fit_bray[["slope"]] - fit_sorensen[["slope"]])
 )
 log_msg("Figure: ", file.path(PLOT_DIR, "Figure_2c_taxonomic_distance_decay.png"))
+writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 log_msg("=== SCRIPT COMPLETED SUCCESSFULLY ===")

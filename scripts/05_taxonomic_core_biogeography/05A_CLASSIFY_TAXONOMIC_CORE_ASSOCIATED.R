@@ -2,25 +2,24 @@
 # -*- coding: utf-8 -*-
 
 # ==============================================================================
-# Script 09A: FIG3A_TAXONOMIC_CORE_BARS_SET401.R
-# Proyecto: Biogeografia_2026 / MAGENTA
-# Objetivo:
-#   Clasificar la fraccion taxonomica core-associated respaldada por realms
-#   segun la definicion del manuscrito y generar el panel 3a en barras.
+# 05A_CLASSIFY_TAXONOMIC_CORE_ASSOCIATED.R
+# Classify realm-supported taxonomic cores and plot their richness/read shares.
 #
-# Definicion primaria del manuscrito:
-#   0) Los identificadores abreviados de especie se armonizan con su unico
-#      identificador de linaje completo y sus conteos se suman antes de filtrar.
-#   1) La localidad es la unidad minima; los replicados se suman por localidad.
-#   2) Se retienen taxa con >= 50 lecturas globales y presencia en >= 5 localidades.
-#   3) Un taxon es core-associated si aparece en todas las localidades muestreadas
-#      de al menos un marine realm representado por >= 3 localidades y su
-#      abundancia relativa media dentro de ese realm es >= 0.0001.
+# Inputs: data/taxonomic_core_counts.rds (phyloseq count object) and
+# data/environmental_metadata.csv, joined by run_accession. Metadata must contain
+# Locality and REALM; the input cohort contains mangrove sediment samples.
 #
-# Nota terminologica:
-#   Esta categoria NO es un core global absoluto. El soporte puede provenir de
-#   un solo marine realm. Todos los taxa elegibles que no cumplen la definicion
-#   se agrupan como non-core para el panel.
+# Counts are pooled within each REALM || Locality unit. Eligibility requires
+# >=50 total reads and detection in >=5 such units. Core-associated taxa occur
+# in every sampled locality of at least one realm with >=3 localities and have
+# mean relative abundance >=0.0001 (a proportion equivalent to 0.01%) in that realm.
+# The mean gives each locality equal weight, using proportions of all retained
+# counts within that locality before the global eligibility filter.
+#
+# A core-associated taxon need not occur in every realm. The read-share panel
+# pools reads across the eligible taxa; it is not an equal-locality average.
+# Abbreviated taxon labels are merged with full lineages only when the terminal
+# name has an unambiguous one-to-one match; counts are summed before filtering.
 # ==============================================================================
 
 options(stringsAsFactors = FALSE, scipen = 999, bitmapType = "cairo")
@@ -76,20 +75,22 @@ terminal_taxon_label <- function(x) {
 
 # ============================== 1) Rutas =====================================
 
-BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
+BASE_DIR <- PROJECT_DIR
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-# Objeto taxonomico canonico actual: 401 metagenomas.
-PS_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = "/data/Magenta/phyloseq_MAGENTA.rds")
+# Taxonomic count object for the 401-metagenome core-analysis cohort.
+PS_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
 
-# Metadata final actual; run_accession es la llave primaria.
+# Sample metadata; run_accession is the unique sample key.
 METADATA_CSV <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
+  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
 )
 
-SCRIPT_TAG <- "09A_FIG3A_TAXONOMIC_CORE_BARS_SET401"
+SCRIPT_TAG <- "05A_TAXONOMIC_CORE_ASSOCIATED"
 RUN_STAMP  <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR    <- file.path(BASE_DIR, "resultados", paste0(SCRIPT_TAG, "_", RUN_STAMP))
+OUT_DIR    <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
 TABLE_DIR  <- file.path(OUT_DIR, "tables")
 PLOT_DIR   <- file.path(OUT_DIR, "plots")
 RDS_DIR    <- file.path(OUT_DIR, "rds")
@@ -98,7 +99,7 @@ dir.create(TABLE_DIR, recursive = TRUE, showWarnings = FALSE)
 dir.create(PLOT_DIR,  recursive = TRUE, showWarnings = FALSE)
 dir.create(RDS_DIR,   recursive = TRUE, showWarnings = FALSE)
 
-LATEST_PTR <- file.path(BASE_DIR, "resultados", paste0("LATEST_", SCRIPT_TAG, ".txt"))
+LATEST_PTR <- file.path(RESULTS_DIR, paste0("LATEST_", SCRIPT_TAG, ".txt"))
 
 # ============================ 2) Parametros ==================================
 
@@ -106,7 +107,7 @@ MIN_GLOBAL_READS      <- 50L
 MIN_GLOBAL_LOCALITIES <- 5L
 MIN_REALM_LOCALITIES  <- 3L
 CORE_REALM_PREVALENCE <- 1.0
-CORE_MEAN_REL_ABUND   <- 0.0001
+CORE_MEAN_REL_ABUND   <- 0.0001  # Proportion: 0.01%, not 0.0001%.
 EXPECTED_N_SAMPLES    <- 401L
 
 CORE_COLOUR    <- "#B2182B"
@@ -242,7 +243,7 @@ if (anyNA(meta_aligned$REALM) || any(!nzchar(meta_aligned$REALM))) {
   stopf("Hay muestras sin REALM despues del match por run_accession.")
 }
 
-# El objeto canonico ya debe estar restringido a mangrove sediment.
+# The input object must contain mangrove sediment samples only.
 if (!all(is.na(meta_aligned$EcologicalClass))) {
   is_mangrove_sediment <- tolower(meta_aligned$EcologicalClass) == "mangrove sediment"
   if (any(!is_mangrove_sediment, na.rm = TRUE)) {
@@ -268,12 +269,9 @@ if (any(!is.finite(otu_sample)) || any(otu_sample < 0)) {
   stopf("La tabla taxonomica contiene valores no finitos o negativos.")
 }
 
-# El objeto actual contiene dos representaciones para algunos taxa: un linaje
-# completo (k__...|s__Especie) y, en otro bloque de muestras, solo "Especie".
-# Si se mantienen como columnas diferentes, la forma abreviada puede parecer
-# artificialmente restringida a un realm. Se fusiona unicamente cuando el
-# nombre terminal abreviado tiene una correspondencia inequivoca (1:1) con un
-# linaje completo. Los casos ambiguos detienen el analisis.
+# Taxon labels may contain full lineages (k__...|s__Species) or terminal names.
+# Merge a terminal name with its full lineage only when the mapping is unique.
+# Ambiguous mappings stop the analysis to prevent conflation of distinct taxa.
 raw_taxon_id <- colnames(otu_sample)
 if (is.null(raw_taxon_id) || anyNA(raw_taxon_id) || any(!nzchar(raw_taxon_id))) {
   stopf("La tabla taxonomica contiene taxon_id vacios.")
@@ -422,7 +420,7 @@ rel_eligible <- rel_locality_all[, eligible, drop = FALSE]
 eligible_ids <- colnames(otu_eligible)
 
 msg("Samples aligned: ", nrow(meta_aligned))
-msg("Coordinate/metadata localities: ", nrow(otu_locality))
+msg("Realm-locality units: ", nrow(otu_locality))
 msg("Detected non-zero taxa: ", ncol(otu_locality))
 msg("Eligible taxa (>=50 reads and >=5 localities): ", ncol(otu_eligible))
 
@@ -741,7 +739,7 @@ parameters <- tibble(
     CORE_REALM_PREVALENCE,
     CORE_MEAN_REL_ABUND,
     "Abbreviated terminal labels merged 1:1 into full lineage IDs; counts summed before filtering",
-    "Locality; replicate counts summed",
+    "REALM || Locality; replicate counts summed",
     "Eligible taxa after >=50 reads and >=5 localities",
     "run_accession",
     EXPECTED_N_SAMPLES,

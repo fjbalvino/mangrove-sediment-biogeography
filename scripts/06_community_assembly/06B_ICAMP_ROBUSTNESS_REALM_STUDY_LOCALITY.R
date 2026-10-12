@@ -1,17 +1,20 @@
 #!/usr/bin/env Rscript
 
 # =============================================================================
-# 08I_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY.R
+# 06B_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY.R
 #
 # Robustness analysis for the completed genus-level iCAMP run.
 #
 # Primary claim tested
 # --------------------
-# The within-realm non-selective fraction remains > 0.5 after controlling the
-# influence of unequal sample sizes among marine realms, Study/BioProject and
-# locality. Non-selective is defined a priori as:
+# Test whether the within-realm fraction not assigned to heterogeneous or
+# homogeneous selection remains >0.5 after equal weighting of marine realms,
+# studies and localities. The sum uses these output columns:
 #
 #   dispersal_limitation + homogenizing_dispersal + drift_weak_selection
+#
+# The last category includes drift, weak selection and other undominated
+# processes; this sum must not be interpreted as a purely stochastic fraction.
 #
 # The script never treats the 24,692 pairwise turnovers as independent
 # replicates. Inference is based on equal-weight group summaries, group-level
@@ -22,7 +25,7 @@
 options(stringsAsFactors = FALSE, scipen = 999, warn = 1)
 
 SCRIPT_ID <- "08I_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY"
-SCRIPT_VERSION <- "1.0.0"
+SCRIPT_VERSION <- "1.1.0"
 
 PROCESS_COLUMNS <- c(
   "heterogeneous_selection",
@@ -156,7 +159,7 @@ long_value <- function(x, key, key_column = names(x)[1L]) {
 sha256_file <- function(path) {
   executable <- Sys.which("sha256sum")
   if (!nzchar(executable) || !file.exists(path)) return(NA_character_)
-  output <- suppressWarnings(system2(executable, path, stdout = TRUE))
+  output <- suppressWarnings(system2(executable, shQuote(path), stdout = TRUE))
   if (length(output) == 0L) return(NA_character_)
   value <- strsplit(output[1L], "[[:space:]]+")[[1L]][1L]
   if (!grepl("^[0-9a-fA-F]{64}$", value)) NA_character_ else tolower(value)
@@ -419,12 +422,12 @@ balanced_realm_resampling <- function(pairwise, metadata,
 print_help <- function() {
   cat(paste(
     "Usage:",
-    "  Rscript 08I_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY.R [options]",
+    "  Rscript scripts/06_community_assembly/06B_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY.R [options]",
     "",
     "Options:",
-    "  --run PATH                 Completed 08B iCAMP run",
-    "  --base PATH                Default /home/fjbalvino/Biogeografia_2026",
-    "  --results_dir PATH         Default BASE/resultados",
+    "  --run PATH                 Completed 06A iCAMP output directory",
+    "  --base PATH                Default BIOGEOGRAPHY_BASE or current directory",
+    "  --results_dir PATH         Default BIOGEOGRAPHY_RESULTS or BASE/results",
     "  --n_boot INT               Default 10000",
     "  --n_perm INT               Default 9999",
     "  --n_balance INT            Default 2000",
@@ -442,12 +445,12 @@ if ("--help" %in% args || "-h" %in% args) {
   quit(save = "no", status = 0L)
 }
 
-BASE_DIR <- get_arg(
-  "--base",
-  Sys.getenv("BIOGEOGRAPHY_BASE", "/home/fjbalvino/Biogeografia_2026")
+PROJECT_DIR <- get_arg("--base", Sys.getenv("BIOGEOGRAPHY_BASE", "."))
+BASE_DIR <- PROJECT_DIR
+RESULTS_DIR <- get_arg(
+  "--results_dir", Sys.getenv("BIOGEOGRAPHY_RESULTS", file.path(PROJECT_DIR, "results"))
 )
-RESULTS_DIR <- get_arg("--results_dir", file.path(BASE_DIR, "resultados"))
-SOURCE_LABEL <- "08B_ICAMP_GENUS_COMMUNITY_ASSEMBLY_FINAL_PRIMARY_COV50_GTDB_R226_RAND999"
+SOURCE_LABEL <- "08B_ICAMP_GENUS_COMMUNITY_ASSEMBLY"
 LATEST_SOURCE <- file.path(RESULTS_DIR, paste0("LATEST_", SOURCE_LABEL, ".txt"))
 
 SOURCE_RUN <- get_arg("--run", Sys.getenv("ICAMP_RUN", ""))
@@ -964,7 +967,7 @@ main <- function() {
   write_tsv(parameters_out, file.path(TABLES_DIR, "08I_parameters.tsv"))
   capture.output(sessionInfo(), file = file.path(LOGS_DIR, "08I_sessionInfo.txt"))
 
-  cat("\n=== NON-SELECTIVE GROUP INFERENCE ===\n")
+  cat("\n=== GROUP INFERENCE FOR THE FRACTION NOT ASSIGNED TO SELECTION ===\n")
   print(nonselective_inference, row.names = FALSE)
   cat("\n=== LEAVE-ONE-GROUP-OUT SUMMARY ===\n")
   print(loo_summary, row.names = FALSE)

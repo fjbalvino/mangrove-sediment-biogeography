@@ -2,25 +2,20 @@
 # -*- coding: utf-8 -*-
 
 # ==============================================================================
-# Script 11: FIG3B_CORE_ASSOCIATED_PHYLA_SET401.R
-# Proyecto: Biogeografia_2026 / MAGENTA
+# 05C_SUMMARIZE_CORE_ASSOCIATED_PHYLA.R
+# Summarize phylum composition within the core-associated fraction from 05A.
 #
-# Objetivo:
-#   Generar el panel 3b con la composicion a nivel de phylum de la fraccion
-#   taxonomica core-associated definida por el script 09A.
+# Core membership uses >=50 total reads, >=5 REALM || Locality units, occurrence
+# in all localities of at least one realm with >=3 localities, and mean relative
+# abundance >=0.0001 (0.01%) within that realm.
 #
-# Decisiones metodologicas:
-#   1) No recalcula el core. Reutiliza exactamente la clasificacion armonizada
-#      de 09A (>=50 lecturas, >=5 localidades, soporte en todas las localidades
-#      de al menos un realm con >=3 localidades y abundancia media >=0.0001).
-#   2) La composicion principal es locality-balanced: primero calcula la
-#      proporcion de lecturas core por phylum dentro de cada localidad y luego
-#      promedia dando el mismo peso a cada unidad REALM || Locality.
-#   3) Conserva como sensibilidad la composicion obtenida al agrupar todas las
-#      lecturas (pooled reads), que puede estar influida por muestreo desigual.
-#   4) Muestra los cinco phyla con mayor contribucion media y agrupa el resto
-#      como "Other phyla". La tabla completa se exporta sin agrupar.
-# ============================================================================== 
+# Locality-balanced composition is calculated by pooling sample counts within
+# each locality, calculating each phylum's share of that locality's core reads,
+# and averaging those shares with equal weight across REALM || Locality units.
+# It does not give equal weight to individual metagenomes or to marine realms.
+# Pooled-read composition is exported separately. The plot shows the five phyla
+# with the largest equal-locality means and groups the rest as 'Other phyla'.
+# ==============================================================================
 
 options(stringsAsFactors = FALSE, scipen = 999, bitmapType = "cairo")
 Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1")
@@ -65,16 +60,18 @@ display_phylum <- function(x) {
 
 # ============================== 1) Rutas =====================================
 
-BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
+BASE_DIR <- PROJECT_DIR
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-SCRIPT_09A_TAG <- "09A_FIG3A_TAXONOMIC_CORE_BARS_SET401"
+SCRIPT_09A_TAG <- "05A_TAXONOMIC_CORE_ASSOCIATED"
 LATEST_09A_PTR <- file.path(
-  BASE_DIR, "resultados", paste0("LATEST_", SCRIPT_09A_TAG, ".txt")
+  RESULTS_DIR, paste0("LATEST_", SCRIPT_09A_TAG, ".txt")
 )
 
-SCRIPT_TAG <- "11_FIG3B_CORE_ASSOCIATED_PHYLA_SET401"
+SCRIPT_TAG <- "05C_CORE_ASSOCIATED_PHYLA"
 RUN_STAMP  <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR    <- file.path(BASE_DIR, "resultados", paste0(SCRIPT_TAG, "_", RUN_STAMP))
+OUT_DIR    <- file.path(RESULTS_DIR, paste0(SCRIPT_TAG, "_", RUN_STAMP))
 TABLE_DIR  <- file.path(OUT_DIR, "tables")
 PLOT_DIR   <- file.path(OUT_DIR, "plots")
 RDS_DIR    <- file.path(OUT_DIR, "rds")
@@ -83,7 +80,7 @@ dir.create(TABLE_DIR, recursive = TRUE, showWarnings = FALSE)
 dir.create(PLOT_DIR,  recursive = TRUE, showWarnings = FALSE)
 dir.create(RDS_DIR,   recursive = TRUE, showWarnings = FALSE)
 
-LATEST_PTR <- file.path(BASE_DIR, "resultados", paste0("LATEST_", SCRIPT_TAG, ".txt"))
+LATEST_PTR <- file.path(RESULTS_DIR, paste0("LATEST_", SCRIPT_TAG, ".txt"))
 
 # ============================= 2) Parametros =================================
 

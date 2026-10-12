@@ -4,7 +4,7 @@
 # Supplementary dbRDA and variance partitioning for Figure 2.
 #
 # Response: site-centroid Aitchison distances reconstructed from the exact
-# sample geometry used by Panel D (314 metagenomes; 130 coordinate sites).
+# sample geometry used by Panel D (327 metagenomes; 130 coordinate sites).
 # Explanatory blocks: environmental PCA, spatial structure, and marine realm.
 # Study/BioProject is evaluated as a conditioning sensitivity because its
 # contribution may be inseparable from geography in public-data compilations.
@@ -31,7 +31,7 @@ suppressPackageStartupMessages({
 SEED <- 12345L
 PERMUTATIONS <- 9999L
 CLR_PSEUDOCOUNT_EXPECTED <- 1
-EXPECTED_PANEL_D_SAMPLES <- 314L
+EXPECTED_PANEL_D_SAMPLES <- 327L
 EXPECTED_COORDINATE_SITES <- 130L
 MIN_COMPLETE_SITES <- 50L
 ENV_PCA_CUMULATIVE_TARGET <- 0.90
@@ -39,21 +39,21 @@ MAX_ENV_PCS <- 8L
 MAX_DBMEM <- 8L
 MAX_ENV_ARROWS <- 4L
 
-PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-RESULTS_DIR <- file.path(PROJECT_DIR, "resultados")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 METADATA_PATH <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
+  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
 )
 
 PANEL_D_POINTER <- file.path(
   RESULTS_DIR,
-  "LATEST_05_NMDS_AITCHISON_PANEL_D_SET18.txt"
+  "LATEST_TAXONOMIC_NMDS.txt"
 )
 PANEL_D_OBJECT_NAME <- file.path("rds", "05_panel_d_analysis_objects.rds")
 
 SCRIPT_ID <- "08"
-SCRIPT_BASENAME <- "DBRDA_VPA_SUPPLEMENTARY_SET18"
+SCRIPT_BASENAME <- "TAXONOMIC_VARIATION_PARTITIONING"
 RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
 
@@ -72,9 +72,8 @@ invisible(lapply(
 
 LATEST_POINTER <- file.path(
   RESULTS_DIR,
-  paste0("LATEST_", SCRIPT_ID, "_", SCRIPT_BASENAME, ".txt")
+  paste0("LATEST_", SCRIPT_BASENAME, ".txt")
 )
-writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 
 LOG_FILE <- file.path(LOG_DIR, "08_dbrda_vpa_supplementary.log")
 sink(LOG_FILE, split = TRUE)
@@ -250,15 +249,27 @@ fit_dbrda_block <- function(
   adj_r2 <- suppressWarnings(vegan::RsquareAdj(model)$adj.r.squared)
   raw_r2 <- suppressWarnings(vegan::RsquareAdj(model)$r.squared)
 
+  model_rank <- if (is.null(model$CCA)) 0L else model$CCA$rank
+  condition_rank <- if (is.null(model$pCCA)) 0L else model$pCCA$rank
+  residual_df <- attr(distance_object, "Size") - 1L - model_rank - condition_rank
   set.seed(seed)
-  permutation_test <- vegan::anova.cca(
-    model,
-    permutations = permutations
-  )
+  if (model_rank > 0L && residual_df > 0L) {
+    permutation_test <- vegan::anova.cca(model, permutations = permutations)
+    fit_status <- "PASS"
+    performed_permutations <- permutations
+  } else {
+    permutation_test <- data.frame(F = NA_real_, check.names = FALSE)
+    permutation_test[["Pr(>F)"]] <- NA_real_
+    fit_status <- "NOT_ESTIMABLE_ZERO_CONSTRAINED_RANK"
+    performed_permutations <- 0L
+  }
 
   statistics <- data.frame(
     model = model_name,
-    status = "PASS",
+    status = fit_status,
+    model_df = model_rank,
+    conditioning_df = condition_rank,
+    residual_df = residual_df,
     n_sites = attr(distance_object, "Size"),
     n_explanatory_columns = ncol(explanatory),
     n_conditioning_columns = n_conditioning,
@@ -266,7 +277,8 @@ fit_dbrda_block <- function(
     adjusted_R2 = adj_r2,
     pseudo_F = permutation_test$F[1L],
     p_value = permutation_test$`Pr(>F)`[1L],
-    permutations = permutations,
+    permutations = performed_permutations,
+    requested_permutations = permutations,
     stringsAsFactors = FALSE
   )
 
@@ -734,10 +746,22 @@ dbmem_raw <- tryCatch(
 )
 
 if (inherits(dbmem_raw, "error")) {
-  log_msg("dbMEM not estimable: ", conditionMessage(dbmem_raw))
-  DBMEM <- matrix(numeric(), nrow = nrow(analysis_site_table), ncol = 0L)
+  stopf("dbMEM not estimable; refusing to omit spatial MEMs: %s", conditionMessage(dbmem_raw))
 } else {
+  dbmem_eigenvalues <- attr(dbmem_raw, "values")
+  data.table::fwrite(data.frame(
+    MEM = seq_along(dbmem_eigenvalues), eigenvalue = dbmem_eigenvalues,
+    retained = seq_along(dbmem_eigenvalues) <= MAX_DBMEM
+  ), file.path(TABLE_DIR, "08_dbMEM_eigenvalues.csv"))
   dbmem_raw <- as.matrix(dbmem_raw)
+  stopifnot(ncol(dbmem_raw) > 0L)
+  data.table::fwrite(data.frame(
+    n_positive_MEMs = ncol(dbmem_raw),
+    max_abs_column_mean = max(abs(colMeans(dbmem_raw))),
+    max_abs_weighted_norm_error = max(abs(colSums(dbmem_raw^2) / nrow(dbmem_raw) - 1)),
+    threshold_km = adespatial::give.thresh(stats::as.dist(haversine_distances)),
+    implementation = paste0("adespatial ", packageVersion("adespatial"), " official dbmem(dist, positive)")
+  ), file.path(TABLE_DIR, "08_dbMEM_construction_audit.csv"))
   n_dbmem <- min(MAX_DBMEM, ncol(dbmem_raw))
   DBMEM <- dbmem_raw[, seq_len(n_dbmem), drop = FALSE]
   colnames(DBMEM) <- paste0("dbMEM", seq_len(ncol(DBMEM)))
@@ -795,12 +819,12 @@ rank_diagnostics <- data.frame(
     ncol(cbind(ENV, SPACE, REALM, STUDY))
   ),
   rank = c(
-    qr(ENV)$rank,
-    qr(SPACE)$rank,
-    qr(REALM)$rank,
-    if (ncol(STUDY) > 0L) qr(STUDY)$rank else 0L,
-    qr(cbind(ENV, SPACE, REALM))$rank,
-    qr(cbind(ENV, SPACE, REALM, STUDY))$rank
+    qr(cbind(1, ENV))$rank - 1L,
+    qr(cbind(1, SPACE))$rank - 1L,
+    qr(cbind(1, REALM))$rank - 1L,
+    if (ncol(STUDY) > 0L) qr(cbind(1, STUDY))$rank - 1L else 0L,
+    qr(cbind(1, ENV, SPACE, REALM))$rank - 1L,
+    qr(cbind(1, ENV, SPACE, REALM, STUDY))$rank - 1L
   )
 )
 rank_diagnostics$rank_deficiency <-
@@ -897,8 +921,8 @@ individual_fractions <- as.data.frame(
       "[b]" = "Unique spatial structure",
       "[c]" = "Unique marine realm",
       "[d]" = "Shared environment + space",
-      "[e]" = "Shared environment + realm",
-      "[f]" = "Shared space + realm",
+      "[e]" = "Shared space + realm",
+      "[f]" = "Shared environment + realm",
       "[g]" = "Shared environment + space + realm",
       "[h]" = "Unexplained",
       .default = fraction_raw
@@ -1216,7 +1240,7 @@ p_dbrda <- ggplot(site_scores, aes(x = dbRDA2, y = dbRDA1)) +
     data = environment_vectors_plot,
     aes(x = arrow_y, y = arrow_x, label = label),
     inherit.aes = FALSE,
-    size = 2.8,
+    size = 3.2,
     color = "grey15",
     min.segment.length = 0,
     seed = SEED,
@@ -1230,7 +1254,7 @@ p_dbrda <- ggplot(site_scores, aes(x = dbRDA2, y = dbRDA1)) +
     drop = FALSE,
     name = "Marine realm",
     guide = guide_legend(
-      nrow = 2,
+      nrow = 3,
       byrow = TRUE,
       override.aes = list(size = 2.8, alpha = 1)
     )
@@ -1283,6 +1307,8 @@ total_adjusted_explained <- sum(
   vpa_plot_data$adjusted_R2,
   na.rm = TRUE
 )
+
+stopifnot(abs(total_adjusted_explained - full_fit$statistics$adjusted_R2) < 1e-8)
 
 fraction_colors <- c(
   "Unique environment" = "#D9A441",
@@ -1337,8 +1363,8 @@ p_vpa <- ggplot(
 ggsave(
   file.path(PLOT_DIR, "08_Supplementary_dbRDA_site_Aitchison.png"),
   p_dbrda,
-  width = 8.4,
-  height = 5.8,
+  width = 6.8,
+  height = 5.2,
   units = "in",
   dpi = 600,
   bg = "white"
@@ -1346,8 +1372,8 @@ ggsave(
 ggsave(
   file.path(PLOT_DIR, "08_Supplementary_dbRDA_site_Aitchison.pdf"),
   p_dbrda,
-  width = 8.4,
-  height = 5.8,
+  width = 6.8,
+  height = 5.2,
   units = "in",
   device = grDevices::cairo_pdf,
   bg = "white"
@@ -1356,8 +1382,8 @@ ggsave(
 ggsave(
   file.path(PLOT_DIR, "08_Supplementary_variance_partition.png"),
   p_vpa,
-  width = 7.2,
-  height = 4.6,
+  width = 6.8,
+  height = 4.4,
   units = "in",
   dpi = 600,
   bg = "white"
@@ -1365,8 +1391,8 @@ ggsave(
 ggsave(
   file.path(PLOT_DIR, "08_Supplementary_variance_partition.pdf"),
   p_vpa,
-  width = 7.2,
-  height = 4.6,
+  width = 6.8,
+  height = 4.4,
   units = "in",
   device = grDevices::cairo_pdf,
   bg = "white"
@@ -1378,8 +1404,8 @@ p_combined <- p_dbrda / p_vpa +
 ggsave(
   file.path(PLOT_DIR, "08_Supplementary_dbRDA_VPA_combined.png"),
   p_combined,
-  width = 9.4,
-  height = 10.2,
+  width = 6.8,
+  height = 9.3,
   units = "in",
   dpi = 600,
   bg = "white"
@@ -1387,8 +1413,8 @@ ggsave(
 ggsave(
   file.path(PLOT_DIR, "08_Supplementary_dbRDA_VPA_combined.pdf"),
   p_combined,
-  width = 9.4,
-  height = 10.2,
+  width = 6.8,
+  height = 9.3,
   units = "in",
   device = grDevices::cairo_pdf,
   bg = "white"
@@ -1415,6 +1441,8 @@ run_summary <- data.frame(
   dbRDA_display_orientation = "x=dbRDA2; y=dbRDA1",
   permutations = PERMUTATIONS,
   seed = SEED,
+  adespatial_version = as.character(packageVersion("adespatial")),
+  vegan_version = as.character(packageVersion("vegan")),
   stringsAsFactors = FALSE
 )
 data.table::fwrite(
@@ -1474,6 +1502,18 @@ writeLines(
   file.path(LOG_DIR, "08_sessionInfo.txt")
 )
 
+writeLines(c(
+  "Taxonomic variation partitioning across coordinate-defined sampling sites.",
+  "Site identity, geometry and samples read from the synchronized Panel D object.",
+  "Official adespatial::dbmem retained; package version recorded in run summary and sessionInfo.",
+  "Shared fractions follow vegan: [e] is space + realm and [f] is environment + realm.",
+  "All negative adjusted variance fractions retained, without truncation.",
+  "Study-conditioned terms with zero estimable constrained rank are explicitly marked not estimable.",
+  "Permutation tests use site-level unrestricted permutations; spatial/study confounding restricts interpretation.",
+  "Study-conditioned models are sensitivity analyses, not proof that all geographic confounding is removed."
+), file.path(OUT_DIR, "README_analysis.txt"))
+
 log_msg("Primary full adjusted R2: ", sprintf("%.6f", full_fit$statistics$adjusted_R2))
 log_msg("Supplementary figures: ", PLOT_DIR)
+writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 log_msg("=== SCRIPT COMPLETED SUCCESSFULLY ===")

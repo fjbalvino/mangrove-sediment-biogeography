@@ -11,16 +11,14 @@ suppressPackageStartupMessages({
   library(vegan)
   library(mgcv)
   library(ggplot2)
-  library(ggnewscale)
   library(dplyr)
-  library(tidyr)
   library(tibble)
   library(data.table)
   library(scales)
 })
 
 ## -----------------------------------------------------------------------------
-## 1. Canonical configuration
+## 1. Analysis configuration
 ## -----------------------------------------------------------------------------
 
 SEED <- 12345L
@@ -33,27 +31,27 @@ LONGITUDE_GAM_K <- 30L
 GRID_N <- 220L
 
 EXPECTED_PHYLOSEQ_SAMPLES <- 401L
-EXPECTED_COHORT_SAMPLES <- 332L
-EXPECTED_ANALYSIS_SAMPLES <- 314L
+EXPECTED_COHORT_SAMPLES <- 345L
+EXPECTED_ANALYSIS_SAMPLES <- 327L
 EXPECTED_COORDINATE_SITES <- 130L
-EXPECTED_COHORT_TAXA_NONZERO <- 24030L
+EXPECTED_COHORT_TAXA_NONZERO <- 24038L
 
-PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-RESULTS_DIR <- file.path(PROJECT_DIR, "resultados")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = "/data/Magenta/phyloseq_MAGENTA.rds")
+PHYLOSEQ_PATH <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
 METADATA_PATH <- Sys.getenv(
   "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
+  unset = file.path(PROJECT_DIR, "data", "environmental_metadata.csv")
 )
 COHORT_POINTER <- file.path(
   RESULTS_DIR,
-  "LATEST_04_ALPHA_DIVERSITY_HILL_SET18_PANEL_A.txt"
+  "LATEST_TAXONOMIC_ALPHA.txt"
 )
 COHORT_FILENAME <- "04a_alpha_diversity_filtered_samplewise.csv"
 
 SCRIPT_ID <- "05"
-SCRIPT_BASENAME <- "NMDS_AITCHISON_PANEL_D_SET18"
+SCRIPT_BASENAME <- "TAXONOMIC_NMDS"
 RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
 
@@ -72,9 +70,8 @@ invisible(lapply(
 
 LATEST_POINTER <- file.path(
   RESULTS_DIR,
-  paste0("LATEST_", SCRIPT_ID, "_", SCRIPT_BASENAME, ".txt")
+  paste0("LATEST_", SCRIPT_BASENAME, ".txt")
 )
-writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 
 LOG_FILE <- file.path(LOG_DIR, "05_panel_d.log")
 sink(LOG_FILE, split = TRUE)
@@ -200,7 +197,7 @@ log_msg("Phyloseq: ", PHYLOSEQ_PATH)
 log_msg("Metadata: ", METADATA_PATH)
 
 ## -----------------------------------------------------------------------------
-## 2. Resolve the canonical Guadeloupe Set #18 cohort
+## 2. Load the diversity analysis sample set
 ## -----------------------------------------------------------------------------
 
 required_files <- c(PHYLOSEQ_PATH, METADATA_PATH, COHORT_POINTER)
@@ -239,7 +236,7 @@ if (length(cohort_ids) != EXPECTED_COHORT_SAMPLES) {
 }
 
 ## -----------------------------------------------------------------------------
-## 3. Load phyloseq and construct the canonical count matrix
+## 3. Load phyloseq and construct the analysis count matrix
 ## -----------------------------------------------------------------------------
 
 phy0 <- readRDS(PHYLOSEQ_PATH)
@@ -689,10 +686,10 @@ p_panel_d <- ggplot() +
     direction = -1,
     guide = "none"
   ) +
-  ggnewscale::new_scale_color() +
   geom_point(
     data = plot_data,
-    aes(x = NMDS1, y = NMDS2, fill = REALM, color = REALM),
+    aes(x = NMDS1, y = NMDS2, fill = REALM),
+    color = "black",
     shape = 21,
     size = 2.15,
     stroke = 0.38,
@@ -700,14 +697,13 @@ p_panel_d <- ggplot() +
   ) +
   annotate(
     "text",
-    x = -Inf,
+    x = Inf,
     y = Inf,
     label = stress_label,
-    hjust = -0.02,
+    hjust = 1.02,
     vjust = 1.25,
     size = 3.4
   ) +
-  scale_color_manual(values = realm_colors, drop = FALSE, guide = "none") +
   scale_fill_manual(
     values = realm_colors,
     drop = FALSE,
@@ -863,4 +859,5 @@ log_msg("Analysis samples: ", nrow(plot_data))
 log_msg("Coordinate-defined sites: ", dplyr::n_distinct(plot_data$site_id))
 log_msg("Aitchison NMDS stress: ", sprintf("%.6f", nmds$stress))
 log_msg("Figure: ", file.path(PLOT_DIR, "Figure_2d_global_taxonomic_composition.png"))
+writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 log_msg("=== SCRIPT COMPLETED SUCCESSFULLY ===")

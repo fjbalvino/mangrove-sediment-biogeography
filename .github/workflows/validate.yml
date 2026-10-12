@@ -33,8 +33,14 @@ jobs:
           invisible(lapply(files, parse))
           cat("R_PARSE_PASS:", length(files), "files\n")
 
+      - name: Test taxonomic analysis invariants
+        run: Rscript tests/test_taxonomic_invariants.R
+
       - name: Check workflow shell syntax
-        run: bash -n workflow/*.sh
+        run: |
+          for script in workflow/*.sh; do
+            bash -n "$script"
+          done
 
       - name: Validate repository contents
         run: python tools/validate_repository.py

@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 # -*- coding: UTF-8 -*-
 
-# Corrected site-level regional PERMANOVA for Figure 2d and Supplementary results.
+# Site-level regional PERMANOVA for Figure 2d and supplementary results.
 #
 # The script inherits the exact samples and distance matrices produced by
-# 05_NMDS_AITCHISON_PANEL_D_SET18.R. The primary unit is the coordinate-defined
+# 04A_NMDS_AITCHISON_LONGITUDE.R. The primary unit is the coordinate-defined
 # site. Site Aitchison centroids are reconstructed exactly from the Euclidean
 # sample-distance geometry. A deterministic within-site medoid is used only for
 # the Bray-Curtis sensitivity analysis. Aitchison is the primary metric.
@@ -15,7 +15,6 @@ suppressPackageStartupMessages({
   library(vegan)
   library(ggplot2)
   library(dplyr)
-  library(tidyr)
   library(tibble)
   library(data.table)
   library(scales)
@@ -34,20 +33,20 @@ LOCO_PERMUTATIONS <- 999L
 STUDY_BLOCK_PERMUTATIONS <- 9999L
 MIN_SITES_PER_LEVEL <- 5L
 
-EXPECTED_ANALYSIS_SAMPLES <- 314L
+EXPECTED_ANALYSIS_SAMPLES <- 327L
 EXPECTED_COORDINATE_SITES <- 130L
 
-PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-RESULTS_DIR <- file.path(PROJECT_DIR, "resultados")
+PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".", mustWork = TRUE))
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
 PANEL_D_POINTER <- file.path(
   RESULTS_DIR,
-  "LATEST_05_NMDS_AITCHISON_PANEL_D_SET18.txt"
+  "LATEST_TAXONOMIC_NMDS.txt"
 )
 PANEL_D_OBJECT_NAME <- file.path("rds", "05_panel_d_analysis_objects.rds")
 
 SCRIPT_ID <- "07"
-SCRIPT_BASENAME <- "PERMANOVA_REGIONAL_SET18_CORRECTED"
+SCRIPT_BASENAME <- "TAXONOMIC_PERMANOVA"
 RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 RUN_NAME <- paste(SCRIPT_ID, SCRIPT_BASENAME, RUN_STAMP, sep = "_")
 
@@ -66,9 +65,8 @@ invisible(lapply(
 
 LATEST_POINTER <- file.path(
   RESULTS_DIR,
-  paste0("LATEST_", SCRIPT_ID, "_", SCRIPT_BASENAME, ".txt")
+  paste0("LATEST_", SCRIPT_BASENAME, ".txt")
 )
-writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 
 LOG_FILE <- file.path(LOG_DIR, "07_permanova_regional.log")
 sink(LOG_FILE, split = TRUE)
@@ -162,7 +160,7 @@ euclidean_coordinates_from_distance <- function(distance_matrix) {
 
 if (!file.exists(PANEL_D_POINTER)) {
   stopf(
-    "No existe %s. Ejecute primero 05_NMDS_AITCHISON_PANEL_D_SET18.R.",
+    "No existe %s. Ejecute primero 04A_NMDS_AITCHISON_LONGITUDE.R.",
     PANEL_D_POINTER
   )
 }
@@ -1159,7 +1157,7 @@ saveRDS(
       loco_permutations = LOCO_PERMUTATIONS
     )
   ),
-  file.path(RDS_DIR, "07_corrected_PERMANOVA_objects.rds")
+  file.path(RDS_DIR, "07_PERMANOVA_objects.rds")
 )
 
 writeLines(capture.output(sessionInfo()), file.path(LOG_DIR, "07_sessionInfo.txt"))
@@ -1170,4 +1168,5 @@ log_msg("Study-block rows: ", nrow(study_block_results))
 log_msg("LOSO rows: ", nrow(loso_results))
 log_msg("LOCO rows: ", nrow(loco_results))
 log_msg("Primary results: ", file.path(TABLE_DIR, "07_primary_site_level_PERMANOVA.csv"))
+writeLines(normalizePath(OUT_DIR, mustWork = FALSE), LATEST_POINTER)
 log_msg("=== SCRIPT COMPLETED SUCCESSFULLY ===")

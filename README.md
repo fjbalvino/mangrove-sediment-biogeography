@@ -18,7 +18,7 @@ functional biogeography and KO co-variation network analyses.
 |---|---|---|
 | 01 | Metadata, reads, FastQC, fastp, Kraken2, taxonomic matrix and phyloseq | `01A`–`01H` |
 | 02 | Human Footprint, WorldClim, GBIF, SoilGrids and MEOW | `02A`–`02G` |
-| 03 | Hill diversity and environmental GAMs | `03A`–`03D` |
+| 03 | Hill diversity, environmental GAMs and taxonomic dominance | `03A`–`03F` |
 | 04 | NMDS, distance decay, PERMANOVA and taxonomic dbRDA/VPA | `04A`–`04D` |
 | 05 | Taxonomic core, realm restriction and core/non-core turnover | `05A`–`05D` |
 | 06 | Genus-level iCAMP and robustness to sampling structure | `06A`–`06B` |
@@ -31,9 +31,14 @@ functional biogeography and KO co-variation network analyses.
 
 These cohorts support different questions and must not be interchanged.
 
-| Analysis | Audited cohort |
+| Analysis | Samples and analytical units |
 |---|---|
-| Taxonomic Set401 | 401 metagenomes |
+| Taxonomic Hill diversity | 345 metagenomes; 18,145 reads per profile |
+| Primary diversity comparisons among realms | 128 coordinate-defined sites in four realms with at least five sites each |
+| Environmental Shannon GAM | 279 metagenomes from 34 sampling localities |
+| Taxonomic ordination, distance decay and dominance | 327 georeferenced metagenomes from 130 coordinate-defined sites |
+| Taxonomic variation partitioning | 104 sites with complete environmental information |
+| Taxonomic core | 401 metagenomes; locality-pooled abundance profiles |
 | Primary iCAMP | 400 metagenomes, 1,892 genera, 24,692 within-realm pairs and 999 null randomizations |
 | Functional atlas | 194 assembly-quality-filtered profiles and 17,508 KOs |
 | Regional functional analysis | 191 metadata-matched profiles and 17,482 non-zero KOs after three declared exclusions |
@@ -41,9 +46,22 @@ These cohorts support different questions and must not be interchanged.
 
 ## Using the workflow
 
-Users must download or clone the repository and adapt paths, software
-environments, database locations, thread and memory settings, and job-submission
-procedures to their own computer or computing cluster before execution.
+For the taxonomic analyses, place the frozen input files described in
+[DATA_AVAILABILITY.md](DATA_AVAILABILITY.md) in `data/`, install the R packages
+listed in `config/`, and review `config/taxonomic.env.example`. From the
+repository root, preview the analysis sequence with:
+
+```bash
+bash workflow/03_RUN_TAXONOMIC_ANALYSES.sh --config config/taxonomic.env.example --core --assembly
+```
+
+Add `--execute` to run it. Omit `--core` or `--assembly` when those analyses are
+not needed. Outputs are written to separate, time-stamped directories under
+`results/`. The [taxonomic analysis guide](docs/TAXONOMIC_ANALYSES.md) explains
+sample selection, statistical units, model assumptions and output files.
+
+The other workflow blocks require paths, database locations and computing
+resources appropriate to the user's environment.
 
 ## Reproducibility conventions
 
@@ -59,7 +77,11 @@ procedures to their own computer or computing cluster before execution.
 
 ## Release status
 
-The canonical scripts are organized and repository validation is configured.
+The taxonomic scripts include site-level diversity comparisons, dominance,
+environmental GAM diagnostics, regional composition tests and sampling
+sensitivity analyses. Repository checks validate code syntax, file integrity
+and selected statistical invariants; they do not rerun the full analyses.
+
 Block 07, which constructs the KO matrix from assemblies, is deliberately
 marked pending until its scripts are supplied and audited. The first public
 archival release should be tagged only after Block 07, Zenodo checksums and the

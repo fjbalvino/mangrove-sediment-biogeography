@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 # -*- coding: utf-8 -*-
 
-# Create the manuscript Set401 phyloseq
-# absent from the frozen analysis metadata.
+# Select the samples used for core and community-assembly analyses.
+# Membership is defined by the accession manifest supplied with the repository.
 # Only samples are removed; the original taxonomic feature space is preserved.
 
 options(stringsAsFactors = FALSE, scipen = 999)
@@ -18,7 +18,7 @@ get_arg <- function(flag, default) {
   prefixed <- grep(paste0("^", flag, "="), args)
   if (length(exact) > 0L) {
     index <- exact[[length(exact)]]
-    if (index == length(args)) stop(flag, " requiere un valor.", call. = FALSE)
+    if (index == length(args)) stop(flag, " requires a value.", call. = FALSE)
     return(args[[index + 1L]])
   }
   if (length(prefixed) > 0L) {
@@ -27,33 +27,24 @@ get_arg <- function(flag, default) {
   default
 }
 
-BASE_DIR <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
-
-INPUT_RDS <- get_arg("--input-rds", paste0(
-  "/data/Magenta/",
-  "phyloseq_MAGENTA_EcologicalClass_",
-  "MangroveSedimentOnly_TX1_3_OK.rds"
-))
-
-OUTPUT_RDS <- get_arg("--output-rds", paste0(
-  "/data/Magenta/",
-  "phyloseq_MAGENTA.rds"
-))
-
-EXCLUDE_ACCESSIONS <- c(
-  "SRR29659508",
-  "SRR29659599",
-  "SRR29659629",
-  "SRR29659854"
-)
+BASE_DIR <- get_arg("--base", Sys.getenv("BIOGEOGRAPHY_BASE", unset = normalizePath(".")))
+RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(BASE_DIR, "results"))
+INPUT_RDS <- get_arg("--input-rds", Sys.getenv("MAGENTA_PHYLOSEQ_405", unset = file.path(BASE_DIR, "data", "taxonomic_counts.rds")))
+OUTPUT_RDS <- get_arg("--output-rds", Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(BASE_DIR, "data", "taxonomic_core_counts.rds")))
+SAMPLE_MANIFEST <- get_arg("--manifest", Sys.getenv("CORE_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_core_accessions.txt")))
+if (!file.exists(SAMPLE_MANIFEST)) stop("Sample manifest not found: ", SAMPLE_MANIFEST, call. = FALSE)
+KEEP_ACCESSIONS <- trimws(readLines(SAMPLE_MANIFEST, warn = FALSE))
+KEEP_ACCESSIONS <- KEEP_ACCESSIONS[nzchar(KEEP_ACCESSIONS) & !grepl("^#", KEEP_ACCESSIONS)]
+if (length(KEEP_ACCESSIONS) != 401L || anyDuplicated(KEEP_ACCESSIONS)) {
+  stop("The core analysis manifest must contain 401 unique accessions.", call. = FALSE)
+}
 
 RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
 OUT_DIR <- file.path(
-  BASE_DIR,
-  "resultados",
+  RESULTS_DIR,
   paste0(
-    "01H_EXCLUDE_GIRALIA4_CREATE_SET401_",
+    "01H_CORE_ANALYSIS_SAMPLES_",
     RUN_STAMP
   )
 )
@@ -83,7 +74,7 @@ dir.create(
   showWarnings = FALSE
 )
 
-msg("Starting canonical Set401 derivation")
+msg("Selecting the core analysis samples")
 msg("Input:  ", INPUT_RDS)
 msg("Output: ", OUTPUT_RDS)
 msg("Audit:  ", OUT_DIR)
@@ -142,31 +133,13 @@ if (nrow(invalid_ids) > 0L) {
   )
 }
 
-exclusion_check <- data.frame(
-  run_accession = EXCLUDE_ACCESSIONS,
-  n_phyloseq_rows = vapply(
-    EXCLUDE_ACCESSIONS,
-    function(id) sum(metadata$run_accession == id),
-    integer(1)
-  ),
-  stringsAsFactors = FALSE
-)
-
-write.csv(
-  exclusion_check,
-  file.path(
-    OUT_DIR,
-    "01H_exclusion_accession_check.csv"
-  ),
-  row.names = FALSE
-)
-
-if (any(exclusion_check$n_phyloseq_rows != 1L)) {
-  stop_with(
-    "Each requested accession must occur exactly once. ",
-    "See 01H_exclusion_accession_check.csv."
-  )
-}
+if (nsamples(ps) != 405L) stop_with("Expected 405 samples in the source phyloseq object.")
+missing_ids <- setdiff(KEEP_ACCESSIONS, metadata$run_accession)
+if (length(missing_ids)) stop_with("Manifest accessions missing from phyloseq: ", paste(missing_ids, collapse = ", "))
+EXCLUDE_ACCESSIONS <- setdiff(metadata$run_accession, KEEP_ACCESSIONS)
+write.csv(data.frame(run_accession = metadata$run_accession,
+                     included = metadata$run_accession %in% KEEP_ACCESSIONS),
+          file.path(OUT_DIR, "01H_sample_membership.csv"), row.names = FALSE)
 
 removed_metadata <- metadata[
   metadata$run_accession %in% EXCLUDE_ACCESSIONS,
@@ -235,6 +208,7 @@ if (any(EXCLUDE_ACCESSIONS %in% derived_accessions)) {
   )
 }
 
+dir.create(dirname(OUTPUT_RDS), recursive = TRUE, showWarnings = FALSE)
 saveRDS(
   ps_derived,
   OUTPUT_RDS,
@@ -273,9 +247,9 @@ summary_table <- data.frame(
     "samples_after",
     "taxa_before",
     "taxa_after",
-    "classified_reads_before",
-    "classified_reads_removed",
-    "classified_reads_after",
+    "retained_reads_before",
+    "retained_reads_removed",
+    "retained_reads_after",
     "output_md5"
   ),
   value = c(
@@ -305,7 +279,7 @@ write.csv(
 
 writeLines(
   c(
-    "Canonical MAGENTA Set401 phyloseq",
+    "Canonical MAGENTA core analysis phyloseq",
     paste0(
       "Timestamp: ",
       format(Sys.time(), "%Y-%m-%d %H:%M:%S")
@@ -338,9 +312,8 @@ writeLines(
 writeLines(
   OUT_DIR,
   file.path(
-    BASE_DIR,
-    "resultados",
-    "LATEST_01H_EXCLUDE_GIRALIA4_CREATE_SET401.txt"
+    RESULTS_DIR,
+    "LATEST_CORE_ANALYSIS_SAMPLES.txt"
   )
 )
 

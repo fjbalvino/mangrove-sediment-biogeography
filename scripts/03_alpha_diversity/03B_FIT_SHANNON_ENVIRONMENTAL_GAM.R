@@ -1,26 +1,11 @@
 #!/usr/bin/env Rscript
 # -*- coding: utf-8 -*-
 
-# =============================================================================
-# Figure 2b, stage A — full environmental GAM for Shannon diversity
-#
-# Purpose
-#   1. Inherit the exact sample cohort produced by the latest successful
-#      04_ALPHA_DIVERSITY_HILL_SET18 analysis.
-#   2. Reconstruct Shannon entropy as log(Hill q = 1) and retain the original
-#      response transformation: y_log = log1p(Shannon entropy).
-#   3. Fit ONE stable mean GAM containing every environmental predictor used
-#      in the original script 17, plus a locality random effect.
-#   4. Rank all environmental smooths by the range of their centered partial
-#      effect across the central 95% of the observed predictor distribution.
-#   5. Export the complete ranking and model-derived curves. Script 17B uses
-#      these outputs to plot the four largest effects without refitting them.
-#
-# The failed Gaussian location-scale model is intentionally not reused for
-# inference. Its smoothing-parameter step failure invalidated effect ranking.
-# This script models the conditional mean with Gaussian identity errors, REML,
-# outer/BFGS optimization, shrinkage selection and explicit convergence checks.
-# =============================================================================
+# Fit a descriptive Gaussian GAM for log1p-transformed Shannon entropy.
+# Fourteen environmental smooths are fitted jointly with a locality random effect.
+# Complete cases are retained, followed by a four-standard-deviation response rule.
+# The fitted model, numerical checks, residual diagnostics, smooth statistics and
+# partial-effect curves are exported. Convergence does not establish model adequacy.
 
 options(stringsAsFactors = FALSE, scipen = 999, bitmapType = "cairo")
 
@@ -34,45 +19,31 @@ suppressPackageStartupMessages({
 # 1. Configuration and helpers
 # =============================================================================
 
-BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-
-ALPHA_POINTER <- file.path(
-  BASE_DIR,
-  "resultados",
-  "LATEST_04_ALPHA_DIVERSITY_HILL_SET18_PANEL_A.txt"
-)
-
-METADATA_CSV <- Sys.getenv(
-  "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
-)
-
-SCRIPT_ID <- "17A_GAM_SHANNON_ALL_VARIABLES_STABLE"
-RUN_STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR <- file.path(
-  BASE_DIR,
-  "resultados",
-  paste0(SCRIPT_ID, "_", RUN_STAMP)
-)
-
+BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
+OUTPUT_ROOT <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(BASE_DIR, "results"))
+ALPHA_DIR <- Sys.getenv("ALPHA_INPUT_DIR", unset = "")
+if (!nzchar(ALPHA_DIR)) {
+  pointer <- file.path(OUTPUT_ROOT, "LATEST_TAXONOMIC_ALPHA.txt")
+  if (!file.exists(pointer)) stop("Run 03A first or supply ALPHA_INPUT_DIR.", call. = FALSE)
+  ALPHA_DIR <- trimws(readLines(pointer, n = 1L, warn = FALSE))
+}
+METADATA_CSV <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(BASE_DIR, "data", "environmental_metadata.csv"))
+SCRIPT_ID <- "SHANNON_GAM"
+OUT_DIR <- Sys.getenv("GAM_OUTPUT_DIR", unset = file.path(OUTPUT_ROOT, paste0(SCRIPT_ID, "_", format(Sys.time(), "%Y%m%d_%H%M%S"))))
 for (subdir in c("plots", "models", "logs", "tables")) {
   dir.create(file.path(OUT_DIR, subdir), recursive = TRUE, showWarnings = FALSE)
 }
-
-LOG_FILE <- file.path(OUT_DIR, "logs", paste0(SCRIPT_ID, ".log"))
+OUT_DIR <- normalizePath(OUT_DIR, mustWork = TRUE)
+LOG_FILE <- file.path(OUT_DIR, "logs", "SHANNON_GAM.log")
 writeLines(character(), LOG_FILE)
-
-LATEST_POINTER <- file.path(
-  BASE_DIR,
-  "resultados",
-  paste0("LATEST_", SCRIPT_ID, ".txt")
-)
-
-# Prevent a failed new run from leaving a stale success pointer available to
-# stage B. Earlier versioned output directories remain untouched.
+LATEST_POINTER <- file.path(OUTPUT_ROOT, "LATEST_SHANNON_GAM.txt")
 if (file.exists(LATEST_POINTER)) unlink(LATEST_POINTER)
-
-EXPECTED_ALPHA_N <- 332L
+SAMPLE_MANIFEST <- Sys.getenv("ALPHA_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_diversity_accessions.txt"))
+if (!file.exists(SAMPLE_MANIFEST)) stop("Sample manifest is missing: ", SAMPLE_MANIFEST, call. = FALSE)
+EXPECTED_ACCESSIONS <- trimws(readLines(SAMPLE_MANIFEST, warn = FALSE))
+EXPECTED_ACCESSIONS <- EXPECTED_ACCESSIONS[nzchar(EXPECTED_ACCESSIONS) & !startsWith(EXPECTED_ACCESSIONS, "#")]
+if (!length(EXPECTED_ACCESSIONS) || anyDuplicated(EXPECTED_ACCESSIONS)) stop("Invalid sample manifest.", call. = FALSE)
+EXPECTED_ALPHA_N <- length(EXPECTED_ACCESSIONS)
 K_ENVIRONMENTAL <- 6L
 GAMMA_VALUE <- 1.4
 MIN_COMPLETE_CASES <- 150L
@@ -145,26 +116,22 @@ single_text_or_na <- function(x) {
 }
 
 msg("Starting full-variable Shannon GAM")
-msg("Figure 2a cohort pointer: ", ALPHA_POINTER)
+msg("Explicit alpha-diversity input directory: ", ALPHA_DIR)
 msg("Environmental metadata: ", METADATA_CSV)
 msg("Environmental predictors: ", length(ENV_VARIABLES))
 msg("Output: ", OUT_DIR)
 
-for (required_file in c(ALPHA_POINTER, METADATA_CSV)) {
-  if (!file.exists(required_file)) {
-    stop_with("Required file not found: ", required_file)
-  }
-}
-
-# =============================================================================
-# 2. Import the frozen Figure 2a cohort
-# =============================================================================
-
-ALPHA_DIR <- trimws(readLines(ALPHA_POINTER, n = 1L, warn = FALSE))
-
 if (!nzchar(ALPHA_DIR) || !dir.exists(ALPHA_DIR)) {
-  stop_with("Invalid Figure 2a output directory: ", ALPHA_DIR)
+  stop_with("Invalid explicit alpha-diversity input directory: ", ALPHA_DIR)
 }
+
+if (!file.exists(METADATA_CSV)) {
+  stop_with("Required metadata file not found: ", METADATA_CSV)
+}
+
+# =============================================================================
+# 2. Import the Figure 2a sample cohort
+# =============================================================================
 
 ALPHA_CSV <- file.path(
   ALPHA_DIR,
@@ -204,6 +171,8 @@ if (nrow(alpha) != EXPECTED_ALPHA_N) {
     " rows; expected ", EXPECTED_ALPHA_N, "."
   )
 }
+
+if (!setequal(alpha$run_accession, EXPECTED_ACCESSIONS)) stop_with("Alpha table does not match the sample manifest.")
 
 if (anyNA(alpha$run_accession) || anyDuplicated(alpha$run_accession)) {
   stop_with("Figure 2a run_accession values are missing or duplicated.")
@@ -483,12 +452,12 @@ MODEL_INPUT_CSV <- file.path(
 write.csv(datos, MODEL_INPUT_CSV, row.names = FALSE)
 
 msg("Complete cases for all 14 predictors: n = ", nrow(datos_complete))
-msg("Retained after original 4-SD response rule: n = ", nrow(datos))
+msg("Retained after 4-SD response rule: n = ", nrow(datos))
 msg("Locality levels: ", nlevels(datos$Locality))
 msg("Response retained: y_log = log1p(Shannon entropy)")
 
 # =============================================================================
-# 5. Fit one stable full-variable mean GAM
+# 5. Fit the full-variable Gaussian mean GAM
 # =============================================================================
 
 environmental_smooths <- sprintf(
@@ -919,15 +888,15 @@ top4_summary <- effect_ranking %>%
   pull(text)
 
 run_summary <- c(
-  "Figure 2b stage A — full environmental GAM and effect ranking",
+  "Shannon diversity environmental GAM",
   paste0("Timestamp: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
   paste0("Figure 2a source: ", ALPHA_CSV),
   paste0("Metadata source: ", METADATA_CSV),
-  "Canonical join key: run_accession",
+  "Join key: run_accession",
   paste0("Inherited Figure 2a samples: ", nrow(alpha)),
   paste0("Complete cases for all 14 predictors: ", nrow(datos_complete)),
   paste0(
-    "Samples excluded by original 4-SD response rule: ",
+    "Samples excluded by 4-SD response rule: ",
     sum(datos_complete$response_outlier_4sd)
   ),
   paste0("Analysis samples: ", nrow(datos)),
@@ -970,3 +939,4 @@ writeLines(run_summary, file.path(OUT_DIR, "17A_run_summary.txt"))
 writeLines(OUT_DIR, LATEST_POINTER)
 
 msg("Completed successfully: ", OUT_DIR)
+

@@ -1,19 +1,12 @@
 #!/usr/bin/env Rscript
 # -*- coding: utf-8 -*-
 
-# Figure 2a — Taxonomic Hill diversity (q = 1) across marine realms
+# Taxonomic Hill diversity across marine realms
 #
-# Main decisions
-#   1. Metadata_2026_copia.csv is the primary metadata source.
-#   2. run_accession is the only join key.
-#   3. Missing metadata are resolved only through an audited phyloseq fallback.
-#   4. Only the 10 prespecified Guadeloupe accessions are retained.
-#   5. Filtering precedes rarefaction and Hill-number calculation.
-#   6. Realms are ordered west-to-east using median longitude of unique sites.
-#   7. Global inference uses Kruskal-Wallis.
-#   8. Post hoc inference uses Dunn tests with Holm correction.
-#   9. The figure shows compact-letter groups; nonsignificant brackets are not
-#      drawn. Locality-level medians are exported as a sensitivity analysis.
+# Uses an explicit sample-accession manifest and metadata joined by run_accession.
+# Standardizes profiles to a common read count, calculates Hill q0/q1/q2,
+# and plots metagenome-level q1 distributions. These realm comparisons are
+# descriptive; primary coordinate-site inference is implemented in script 03E.
 
 options(stringsAsFactors = FALSE, scipen = 999)
 
@@ -49,28 +42,49 @@ format_p <- function(p, prefix = "P") {
   paste0(prefix, " = ", formatC(p, format = "f", digits = 3))
 }
 
+read_accession_file <- function(path, label) {
+  if (!file.exists(path)) {
+    stop_with(label, " file not found: ", path)
+  }
+
+  values <- normalize_text(readLines(path, warn = FALSE))
+  values <- values[!is.na(values) & !grepl("^#", values)]
+
+  if (length(values) == 0L) {
+    stop_with(label, " file contains no accessions: ", path)
+  }
+
+  if (anyDuplicated(values)) {
+    stop_with(label, " file contains duplicated accessions: ", path)
+  }
+
+  values
+}
+
+read_integer_env <- function(name, default = NA_integer_) {
+  value <- Sys.getenv(name, unset = "")
+  if (!nzchar(value)) return(default)
+  parsed <- suppressWarnings(as.integer(value))
+  if (length(parsed) != 1L || is.na(parsed)) {
+    stop_with("Environment variable ", name, " is not an integer: ", value)
+  }
+  parsed
+}
+
 # ==============================================================================
 # 1. Configuration
 # ==============================================================================
 
-BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = "/home/fjbalvino/Biogeografia_2026")
-
-INPUT_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = "/data/Magenta/phyloseq_MAGENTA.rds")
-
-METADATA_CSV <- Sys.getenv(
-  "MAGENTA_METADATA_CSV",
-  unset = "/data/Magenta/data/metadata/Metadata_2026_environmental_reproduced.csv"
-)
-
+BASE_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
+OUTPUT_ROOT <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(BASE_DIR, "results"))
+INPUT_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_405", unset = file.path(BASE_DIR, "data", "taxonomic_counts.rds"))
+METADATA_CSV <- Sys.getenv("MAGENTA_METADATA_CSV", unset = file.path(BASE_DIR, "data", "environmental_metadata.csv"))
+SAMPLE_MANIFEST <- Sys.getenv("ALPHA_SAMPLE_MANIFEST", unset = file.path(BASE_DIR, "config", "samples", "taxonomic_diversity_accessions.txt"))
+ANALYSIS_ACCESSIONS <- read_accession_file(SAMPLE_MANIFEST, "Taxonomic diversity sample manifest")
+EXPECTED_ANALYSIS_N <- length(ANALYSIS_ACCESSIONS)
 SEED_RAREFACTION <- 42L
 SEED_POINTS <- 3030L
 ALPHA <- 0.05
-
-GUADELOUPE_KEEP <- c(
-  "SRR18718172", "SRR18725089", "SRR18714529", "SRR18713744",
-  "SRR18715623", "SRR18718174", "SRR18718176", "SRR18714294",
-  "SRR18716460", "SRR18713683"
-)
 
 EXPECTED_REALMS <- c(
   "Central Indo-Pacific",
@@ -100,18 +114,14 @@ REALM_COLORS <- c(
 )
 
 run_stamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUT_DIR <- file.path(
-  BASE_DIR,
-  "resultados",
-  paste0("04_ALPHA_DIVERSITY_HILL_SET18_PANEL_A_", run_stamp)
-)
-
+OUT_DIR <- Sys.getenv("ALPHA_OUTPUT_DIR", unset = file.path(OUTPUT_ROOT, paste0("TAXONOMIC_ALPHA_", run_stamp)))
 dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
-
-msg("Starting Figure 2a workflow with Guadeloupe Set #18")
+OUT_DIR <- normalizePath(OUT_DIR, mustWork = TRUE)
+msg("Starting taxonomic Hill diversity analysis")
 msg("Phyloseq: ", INPUT_RDS)
-msg("Metadata:  ", METADATA_CSV)
-msg("Output:    ", OUT_DIR)
+msg("Metadata: ", METADATA_CSV)
+msg("Sample manifest: ", SAMPLE_MANIFEST)
+msg("Output: ", OUT_DIR)
 
 if (!file.exists(INPUT_RDS)) {
   stop_with("Phyloseq RDS not found: ", INPUT_RDS)
@@ -203,7 +213,7 @@ metadata <- metadata_raw %>%
   distinct(run_accession, .keep_all = TRUE)
 
 # ==============================================================================
-# 3. Resolve metadata against phyloseq and filter Guadeloupe
+# 3. Resolve metadata against phyloseq and select the analysis samples
 # ==============================================================================
 
 ps <- readRDS(INPUT_RDS)
@@ -211,6 +221,7 @@ ps <- readRDS(INPUT_RDS)
 if (!inherits(ps, "phyloseq")) {
   stop_with("INPUT_RDS is not a phyloseq object.")
 }
+
 
 ps_metadata <- as(sample_data(ps), "data.frame")
 ps_metadata$.ps_sample_id <- rownames(ps_metadata)
@@ -341,94 +352,24 @@ if (nrow(unresolved_samples) > 0L) {
   )
 }
 
-missing_keep_metadata <- setdiff(GUADELOUPE_KEEP, metadata$run_accession)
-missing_keep_phyloseq <- setdiff(GUADELOUPE_KEEP, sample_map$run_accession)
-
-if (length(missing_keep_metadata) > 0L) {
-  stop_with(
-    "Requested Guadeloupe accessions absent from Metadata_2026_copia.csv: ",
-    paste(missing_keep_metadata, collapse = ", ")
-  )
+missing_accessions <- setdiff(ANALYSIS_ACCESSIONS, sample_map$run_accession)
+if (length(missing_accessions)) {
+  stop_with("Manifest accessions absent from phyloseq: ", paste(missing_accessions, collapse = ", "))
 }
-
-if (length(missing_keep_phyloseq) > 0L) {
-  stop_with(
-    "Requested Guadeloupe accessions absent from phyloseq: ",
-    paste(missing_keep_phyloseq, collapse = ", ")
-  )
-}
-
-country_key <- tolower(coalesce(sample_map$Country, ""))
-locality_key <- tolower(coalesce(sample_map$Locality, ""))
-
-sample_map$is_guadeloupe <-
-  country_key == "guadeloupe" | locality_key == "guadeloupe"
-
-wrong_guadeloupe_label <- sample_map %>%
-  filter(run_accession %in% GUADELOUPE_KEEP, !is_guadeloupe)
-
-if (nrow(wrong_guadeloupe_label) > 0L) {
-  stop_with(
-    "At least one requested accession is not identified as Guadeloupe in ",
-    "Country or Locality."
-  )
-}
-
-sample_map <- sample_map %>%
-  mutate(
-    keep_sample = !is_guadeloupe | run_accession %in% GUADELOUPE_KEEP,
-    filter_status = case_when(
-      !is_guadeloupe ~ "retained_non_Guadeloupe",
-      run_accession %in% GUADELOUPE_KEEP ~
-        "retained_Guadeloupe_prespecified",
-      TRUE ~ "excluded_Guadeloupe"
-    )
-  )
-
-write.csv(
-  sample_map %>%
-    filter(is_guadeloupe) %>%
-    arrange(desc(keep_sample), run_accession),
-  file.path(OUT_DIR, "04a_Guadeloupe_filter_audit.csv"),
-  row.names = FALSE
+sample_map <- sample_map %>% mutate(
+  keep_sample = run_accession %in% ANALYSIS_ACCESSIONS,
+  filter_status = ifelse(keep_sample, "included_analysis_manifest", "not_in_analysis_manifest")
 )
-
+write.csv(sample_map %>% select(.ps_sample_id, run_accession, Country, Locality, REALM, keep_sample, filter_status),
+          file.path(OUT_DIR, "04a_sample_selection_manifest.csv"), row.names = FALSE)
 n_before <- nsamples(ps)
-n_guadeloupe_before <- sum(sample_map$is_guadeloupe)
-n_guadeloupe_retained <- sum(
-  sample_map$is_guadeloupe & sample_map$keep_sample
-)
-expected_after <- n_before - n_guadeloupe_before + n_guadeloupe_retained
-
-if (n_guadeloupe_retained != length(GUADELOUPE_KEEP)) {
-  stop_with(
-    "The final Guadeloupe subset contains ", n_guadeloupe_retained,
-    " samples instead of ", length(GUADELOUPE_KEEP), "."
-  )
-}
-
 keep_sample_names <- sample_map$.ps_sample_id[sample_map$keep_sample]
-
-ps_filtered <- prune_samples(
-  sample_names(ps) %in% keep_sample_names,
-  ps
-)
+# Pruning preserves the source matrix order used for the published calculations.
+ps_filtered <- prune_samples(sample_names(ps) %in% keep_sample_names, ps)
 ps_filtered <- prune_taxa(taxa_sums(ps_filtered) > 0, ps_filtered)
-
 n_after <- nsamples(ps_filtered)
-
-if (n_after != expected_after) {
-  stop_with(
-    "Unexpected post-filter sample count: observed ", n_after,
-    "; expected ", expected_after, "."
-  )
-}
-
-msg(
-  "Guadeloupe filter: ", n_guadeloupe_before, " -> ",
-  n_guadeloupe_retained, " samples; total dataset: ",
-  n_before, " -> ", n_after, " samples"
-)
+if (n_after != EXPECTED_ANALYSIS_N) stop_with("Selected sample count does not match the accession manifest.")
+msg("Analysis samples: ", n_after, " of ", n_before, " supplied profiles")
 
 # ==============================================================================
 # 4. Rarefy after filtering and calculate Hill numbers
@@ -571,11 +512,22 @@ write.csv(
 
 kw_test <- kruskal.test(q1 ~ REALM, data = plot_df)
 
+# Rank-based epsilon-squared effect size for the Kruskal-Wallis comparison:
+# epsilon^2_H = (H - k + 1) / (n - k). It is exported explicitly because the
+# manuscript audit found that an earlier text mentioned epsilon-squared without
+# a traceable table.
+kw_epsilon_squared <- (
+  unname(kw_test$statistic) - nlevels(plot_df$REALM) + 1
+) / (
+  nrow(plot_df) - nlevels(plot_df$REALM)
+)
+
 kw_table <- data.frame(
   method = unname(kw_test$method),
   statistic = unname(kw_test$statistic),
   df = unname(kw_test$parameter),
   p_value = kw_test$p.value,
+  epsilon_squared_H = kw_epsilon_squared,
   n_samples = nrow(plot_df),
   n_realms = nlevels(plot_df$REALM),
   stringsAsFactors = FALSE
@@ -762,36 +714,8 @@ realm_descriptives <- realm_descriptives %>%
   ) %>%
   arrange(REALM)
 
-# Locality-level sensitivity: one median q=1 value per unique sampling site.
-locality_medians <- plot_df %>%
-  mutate(
-    site_key = paste(
-      coalesce(Locality, "unknown_locality"),
-      ifelse(is.finite(lat), round(lat, 6), "missing_lat"),
-      ifelse(is.finite(lon), round(lon, 6), "missing_lon"),
-      sep = "|"
-    )
-  ) %>%
-  group_by(REALM, site_key) %>%
-  summarise(
-    Locality = first(Locality),
-    lat = first(lat),
-    lon = first(lon),
-    n_samples = n(),
-    median_q1 = median(q1),
-    .groups = "drop"
-  )
-
-kw_locality <- kruskal.test(median_q1 ~ REALM, data = locality_medians)
-
-kw_locality_table <- data.frame(
-  method = "Kruskal-Wallis on coordinate-defined sampling-site median Hill q=1",
-  statistic = unname(kw_locality$statistic),
-  df = unname(kw_locality$parameter),
-  p_value = kw_locality$p.value,
-  n_unique_sites = nrow(locality_medians),
-  stringsAsFactors = FALSE
-)
+# Coordinate-site inference is calculated by 03E using valid geographic
+# coordinates only, with a minimum of five sites per realm.
 
 # ==============================================================================
 # 7. Raincloud plot
@@ -1066,68 +990,29 @@ write.csv(
 )
 
 write.csv(
-  locality_medians,
-  file.path(OUT_DIR, "04a_sampling_site_median_q1_sensitivity.csv"),
-  row.names = FALSE
-)
-
-write.csv(
-  kw_locality_table,
-  file.path(OUT_DIR, "04a_Kruskal_Wallis_sampling_site_sensitivity.csv"),
-  row.names = FALSE
-)
-
-write.csv(
   library_sizes_before,
   file.path(OUT_DIR, "04a_library_sizes_before_rarefaction.csv"),
   row.names = FALSE
 )
 
 summary_lines <- c(
-  "Figure 2a — Hill q=1 across marine realms",
+  "Taxonomic Hill diversity across marine realms",
   paste0("Timestamp: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
   paste0("Phyloseq object: ", INPUT_RDS),
   paste0("Metadata file: ", METADATA_CSV),
-  "Canonical join key: run_accession",
-  paste0("Samples before Guadeloupe filter: ", n_before),
-  paste0("Guadeloupe samples before filter: ", n_guadeloupe_before),
-  paste0("Guadeloupe samples retained: ", n_guadeloupe_retained),
-  paste0("Samples after Guadeloupe filter: ", n_after),
-  paste0("Taxa after zero-sum pruning: ", ntaxa(ps_filtered)),
-  paste0("Rarefaction depth: ", format(min_depth, big.mark = ",")),
-  paste0(
-    "Realm order west-to-east: ",
-    paste(REALM_CODES[REALM_LEVELS], collapse = " -> ")
-  ),
-  paste0("Sample-level Kruskal-Wallis P: ", kw_test$p.value),
-  paste0("Significant Dunn-Holm contrasts: ", sum(dunn_results$significant_005)),
-  paste0("Coordinate-defined sampling-site sensitivity P: ", kw_locality$p.value),
+  paste0("Sample manifest: ", SAMPLE_MANIFEST),
+  "Join key: run_accession",
+  paste0("Supplied samples: ", n_before),
+  paste0("Analysis samples: ", n_after),
+  paste0("Nonzero taxonomic features: ", ntaxa(ps_filtered)),
+  paste0("Standardized read depth: ", min_depth),
+  "Input counts may already be standardized; supplied library sizes are exported.",
+  "Metagenome-level tests describe the plotted distributions; use 03E for primary site-level inference.",
+  paste0("Metagenome-level Kruskal-Wallis P: ", kw_test$p.value),
   paste0("Output directory: ", OUT_DIR)
 )
-
-writeLines(
-  summary_lines,
-  file.path(OUT_DIR, "04a_run_summary.txt")
-)
-
-writeLines(
-  OUT_DIR,
-  file.path(
-    BASE_DIR,
-    "resultados",
-    "LATEST_04_ALPHA_DIVERSITY_HILL_SET18_PANEL_A.txt"
-  )
-)
-
-msg("Realm order west-to-east:")
-print(realm_longitude_order)
-msg("Realm counts after filtering:")
-print(realm_counts)
-msg("Rarefaction depth: ", min_depth)
-msg("Kruskal-Wallis P: ", format(kw_test$p.value, scientific = TRUE))
-msg("Significant Dunn-Holm contrasts: ", sum(dunn_results$significant_005))
-msg(
-  "Coordinate-defined sampling-site sensitivity P: ",
-  format(kw_locality$p.value, scientific = TRUE)
-)
+writeLines(summary_lines, file.path(OUT_DIR, "04a_run_summary.txt"))
+capture.output(sessionInfo(), file = file.path(OUT_DIR, "sessionInfo.txt"))
+dir.create(OUTPUT_ROOT, recursive = TRUE, showWarnings = FALSE)
+writeLines(OUT_DIR, file.path(OUTPUT_ROOT, "LATEST_TAXONOMIC_ALPHA.txt"))
 msg("Completed successfully: ", OUT_DIR)
