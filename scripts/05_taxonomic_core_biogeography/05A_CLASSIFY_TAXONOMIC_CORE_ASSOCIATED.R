@@ -79,8 +79,13 @@ PROJECT_DIR <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
 BASE_DIR <- PROJECT_DIR
 RESULTS_DIR <- Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(PROJECT_DIR, "results"))
 
-# Taxonomic count object for the 401-metagenome core-analysis cohort.
-PS_RDS <- Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds"))
+# Taxonomic count object for the core-analysis sample manifest.
+PS_RDS <- Sys.getenv("MAGENTA_CORE_PHYLOSEQ", unset = Sys.getenv("MAGENTA_PHYLOSEQ_401", unset = file.path(PROJECT_DIR, "data", "taxonomic_core_counts.rds")))
+SAMPLE_MANIFEST <- Sys.getenv("CORE_SAMPLE_MANIFEST", unset = file.path(PROJECT_DIR, "config", "samples", "taxonomic_core_accessions.txt"))
+if (!file.exists(SAMPLE_MANIFEST)) stopf("Core sample manifest not found: %s", SAMPLE_MANIFEST)
+EXPECTED_ACCESSIONS <- trimws(readLines(SAMPLE_MANIFEST, warn = FALSE))
+EXPECTED_ACCESSIONS <- EXPECTED_ACCESSIONS[nzchar(EXPECTED_ACCESSIONS) & !startsWith(EXPECTED_ACCESSIONS, "#")]
+if (!length(EXPECTED_ACCESSIONS) || anyDuplicated(EXPECTED_ACCESSIONS)) stopf("Core sample manifest must contain unique nonempty identifiers.")
 
 # Sample metadata; run_accession is the unique sample key.
 METADATA_CSV <- Sys.getenv(
@@ -108,7 +113,7 @@ MIN_GLOBAL_LOCALITIES <- 5L
 MIN_REALM_LOCALITIES  <- 3L
 CORE_REALM_PREVALENCE <- 1.0
 CORE_MEAN_REL_ABUND   <- 0.0001  # Proportion: 0.01%, not 0.0001%.
-EXPECTED_N_SAMPLES    <- 401L
+EXPECTED_N_SAMPLES    <- length(EXPECTED_ACCESSIONS)
 
 CORE_COLOUR    <- "#B2182B"
 NONCORE_COLOUR <- "#737373"
@@ -188,6 +193,7 @@ meta_audit <- meta_needed %>%
     n_rows = n(),
     n_locality = n_distinct(Locality[!is.na(Locality) & nzchar(Locality)]),
     n_realm = n_distinct(REALM[!is.na(REALM) & nzchar(REALM)]),
+    n_ecological_classes = n_distinct(EcologicalClass[!is.na(EcologicalClass) & nzchar(EcologicalClass)]),
     localities = collapse_unique(Locality),
     realms = collapse_unique(REALM),
     ecological_classes = collapse_unique(EcologicalClass),
@@ -196,7 +202,7 @@ meta_audit <- meta_needed %>%
 
 write_tsv(meta_audit, file.path(TABLE_DIR, "09A_metadata_run_accession_audit.tsv"))
 
-bad_meta <- meta_audit %>% filter(n_locality > 1L | n_realm > 1L)
+bad_meta <- meta_audit %>% filter(n_locality > 1L | n_realm > 1L | n_ecological_classes > 1L)
 if (nrow(bad_meta) > 0L) {
   stopf(
     paste0("Hay %d run_accession con Locality o REALM incompatibles. ",
@@ -226,6 +232,10 @@ if (length(missing_meta) > 0L) {
 meta_aligned <- meta_one[idx, , drop = FALSE]
 if (!identical(meta_aligned$run_accession, sample_names(ps0))) {
   stopf("Fallo la alineacion por run_accession.")
+}
+
+if (!setequal(meta_aligned$run_accession, EXPECTED_ACCESSIONS)) {
+  stopf("The input samples do not match the core sample manifest: %s", SAMPLE_MANIFEST)
 }
 
 if (nrow(meta_aligned) != EXPECTED_N_SAMPLES) {
@@ -601,14 +611,34 @@ figure_summary <- taxon_classification %>%
     metric = recode(
       metric_code,
       richness = "Taxonomic richness",
-      classified_reads = "Classified reads"
+      classified_reads = "Reads in eligible taxa"
     ),
     component = factor(component, levels = c("Core-associated", "Non-core")),
     metric = factor(
       metric,
-      levels = c("Classified reads", "Taxonomic richness")
+      levels = c("Reads in eligible taxa", "Taxonomic richness")
     )
   )
+
+# Preserve the distinction between eligible non-core features and features
+# excluded by the global read/occupancy criteria.
+all_detected_classification <- tibble(
+  taxon_id = colnames(otu_locality),
+  total_reads = as.numeric(global_reads[colnames(otu_locality)]),
+  n_localities = as.integer(n_localities[colnames(otu_locality)]),
+  passes_global_eligibility = colnames(otu_locality) %in% eligible_ids,
+  core_associated = colnames(otu_locality) %in% eligible_ids[is_core],
+  classification = case_when(
+    core_associated ~ "Eligible core-associated",
+    passes_global_eligibility ~ "Eligible non-core",
+    TRUE ~ "Excluded by global eligibility criteria"
+  )
+)
+write_tsv(all_detected_classification, file.path(TABLE_DIR, "09A_all_detected_feature_status.tsv"))
+write_tsv(tibble(input = c("taxonomic_counts", "metadata", "sample_manifest"),
+                 path = c(PS_RDS, METADATA_CSV, SAMPLE_MANIFEST),
+                 md5 = unname(tools::md5sum(c(PS_RDS, METADATA_CSV, SAMPLE_MANIFEST)))),
+          file.path(TABLE_DIR, "09A_input_checksums.tsv"))
 
 # Sensibilidad: core elegible frente a todo lo restante en la tabla detectada.
 all_detected_summary <- tibble(

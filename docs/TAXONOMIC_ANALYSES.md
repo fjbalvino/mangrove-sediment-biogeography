@@ -1,5 +1,14 @@
 # Taxonomic diversity, composition and community assembly
 
+**Metadata revision:** The corrected core analysis uses 343 profiles with
+assigned marine realms from the selected 345-profile cohort. Its inputs,
+checksums, denominators and runner are documented in
+[the corrected core guide](CORE_METADATA_REVISION.md), which supersedes the older core
+cohort instructions below. The earlier Figure 2 and iCAMP results require
+recalculation with the corrected metadata. Older input checksums and sample
+counts below document the previous analysis version.
+
+
 This guide describes the analyses supporting the manuscript section
 “Taxonomic diversity is structured by environmental and spatial gradients”,
 Figure 2, the taxonomic core results in Figure 3, and their supplements.
@@ -290,3 +299,4 @@ and distance objects, parameter logs and R session information with each
 reported run. Rounded manuscript values should be traced to those exports.
 The identifier manifests specify exact sample membership; they should not be
 reconstructed from geographic labels or the results of significance tests.
+

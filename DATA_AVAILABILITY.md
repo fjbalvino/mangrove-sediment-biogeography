@@ -1,5 +1,14 @@
 # Data availability
 
+**Metadata revision:** The corrected core analysis uses 343 profiles with
+assigned marine realms from the selected 345-profile cohort. Its inputs,
+checksums, denominators and runner are documented in
+[the corrected core guide](docs/CORE_METADATA_REVISION.md), which supersedes the older core
+cohort instructions below. The earlier Figure 2 and iCAMP results require
+recalculation with the corrected metadata. Older input checksums and sample
+counts below document the previous analysis version.
+
+
 ## Raw sequencing data
 
 Public source studies are accessed through their NCBI SRA/ENA run accessions.
@@ -97,4 +106,5 @@ metadata will be released under the license stated in the Zenodo record.
 Third-party sequence records, occurrence data and environmental products retain
 their original attribution and licensing requirements; their sources and
 versions must remain explicit in the archived provenance table.
+
 

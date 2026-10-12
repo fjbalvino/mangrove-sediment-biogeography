@@ -272,6 +272,21 @@ if (any(
   stopf("El resumen filtrado excede el resumen no filtrado.")
 }
 
+# Global percentages use a common all-detected denominator. Realm-specific
+# percentages above use that realm's observed richness and reads.
+global_restriction_summary <- tibble(
+  scope = c("All detected features", "Features passing global eligibility"),
+  n_features = c(nrow(taxon_audit), sum(taxon_audit$passes_primary_taxon_filter)),
+  n_realm_restricted = c(sum(taxon_audit$realm_restricted_unfiltered),
+                        sum(taxon_audit$realm_restricted_after_primary_filter)),
+  total_reads = c(sum(taxon_audit$total_reads),
+                  sum(taxon_audit$total_reads[taxon_audit$passes_primary_taxon_filter])),
+  realm_restricted_reads = c(sum(taxon_audit$total_reads[taxon_audit$realm_restricted_unfiltered]),
+                            sum(taxon_audit$total_reads[taxon_audit$realm_restricted_after_primary_filter]))
+) %>% mutate(restricted_richness_percent = 100 * n_realm_restricted / n_features,
+             restricted_read_percent = 100 * realm_restricted_reads / total_reads)
+write_tsv(global_restriction_summary, file.path(TABLE_DIR, "09B_global_restriction_summary.tsv"))
+
 # ============================== 5) Grafico ===================================
 
 plot_df <- realm_summary %>%

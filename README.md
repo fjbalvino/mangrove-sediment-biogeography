@@ -12,6 +12,15 @@ The code supports taxonomic profiling, environmental covariates, alpha and beta
 diversity, taxonomic biogeography, iCAMP community-assembly inference,
 functional biogeography and KO co-variation network analyses.
 
+## Corrected metadata and core analysis
+
+The corrected taxonomic core analysis uses 343 profiles with assigned marine
+realms from the selected 345-profile cohort. Follow
+[the corrected core guide](docs/CORE_METADATA_REVISION.md) for the matching
+inputs, manifest, runner and read denominators. The earlier Figure 2 analyses
+and iCAMP estimates require recalculation with the corrected metadata; their
+previous sample counts and numerical results are not validated by this branch.
+
 ## Workflow
 
 | Block | Objective | Scripts |
@@ -100,3 +109,4 @@ Citation metadata are provided in [`CITATION.cff`](CITATION.cff). Code is
 released under the [MIT License](LICENSE). Data licenses and third-party terms
 are documented per archived object in the Zenodo record; source datasets retain
 their original licenses and accession-level attribution.
+
