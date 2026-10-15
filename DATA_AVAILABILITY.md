@@ -1,7 +1,7 @@
 # Data availability
 
 The Figure 6 rerun uses the same 191-profile functional cohort documented
-below. The companion `MAGENTA_red_191_20261015.zip` additionally supplies the
+below. The companion `MAGENTA_functional_network.zip` additionally supplies the
 frozen KO dictionary, restricted historical KEGG MODULE mapping, corrected
 network scripts, final tables and execution logs. Input checksums are in
 `config/network_input_checksums.json`; mapping limitations and reproduction

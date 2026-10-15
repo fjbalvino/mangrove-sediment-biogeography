@@ -84,15 +84,30 @@ the main figure remains a separate stage. Plotting additionally needs
 ggplot2 and patchwork; compressed input reading uses R.utils. Python requires
 the packages in `config/functional_requirements.txt`.
 
-For the standalone companion package on Landa:
+For the standalone companion package, extract or refresh the same package directory:
 
 ```bash
-cd /home/fjbalvino/Biogeografia_2026
-unzip -n MAGENTA_red_191_20261015.zip
+unzip -o MAGENTA_functional_network.zip
 bash MAGENTA_red_191/ejecutar_en_landa.sh
 ```
 
-The wrapper uses `/data/env/dastool/bin/Rscript` unless `RSCRIPT` is explicitly
-set, and writes a new timestamped run beneath
-`/home/fjbalvino/Biogeografia_2026/MAGENTA_red_191/reanalisis/`. Figures are
-generated locally by the scripts and are not uploaded by this workflow.
+The wrapper uses `Rscript` unless `RSCRIPT` is explicitly set and writes its
+execution record beneath `MAGENTA_red_191/reanalisis/`. Timestamped computation
+directories preserve individual run provenance; they are not parallel versions
+of the published manuscript or scripts. Figures are generated locally and are
+not uploaded by this workflow.
+
+## Editorial delivery
+
+Keep the main results and Figure 6 caption in `FUNCTIONAL_NETWORK_RESULTS.md`.
+Keep complete statistical tables, sensitivity analyses and supplementary
+methods in `FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md`. Their Word
+deliverables are `Functional_network_results.docx` and
+`Functional_network_supplementary_results.docx`. Replace the current files when
+correcting them; use version history instead of dated or numbered copies.
+
+Retain the accepted narrative structure and the reviewer's text where the
+current evidence supports it. Keep decisive limitations in the main text and
+full inferential detail in the supplement. Editorial changes must not silently
+change cohorts, definitions or analytical results. Update the same companion
+archive when the documents change. The current delivery contains no images.

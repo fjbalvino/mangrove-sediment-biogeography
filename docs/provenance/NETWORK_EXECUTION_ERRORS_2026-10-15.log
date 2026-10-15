@@ -16,3 +16,10 @@ Follow-up: zlib headers were present; data.table configure disabled compression 
 2026-10-15 04:10 UTC: annotation tables were computed, but one optional Cairo PDF export was zero bytes (173_network_by_functional_category.pdf); the explicit figure check stopped stage E. PNG and other exports were nonzero. Added --make_figures to stage E and selected 0 for auxiliary annotation plots; downstream statistics consume the completed tables. No images were uploaded.
 2026-10-15 04:13 UTC: methodological audit found that 10F reclustered each connected component separately, while 10C optimized the full candidate graph. Updated 10F to recluster the full candidate graph consistently for thresholds, algorithms and edge perturbations. Community-detection errors now stop explicitly instead of being silently replaced by singleton clusters. Rerunning validation; earlier componentwise stability results are superseded.
 2026-10-15T04:20:25.057608+00:00 FINAL: all stages B,A,C,D,E,F,G completed; 26 independent output checks passed. Full-graph sensitivity supersedes the componentwise run. Main plot source data and labels were checked; no PNG/PDF/TIFF is included in the repository update or delivery archive. Repository validation and four functional statistical tests passed.
+
+2026-10-15 UTC | Editorial delivery correction
+Observed delivery error: the previous TXT combined the main result, figure caption and supplement, contrary to the requested separate documents.
+Correction: replace the main delivery with Functional_network_results.docx and provide Functional_network_supplementary_results.docx separately; split the canonical repository text in place.
+Recovered source: the complete editorial literature review saved as Estadistica/Markdown pegado.md on 2026-10-13. The linked chat itself could not be read in full; no claim of full chat recovery is made.
+Versioning: replace the existing companion archive identity under the stable name MAGENTA_functional_network.zip; do not create another dated archive.
+Scope: editorial separation and reporting only. The validated numerical outputs of the 191-profile rerun are unchanged. No image files are published.
