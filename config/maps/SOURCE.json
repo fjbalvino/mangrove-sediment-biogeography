@@ -1,0 +1,10 @@
+{
+  "dataset": "Natural Earth Admin 0 Countries 1:110m",
+  "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson",
+  "documentation": "https://www.naturalearthdata.com/downloads/110m-cultural-vectors/110m-admin-0-countries/",
+  "license": "public domain",
+  "retrieved": "2026-10-15",
+  "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+  "n_features": 177,
+  "role": "Basemap geometry only; not used to assign sample realms or coordinates"
+}

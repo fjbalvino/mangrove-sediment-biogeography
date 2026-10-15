@@ -98,6 +98,26 @@ list is not yet independently verified: `metagenome_totals.tsv` and
 `process_matrix.py` are required to establish the proposed 2,000-protein cutoff.
 The current Results therefore do not assert that cutoff.
 
+## Functional prevalence and regional differentiation (Figure 5)
+
+The companion `MAGENTA_Figure_5.zip` provides the original KO matrix and corrected
+functional metadata above, plus `KO_persistence_classes.tsv` (the current atlas
+classification used for independent reconciliation) and `KO_function_dictionary.tsv`
+(a frozen KO description dictionary). Their hashes and sizes are in
+`config/functional_regional_input_checksums.json`. The same 191-accession manifest
+governs selection; no taxonomic object is required. The package also includes full
+per-selection results, RDS and NPZ analysis objects, assembled and separate figure panels,
+two Word reports with images, logs, exact commands for landalab and the proposed
+repository changes. Inputs and full analysis objects remain outside GitHub.
+
+Classification uses 191 profiles and 26 named realm-localities. Balanced comparisons
+use 188 eligible profiles in Central Indo-Pacific, Tropical Atlantic and Western
+Indo-Pacific; Tropical Eastern Pacific has only one locality and remains descriptive.
+The primary and alternative selections contain 18 and 12 profiles, respectively.
+The selected-process catalog, its inclusion audit, process-score effect sizes, locality-turnover summaries and base-R verification are included. The map retains all 26 locality centroids but displays only the 23 with coordinates (184 profiles); the three unlocated units remain in the global reference.
+Do not substitute the 184-profile coordinate-complete functional subset or the
+341-profile taxonomic and 400-profile iCAMP cohorts for these units.
+
 ## Raw sequences and archive
 
 Public source studies are identified by NCBI SRA/ENA run, BioSample and BioProject

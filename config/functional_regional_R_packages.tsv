@@ -1,0 +1,8 @@
+package	validated_version
+R	4.3.3
+vegan	2.7-6
+permute	0.9-10
+cluster	2.1.8.3
+data.table	1.17.8
+ggplot2	3.4.4
+patchwork	1.2.0

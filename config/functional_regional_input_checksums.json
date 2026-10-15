@@ -1,0 +1,33 @@
+{
+  "KO_function_dictionary.tsv": {
+    "sha256": "b212b6b6123ab1c5d66bc4a8038d3a964afb50db5edb7e4d969b2fd2bae98ae8",
+    "size_bytes": 2348419
+  },
+  "KO_persistence_classes.tsv": {
+    "sha256": "768b72feee8c77a6af3b3a2ec1814c2704d23d34f3394d44ec4dc9032f0e84e6",
+    "size_bytes": 890685
+  },
+  "functional_KO_counts_original.tsv.gz": {
+    "sha256": "359bee6a6586a3739f8ceb781a67007b857d518d59d011bde99b2f928e70f431",
+    "size_bytes": 1645658
+  },
+  "metadata_functional.csv": {
+    "sha256": "12960f46fce1c99eb1a57bfb11051d6f32c8e9c5d15d799a78e641de81646ddc",
+    "size_bytes": 279135
+  },
+  "canonical_accessions": {
+    "path": "config/samples/functional_accessions.txt",
+    "sha256": "5a473fd5109d08f9381334482d27b828dd8c01b35898ef5caea7a1b3f962feaf",
+    "n_profiles": 191
+  },
+  "process_catalog": {
+    "path": "config/functional_process_catalog.tsv",
+    "sha256": "4789d1d6db26cec08b628ffca5d908d26348b2a78ade6825e629ca1f85b1d44d",
+    "size_bytes": 3725
+  },
+  "basemap": {
+    "path": "config/maps/ne_110m_admin_0_countries.geojson",
+    "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+    "size_bytes": 838726
+  }
+}

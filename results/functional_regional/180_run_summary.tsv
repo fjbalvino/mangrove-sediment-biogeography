@@ -1,0 +1,38 @@
+item	value
+status	PASS
+script_version	180.3.0
+standalone_inputs_only	TRUE
+metadata_input	/workspace/scratch/b9323129262a/figure5_revision/inputs/metadata_functional.csv
+ko_matrix_input	/workspace/scratch/b9323129262a/figure5_revision/inputs/functional_KO_counts_original.tsv.gz
+n_KO_matrix_samples_before_exclusion	194
+intentional_excluded_run_accessions	SRR31095011 | SRR31095534 | SRR31095535
+n_intentional_exclusions	3
+n_functional_samples	191
+n_KOs	17482
+n_realm_locality_units	26
+qualifying_realms_for_core	Central Indo-Pacific | Tropical Atlantic | Western Indo-Pacific
+min_realm_localities	3
+min_mean_relative_abundance_realm	1e-04
+prevalent_threshold	0.95
+cloud_threshold	0.15
+pseudocount	1
+primary_design	3 realms x 6 localities
+alternative_design	3 realms x 4 localities
+balanced_iterations	499
+balanced_diagnostic_iterations	499
+balanced_permutations	499
+sensitivity_iterations	99
+equal_KO_iterations	99
+full_test_permutations	999
+full_PERMDISP_minimum_realm_n	2
+PERMDISP_permutation_parallelism	1
+equal_KO_target	1128
+primary_realms	Central Indo-Pacific | Tropical Atlantic | Western Indo-Pacific
+alternative_realms	Central Indo-Pacific | Tropical Atlantic | Western Indo-Pacific
+minimum_occurrence_sensitivity	1 | 10
+prevalence_threshold_sensitivity	0.90:0.10,0.95:0.15,0.975:0.20
+Guadeloupe_samples_retained	23
+seed	20261015
+Guadeloupe_downsampling_applied	NO
+strict_class_counts_against_current_191_sample_reference	TRUE
+panel_d_delta_definition	Shell R2 minus max(Prevalent R2, Cloud R2), paired within each balanced iteration

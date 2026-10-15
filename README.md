@@ -19,6 +19,7 @@ The metadata and count object are joined by `run_accession`.
 | Core-associated taxa | 339 profiles from 47 realm-locality units |
 | Functional atlas and taxonomic–functional coupling | 191 matched profiles; 17,482 KOs |
 | Functional geographic analyses | 184 profiles from 57 sites; primary realm tests use 56 sites |
+| Functional prevalence and persistence intersections (Figure 5) | 191 profiles for classification; 188 eligible profiles in three realms for balanced named-locality comparisons |
 | iCAMP, separate completed analysis | 400 profiles, 1,892 genera, 24,692 within-realm pairs; 999 randomizations |
 
 The eight profiles from Mud Island represent one sampling site. The Temperate
@@ -73,6 +74,17 @@ class definitions, PERMANOVA and dispersion tests, count-adjusted analyses,
 taxonomic–functional coupling, and geographic sampling sensitivity.
 [Current results and Figure 4 caption](docs/FUNCTIONAL_RESULTS.md) use the same outputs.
 Compact numerical results are in `results/functional/`.
+
+The [Figure 5 workflow](docs/FUNCTIONAL_REGIONAL_ANALYSES.md) uses the corrected
+191-profile cohort for prevalence and persistence, with 499 balanced selections
+under three-realm × six-locality and three-realm × four-locality designs.
+[Results and the Figure 5 caption](docs/FUNCTIONAL_REGIONAL_RESULTS.md) and
+[separate supplementary results](docs/FUNCTIONAL_REGIONAL_SUPPLEMENTARY_RESULTS.md)
+replace the historical claim of a consistent Shell advantage, which the corrected
+analysis does not reproduce. Run `workflow/06_RUN_FUNCTIONAL_REGIONAL.sh` with
+the four inputs in the companion `MAGENTA_Figure_5.zip`; compact verified summaries
+are in `results/functional_regional/`. This analysis uses named localities, not the
+coordinate-defined sites used for the atlas geographic comparisons. The restored main figure includes six selected Shell process scores (33 KOs) and locality-centroid turnover for all 26 named localities, with 23 shown on the map. Process effects use the exact balanced selections and are independently checked in R; annotation-total sensitivity is retained.
 
 The [functional network workflow](docs/FUNCTIONAL_NETWORK_ANALYSES.md) now uses
 the same 191-profile cohort. [Figure 6 results and caption](docs/FUNCTIONAL_NETWORK_RESULTS.md)

@@ -1,0 +1,19 @@
+process_id	process_label	realm	balanced_mean_process_z
+sulfur_respiration	Anaerobic sulfur respiration	Central Indo-Pacific	0.1568851438282162
+sulfur_respiration	Anaerobic sulfur respiration	Tropical Atlantic	-0.4377470629436682
+sulfur_respiration	Anaerobic sulfur respiration	Western Indo-Pacific	-0.45582933111330803
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	Central Indo-Pacific	0.25163739801364154
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	Tropical Atlantic	-0.4218521046267828
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	Western Indo-Pacific	-0.49884617468092984
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	Central Indo-Pacific	0.28407191024163136
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	Tropical Atlantic	-0.56837597232562
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	Western Indo-Pacific	-0.1841472802415474
+thiocyanate_degradation	Thiocyanate degradation	Central Indo-Pacific	-0.31798936085470814
+thiocyanate_degradation	Thiocyanate degradation	Tropical Atlantic	0.7011834673784159
+thiocyanate_degradation	Thiocyanate degradation	Western Indo-Pacific	-0.3189518587569533
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	Central Indo-Pacific	0.15752828398127444
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	Tropical Atlantic	-0.42482249514397685
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	Western Indo-Pacific	-0.01379305412086072
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	Central Indo-Pacific	0.013958970107577962
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	Tropical Atlantic	-0.5066334814229254
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	Western Indo-Pacific	0.4557085948699679

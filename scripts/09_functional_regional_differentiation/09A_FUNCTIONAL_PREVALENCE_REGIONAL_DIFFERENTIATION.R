@@ -18,8 +18,8 @@ suppressPackageStartupMessages({
 #   2) global prevalence: Prevalent / Shell / Cloud
 #
 # It starts from every metagenome in the assembly-quality-filtered KO matrix
-# and excludes only the explicitly declared run accessions that are absent from
-# the complete metadata table. No geographic downsampling is applied.
+# and validates the retained accession manifest against corrected metadata.
+# Three air controls are excluded explicitly. No cohort downsampling is applied.
 #
 # The final four panels are:
 #   a) cross-tabulation of persistence and prevalence definitions;
@@ -83,13 +83,13 @@ PREVALENT_THRESHOLD <- as_num(get_arg("--prevalent_threshold", "0.95"), "prevale
 CLOUD_THRESHOLD <- as_num(get_arg("--cloud_threshold", "0.15"), "cloud_threshold")
 PSEUDOCOUNT <- as_num(get_arg("--pseudocount", "1"), "pseudocount")
 
-PRIMARY_N_REALMS <- as_int(get_arg("--primary_n_realms", "4"), "primary_n_realms")
-PRIMARY_N_LOCALITIES <- as_int(get_arg("--primary_n_localities", "4"), "primary_n_localities")
+PRIMARY_N_REALMS <- as_int(get_arg("--primary_n_realms", "3"), "primary_n_realms")
+PRIMARY_N_LOCALITIES <- as_int(get_arg("--primary_n_localities", "6"), "primary_n_localities")
 SECONDARY_N_REALMS <- as_int(get_arg("--secondary_n_realms", "3"), "secondary_n_realms")
-SECONDARY_N_LOCALITIES <- as_int(get_arg("--secondary_n_localities", "6"), "secondary_n_localities")
+SECONDARY_N_LOCALITIES <- as_int(get_arg("--secondary_n_localities", "4"), "secondary_n_localities")
 PRIMARY_REALMS_ARG <- get_arg(
   "--primary_realms",
-  "Central Indo-Pacific,Indo-Pacific,Tropical Atlantic,Western Indo-Pacific"
+  "Central Indo-Pacific,Tropical Atlantic,Western Indo-Pacific"
 )
 SECONDARY_REALMS_ARG <- get_arg(
   "--secondary_realms",
@@ -116,8 +116,8 @@ EXPECTED_SAMPLES <- as_int(get_arg("--expected_samples", "191"), "expected_sampl
 EXPECTED_KOS <- as_int(get_arg("--expected_kos", "17482"), "expected_kos")
 EXPECTED_ABSOLUTE_KOS <- as_int(get_arg("--expected_absolute_kos", "24"), "expected_absolute_kos")
 EXPECTED_NEAR_GLOBAL_KOS <- as_int(get_arg("--expected_near_global_kos", "1104"), "expected_near_global_kos")
-EXPECTED_REALM_CORE_KOS <- as_int(get_arg("--expected_realm_core_kos", "1628"), "expected_realm_core_kos")
-EXPECTED_PERIPHERY_KOS <- as_int(get_arg("--expected_periphery_kos", "14726"), "expected_periphery_kos")
+EXPECTED_REALM_CORE_KOS <- as_int(get_arg("--expected_realm_core_kos", "1415"), "expected_realm_core_kos")
+EXPECTED_PERIPHERY_KOS <- as_int(get_arg("--expected_periphery_kos", "14939"), "expected_periphery_kos")
 STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"), "strict_expected")
 STRICT_CLASS_COUNTS <- as_flag(get_arg("--strict_class_counts", "1"), "strict_class_counts")
 STRICT_METADATA <- as_flag(get_arg("--strict_metadata", "1"), "strict_metadata")
@@ -144,16 +144,20 @@ HISTORICAL_CLASS_COUNTS_194 <- c(
   "Periphery" = 14754L
 )
 
-SCRIPT_VERSION <- "180.2.3"
+SCRIPT_VERSION <- "180.3.0"
+ACCESSIONS_FILE <- get_arg("--accessions", NA_character_)
+ATLAS_CLASSES_FILE <- get_arg("--atlas_classes", NA_character_)
+MAKE_FIGURES <- as_flag(get_arg("--make_figures", "0"), "make_figures")
+RUN_FULL_SAMPLE_TESTS <- as_flag(get_arg("--full_sample_tests", "0"), "full_sample_tests")
 SCRIPT_BASENAME <- "180_FUNCTIONAL_REGIONAL_IDENTITY_STANDALONE"
 STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
-OUTDIR <- file.path(RESULTS_DIR, paste0(SCRIPT_BASENAME, "_", STAMP))
+OUTDIR <- get_arg("--outdir", file.path(RESULTS_DIR, paste0(SCRIPT_BASENAME, "_", STAMP)))
 TABLES_DIR <- file.path(OUTDIR, "tables")
 PLOTS_DIR <- file.path(OUTDIR, "plots")
 RDS_DIR <- file.path(OUTDIR, "rds")
 LOGS_DIR <- file.path(OUTDIR, "logs")
 
-for (d in c(TABLES_DIR, PLOTS_DIR, RDS_DIR, LOGS_DIR)) {
+for (d in c(RESULTS_DIR, TABLES_DIR, PLOTS_DIR, RDS_DIR, LOGS_DIR)) {
   dir.create(d, recursive = TRUE, showWarnings = FALSE)
 }
 
@@ -244,7 +248,7 @@ sha256_file <- function(path) {
 build_input_manifest <- function(paths) {
   info <- file.info(paths)
   data.frame(
-    role = c("metadata", "KO_count_matrix", "analysis_script")[seq_along(paths)],
+    role = c("metadata", "KO_count_matrix", "analysis_script", "accession_manifest", "atlas_classification_reference")[seq_along(paths)],
     file = normalizePath(paths, winslash = "/", mustWork = TRUE),
     size_bytes = info$size,
     modified_utc = format(info$mtime, "%Y-%m-%d %H:%M:%S UTC", tz = "UTC"),
@@ -347,7 +351,7 @@ collapse_metadata <- function(df, run_col, fields) {
 
 numeric_matrix_from_df <- function(df) {
   m <- as.matrix(data.frame(lapply(df, function(x) suppressWarnings(as.numeric(as.character(x)))), check.names = FALSE))
-  m[is.na(m)] <- 0
+  if (any(!is.finite(m)) || any(m < 0)) stop("KO counts must be finite and non-negative; no missing-value imputation is allowed.")
   storage.mode(m) <- "numeric"
   m
 }
@@ -392,7 +396,8 @@ load_ko_matrix <- function(path, metadata_ids) {
     }
     mat <- numeric_matrix_from_df(raw[, candidate_cols, drop = FALSE])
     colnames(mat) <- matched
-    mat <- rowsum(mat, group = ko, reorder = FALSE)
+    if (anyDuplicated(ko)) stop("Duplicated KO identifiers in the count matrix.")
+    rownames(mat) <- ko
     matching <- data.frame(
       matrix_id = matrix_ids,
       run_accession = matched_all,
@@ -554,6 +559,19 @@ sample_balanced_ids <- function(meta, realms, n_localities) {
   selected
 }
 
+.DIST_CACHE <- list()
+cached_distance <- function(x) {
+  # Every CLR matrix derives from the same immutable input cohort and pseudocount.
+  hit <- which(vapply(.DIST_CACHE, function(z) {
+    identical(z$features, colnames(x)) && identical(z$samples, rownames(x))
+  }, logical(1)))
+  if (length(hit)) return(.DIST_CACHE[[hit[1L]]]$distance)
+  d <- as.matrix(stats::dist(x))
+  .DIST_CACHE[[length(.DIST_CACHE)+1L]] <<- list(
+    features=colnames(x), samples=rownames(x), distance=d)
+  d
+}
+
 run_balanced_groups <- function(
     clr_list,
     meta,
@@ -571,29 +589,48 @@ run_balanced_groups <- function(
   } else {
     integer()
   }
+  distance_cache <- lapply(clr_list, cached_distance)
   out <- vector("list", n_iter * length(clr_list))
   k <- 0L
   for (i in seq_len(n_iter)) {
+    if (i==1L || i %% 50L == 0L) log_msg(design_label, ": ", i, "/", n_iter)
     set.seed(seed + i)
     ids <- sample_balanced_ids(meta, realms, n_localities)
     if (is.null(ids)) next
     m <- meta[match(ids, meta$run_accession), , drop = FALSE]
     for (j in seq_along(clr_list)) {
       nm <- names(clr_list)[j]
-      x <- clr_list[[nm]][ids, , drop = FALSE]
-      st <- permanova_stats_fast(x, m$realm)
-      permanova_P <- permdisp_F <- permdisp_P <- NA_real_
+      n_features <- ncol(clr_list[[nm]])
+      d <- stats::as.dist(distance_cache[[nm]][ids, ids, drop=FALSE])
+      d2 <- as.matrix(d)^2
+      gram <- -0.5 * (d2 - rowMeans(d2) - rep(colMeans(d2), each=nrow(d2)) + mean(d2))
+      design_base <- cbind(1, m$log10_KO_total)
+      design_full <- model.matrix(~ log10_KO_total + realm, m)
+      q0 <- qr.Q(qr(design_base)); q1 <- qr.Q(qr(design_full))
+      ss_total <- sum(diag(gram))
+      ss0 <- sum(diag(crossprod(q0, gram %*% q0)))
+      ss1 <- sum(diag(crossprod(q1, gram %*% q1)))
+      unique_R2 <- max(0, (ss1-ss0)/ss_total)
+      partial_R2 <- max(0, (ss1-ss0)/(ss_total-ss0))
+      q_realm <- qr.Q(qr(model.matrix(~ realm, m)))
+      ss_realm <- sum(diag(crossprod(q_realm, gram %*% q_realm)))
+      df_realm <- length(unique(m$realm))-1L
+      df_residual <- nrow(m)-length(unique(m$realm))
+      st <- c(R2=ss_realm/ss_total, F=(ss_realm/df_realm)/((ss_total-ss_realm)/df_residual))
+      permanova_P <- adjusted_P <- permdisp_F <- permdisp_P <- NA_real_
       diagnostic_error <- NA_character_
       if (i %in% diagnostic_schedule) {
         diagnostic <- tryCatch({
-          d <- stats::dist(x)
-          dat <- data.frame(realm = droplevels(factor(m$realm)))
+          dat <- data.frame(realm = droplevels(factor(m$realm)), log10_KO_total = m$log10_KO_total)
           set.seed(seed + 1000000L + i * 100L + j)
           ad <- vegan::adonis2(d ~ realm, data = dat, permutations = nperm)
+          set.seed(seed + 1000000L + i * 100L + j)
+          adj <- vegan::adonis2(d ~ log10_KO_total + realm, data=dat, permutations=nperm, by="margin")
+          if (abs(adj$R2[which(rownames(adj)=="realm")]-unique_R2)>1e-8) stop("Adjusted R2 independent check failed.")
           bd <- vegan::betadisper(
             d,
             dat$realm,
-            type = "centroid",
+            type = "median",
             bias.adjust = TRUE
           )
           if (any(!is.finite(bd$distances))) {
@@ -607,6 +644,7 @@ run_balanced_groups <- function(
           )
           c(
             permanova_P = ad$`Pr(>F)`[1L],
+            adjusted_P = adj$`Pr(>F)`[which(rownames(adj)=="realm")],
             permdisp_F = pd$tab[1L, "F"],
             permdisp_P = pd$tab[1L, "Pr(>F)"]
           )
@@ -615,6 +653,7 @@ run_balanced_groups <- function(
           diagnostic_error <- conditionMessage(diagnostic)
         } else {
           permanova_P <- unname(diagnostic["permanova_P"])
+          adjusted_P <- unname(diagnostic["adjusted_P"])
           permdisp_F <- unname(diagnostic["permdisp_F"])
           permdisp_P <- unname(diagnostic["permdisp_P"])
         }
@@ -625,9 +664,12 @@ run_balanced_groups <- function(
         iteration = i,
         group = nm,
         n_samples = length(ids),
-        n_KOs = ncol(x),
+        n_KOs = n_features,
         R2 = unname(st["R2"]),
         F = unname(st["F"]),
+        adjusted_unique_R2 = unique_R2,
+        adjusted_partial_R2 = partial_R2,
+        adjusted_P = adjusted_P,
         diagnostic_iteration = i %in% diagnostic_schedule,
         permanova_P = permanova_P,
         permdisp_F = permdisp_F,
@@ -651,6 +693,7 @@ summarize_balanced_diagnostics <- function(x) {
     r2 <- z$R2[is.finite(z$R2)]
     p_ad <- z$permanova_P[is.finite(z$permanova_P)]
     p_bd <- z$permdisp_P[is.finite(z$permdisp_P)]
+    p_adj <- z$adjusted_P[is.finite(z$adjusted_P)]
     data.frame(
       design = z$design[1L],
       group = z$group[1L],
@@ -659,6 +702,11 @@ summarize_balanced_diagnostics <- function(x) {
       median_R2 = if (length(r2)) stats::median(r2) else NA_real_,
       q05_R2 = if (length(r2)) stats::quantile(r2, 0.05, names = FALSE) else NA_real_,
       q95_R2 = if (length(r2)) stats::quantile(r2, 0.95, names = FALSE) else NA_real_,
+      median_adjusted_unique_R2 = median(z$adjusted_unique_R2),
+      q05_adjusted_unique_R2 = quantile(z$adjusted_unique_R2, 0.05, names=FALSE),
+      q95_adjusted_unique_R2 = quantile(z$adjusted_unique_R2, 0.95, names=FALSE),
+      median_adjusted_partial_R2 = median(z$adjusted_partial_R2),
+      fraction_adjusted_P_le_0.05 = if(length(p_adj)) mean(p_adj<=0.05) else NA_real_,
       n_diagnostic_iterations = length(p_ad),
       fraction_PERMANOVA_P_le_0.05 = if (length(p_ad)) mean(p_ad <= 0.05) else NA_real_,
       fraction_PERMDISP_P_le_0.05 = if (length(p_bd)) mean(p_bd <= 0.05) else NA_real_,
@@ -751,7 +799,7 @@ full_permanova_permdisp <- function(
     bd <- vegan::betadisper(
       d_permdisp,
       realm_permdisp,
-      type = "centroid",
+      type = "median",
       bias.adjust = TRUE
     )
     if (any(!is.finite(bd$distances))) {
@@ -791,7 +839,7 @@ full_permanova_permdisp <- function(
 
 save_plot_pair <- function(plot, stem, width = 3.65, height = 3.25) {
   ggplot2::ggsave(file.path(PLOTS_DIR, paste0(stem, ".png")), plot, width = width, height = height, dpi = DPI, bg = "white")
-  ggplot2::ggsave(file.path(PLOTS_DIR, paste0(stem, ".pdf")), plot, width = width, height = height, device = grDevices::cairo_pdf, bg = "white")
+  ggplot2::ggsave(file.path(PLOTS_DIR, paste0(stem, ".pdf")), plot, width = width, height = height, device = grDevices::pdf, useDingbats = FALSE, encoding = "WinAnsi", bg = "white")
   ggplot2::ggsave(
     file.path(PLOTS_DIR, paste0(stem, ".tiff")),
     plot,
@@ -912,9 +960,14 @@ collapsed <- collapse_metadata(
   c(realm = realm_col, locality = locality_col, country = country_col, study_block = study_col)
 )
 meta <- collapsed$metadata
+if (is.na(ACCESSIONS_FILE) || !file.exists(ACCESSIONS_FILE)) stop("Supply --accessions with the canonical functional cohort manifest.")
+allowed_ids <- clean_chr(readLines(ACCESSIONS_FILE, warn = FALSE))
+if (anyNA(allowed_ids) || anyDuplicated(allowed_ids)) stop("Invalid accession manifest.")
+if (!all(allowed_ids %in% meta$run_accession)) stop("Canonical accessions missing from metadata.")
+meta <- meta[match(allowed_ids, meta$run_accession), , drop = FALSE]
 write_tsv(collapsed$audit, file.path(TABLES_DIR, "180_metadata_duplicate_audit.tsv"))
 if (nrow(collapsed$audit) > 0L) {
-  critical <- collapsed$audit$field %in% c("realm", "locality")
+  critical <- collapsed$audit$field %in% c("realm", "locality", "country", "study_block")
   if (any(critical)) stop("Discordant realm/locality values found for duplicated run_accession.")
   log_msg("WARNING: non-critical duplicate metadata conflicts were resolved using the first non-missing value.")
 }
@@ -1002,6 +1055,8 @@ if (any(missing_core_meta)) {
   meta <- meta[!missing_core_meta, , drop = FALSE]
 }
 
+if (!setequal(colnames(mat), allowed_ids)) stop("Matrix cohort differs from canonical accession manifest.")
+meta$log10_KO_total <- log10(sample_totals[meta$run_accession])
 meta$realm_locality <- paste(meta$realm, meta$locality, sep = " || ")
 rownames(meta) <- meta$run_accession
 mat <- mat[, meta$run_accession, drop = FALSE]
@@ -1116,6 +1171,11 @@ master$intersection_group <- ifelse(
 )
 master$intersection_group <- sub("^Periphery ", "Peripheral ", master$intersection_group)
 write_tsv(master, file.path(TABLES_DIR, "180_KO_master_classification.tsv"))
+if (is.na(ATLAS_CLASSES_FILE) || !file.exists(ATLAS_CLASSES_FILE)) stop("Supply --atlas_classes for independent classification reconciliation.")
+atlas <- read_table_auto(ATLAS_CLASSES_FILE)
+if (!all(c("KO", "class") %in% names(atlas)) || anyDuplicated(atlas$KO)) stop("Invalid atlas classification reference.")
+if (!setequal(master$KO, atlas$KO) || any(master$persistence_class != atlas$class[match(master$KO, atlas$KO)])) stop("Recomputed persistence classes disagree with the current functional atlas.")
+write_tsv(data.frame(check="All KO persistence labels match the functional atlas",n_KOs=nrow(master),pass=TRUE), file.path(TABLES_DIR,"180_atlas_classification_reconciliation.tsv"))
 
 class_validation <- data.frame(
   persistence_class = c("Absolute core", "Near-global", "Realm-core", "Periphery"),
@@ -1275,7 +1335,7 @@ intersection_primary <- run_balanced_groups(
   primary_realms,
   PRIMARY_N_LOCALITIES,
   N_ITER,
-  SEED + 10L,
+  SEED + 20L,
   paste0(PRIMARY_N_REALMS, " realms x ", PRIMARY_N_LOCALITIES, " localities"),
   diagnostic_iterations = N_DIAGNOSTIC_ITER,
   nperm = N_PERM_BALANCED
@@ -1351,13 +1411,13 @@ full_clr <- c(
   prevalence_clr,
   intersection_clr[setdiff(names(intersection_clr), names(prevalence_clr))]
 )
-full_tests <- full_permanova_permdisp(
+full_tests <- if (RUN_FULL_SAMPLE_TESTS) full_permanova_permdisp(
   full_clr,
   meta,
   N_PERM_FULL,
   SEED + 40L,
   min_permdisp_group_n = MIN_PERMDISP_GROUP_N
-)
+) else data.frame(analysis="Unbalanced sample-level inference omitted because it treats within-locality replication as independent.")
 write_tsv(full_tests, file.path(TABLES_DIR, "180_full_cohort_PERMANOVA_PERMDISP.tsv"))
 
 # -----------------------------------------------------------------------------
@@ -1368,6 +1428,11 @@ robust_raw <- list()
 delta_primary <- paired_shell_delta(prevalence_primary)
 delta_primary$analysis <- "Primary design"
 robust_raw[["primary"]] <- delta_primary
+adjusted_primary <- prevalence_primary
+adjusted_primary$R2 <- adjusted_primary$adjusted_unique_R2
+delta_adjusted <- paired_shell_delta(adjusted_primary)
+delta_adjusted$analysis <- "Adjusted for KO annotation total"
+robust_raw[["adjusted"]] <- delta_adjusted
 
 delta_secondary <- paired_shell_delta(prevalence_secondary)
 delta_secondary$analysis <- "Alternative design"
@@ -1457,7 +1522,8 @@ run_leaveout <- function(field, label, seed_offset) {
       stringsAsFactors = FALSE
     ))
   }
-  blocks <- sort(unique(meta[[field]][!is.na(meta[[field]])]))
+  active_meta <- meta[meta$realm %in% primary_realms, , drop=FALSE]
+  blocks <- sort(unique(active_meta[[field]][!is.na(active_meta[[field]])]))
   results <- list()
   raw_results <- list()
   skipped <- list()
@@ -1704,6 +1770,7 @@ pC <- ggplot2::ggplot(prevalence_balanced, ggplot2::aes(x = group, y = R2, fill 
 # Panel d: robustness of Shell vs the stronger of Prevalent and Cloud.
 robust_order <- c(
   "Primary design",
+  "Adjusted for KO annotation total",
   "Alternative design",
   "Equal-KO resampling",
   paste0("Detected in >= ", occurrence_thresholds[occurrence_thresholds > 1L], " samples"),
@@ -1722,6 +1789,7 @@ pD <- ggplot2::ggplot(robust_summary, ggplot2::aes(y = analysis, x = median)) +
   theme_pub(8.8) +
   ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
 
+if (MAKE_FIGURES) {
 save_plot_pair(pA, "Figure_5a_persistence_prevalence_crosswalk")
 save_plot_pair(pB, "Figure_5b_regional_signal_by_intersection")
 save_plot_pair(pC, "Figure_5c_balanced_resampling_prevalence")
@@ -1741,7 +1809,7 @@ ggplot2::ggsave(
   combined,
   width = 7.4,
   height = 6.6,
-  device = grDevices::cairo_pdf,
+  device = grDevices::pdf, useDingbats = FALSE, encoding = "WinAnsi",
   bg = "white"
 )
 ggplot2::ggsave(
@@ -1758,6 +1826,7 @@ ggplot2::ggsave(
 # -----------------------------------------------------------------------------
 # 6. Provenance
 # -----------------------------------------------------------------------------
+}
 summary_df <- data.frame(
   item = c(
     "status",
@@ -1842,7 +1911,7 @@ summary_df <- data.frame(
 write_tsv(summary_df, file.path(TABLES_DIR, "180_run_summary.tsv"))
 script_arg <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
 script_file <- if (length(script_arg)) sub("^--file=", "", script_arg[1L]) else NA_character_
-provenance_files <- unique(c(METADATA_FILE, KO_MATRIX_FILE, script_file))
+provenance_files <- unique(c(METADATA_FILE, KO_MATRIX_FILE, script_file, ACCESSIONS_FILE, ATLAS_CLASSES_FILE))
 provenance_files <- provenance_files[!is.na(provenance_files) & file.exists(provenance_files)]
 input_manifest <- build_input_manifest(provenance_files)
 write_tsv(input_manifest, file.path(TABLES_DIR, "180_input_integrity.tsv"))
@@ -1875,6 +1944,7 @@ saveRDS(
   file.path(RDS_DIR, "180_Figure_5_analysis_objects.rds")
 )
 capture.output(sessionInfo(), file = file.path(LOGS_DIR, "180_sessionInfo.txt"))
+if (nrow(diagnostic_errors)) stop("Balanced diagnostic errors occurred; see 180_balanced_diagnostic_errors.tsv.")
 
 log_msg("Panel a: ", file.path(PLOTS_DIR, "Figure_5a_persistence_prevalence_crosswalk.png"))
 log_msg("Panel b: ", file.path(PLOTS_DIR, "Figure_5b_regional_signal_by_intersection.png"))

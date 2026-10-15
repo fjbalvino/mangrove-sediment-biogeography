@@ -1,0 +1,6 @@
+{
+  "catalog_source": "158_FIG5D_SHELL_KO_REALM_SIGNATURES.R builtin_process_catalog",
+  "source_script_sha256": "c6d53a76273bb5daec4358cd45965b5778ff08bdc18fb1cbf111389e9f56aa6a",
+  "n_original_KOs": 34,
+  "selection": "Original six groups retained; membership in the current Shell fraction is recomputed before scoring. No selection using new effect sizes."
+}

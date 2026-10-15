@@ -1,0 +1,35 @@
+process_id	process_label	KO	KO_role
+sulfur_respiration	Anaerobic sulfur respiration	K08352	thiosulfate/polysulfide reductase chain A
+sulfur_respiration	Anaerobic sulfur respiration	K08353	thiosulfate reductase electron-transfer protein
+sulfur_respiration	Anaerobic sulfur respiration	K08354	thiosulfate reductase cytochrome b subunit
+sulfur_respiration	Anaerobic sulfur respiration	K08357	tetrathionate reductase subunit A
+sulfur_respiration	Anaerobic sulfur respiration	K08358	tetrathionate reductase subunit B
+sulfur_respiration	Anaerobic sulfur respiration	K08359	tetrathionate reductase subunit C
+sulfur_respiration	Anaerobic sulfur respiration	K00394	adenylylsulfate reductase subunit A
+sulfur_respiration	Anaerobic sulfur respiration	K00395	adenylylsulfate reductase subunit B
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K03388	heterodisulfide reductase subunit A2
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K03389	heterodisulfide reductase subunit B2
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K03390	heterodisulfide reductase subunit C2
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K14126	F420-non-reducing hydrogenase large subunit
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K14127	F420-non-reducing hydrogenase iron-sulfur subunit
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K14128	F420-non-reducing hydrogenase small subunit
+methanogenic_hdr_transfer	Methanogenic/Hdr electron transfer	K00441	coenzyme F420 hydrogenase subunit beta
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	K00370	nitrate reductase alpha subunit
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	K00371	nitrate reductase beta subunit
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	K00374	nitrate reductase gamma subunit
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	K02574	NapH electron-transfer protein
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	K16950	anaerobic sulfite reductase subunit A
+nitrate_sulfite_respiration	Anaerobic nitrate and sulfite respiration	K16951	anaerobic sulfite reductase subunit B
+thiocyanate_degradation	Thiocyanate degradation	K20760	thiocyanate hydrolase subunit alpha
+thiocyanate_degradation	Thiocyanate degradation	K20761	thiocyanate hydrolase subunit beta
+thiocyanate_degradation	Thiocyanate degradation	K20762	thiocyanate hydrolase subunit gamma
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	K18427	4-hydroxyphenylacetate decarboxylase large subunit
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	K03863	vanillate monooxygenase ferredoxin subunit
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	K00483	4-hydroxyphenylacetate 3-monooxygenase
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	K04110	benzoate-CoA ligase
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	K05709	3-phenylpropionate/cinnamate dioxygenase beta subunit
+aromatic_phenolic_transformation	Aromatic and phenolic transformation	K05710	3-phenylpropionate/cinnamate dioxygenase ferredoxin
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	K07638	EnvZ osmolarity sensor histidine kinase
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	K07659	OmpR response regulator
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	K07646	KdpD potassium/osmotic sensor histidine kinase
+environmental_sensing_osmoregulation	Environmental sensing and osmoregulation	K07667	KdpE KDP-operon response regulator

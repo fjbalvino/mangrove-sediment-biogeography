@@ -1,0 +1,4 @@
+check	n_values	maximum_absolute_error	pass
+standardized_process_scores	1146	1.66533453693773e-15	TRUE
+all_balanced_process_R2_and_conditional_R2	11976	1.60982338570648e-15	TRUE
+all_locality_RMS_Aitchison_distances	26	2.22044604925031e-16	TRUE

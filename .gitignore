@@ -34,6 +34,8 @@ data/derived/
 cache/
 results/*
 !results/README.md
+!results/functional_regional/
+!results/functional_regional/**
 resultados/
 preflight.json
 
