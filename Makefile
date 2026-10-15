@@ -1,6 +1,6 @@
-.PHONY: validate python-check bash-check r-parse r-tests manifest
+.PHONY: validate python-check bash-check r-parse r-tests functional-tests manifest
 
-validate: python-check bash-check r-parse r-tests
+validate: python-check bash-check r-parse r-tests functional-tests
 	python tools/validate_repository.py
 
 python-check:
@@ -14,6 +14,9 @@ r-parse:
 
 r-tests:
 	Rscript tests/test_taxonomic_invariants.R
+
+functional-tests:
+	OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m unittest discover -s tests -p 'test_functional_*.py'
 
 manifest:
 	python tools/build_manifest.py

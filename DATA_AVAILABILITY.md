@@ -58,6 +58,39 @@ and SHA-256 `15761713cbfbe4edcf0600bb65afbea0f39cfe6a01a7b111a92aeeba59ffd3fd`.
 The original tree and fitted pairwise RDS are not included in the current archive.
 Do not substitute the 341-profile object when reporting these retained estimates.
 
+## Functional atlas inputs
+
+The compact companion package `Functional_analysis_package.zip` contains the
+three files below under `functional_analysis/inputs/`. Copy that directory to
+`data/functional/`, or set `FUNCTIONAL_INPUT_DIR` to its extracted location.
+The input files remain outside the code repository.
+
+| File | Contents |
+| --- | --- |
+| `functional_KO_counts_original.tsv.gz` | Source KO matrix: 17,508 KOs and 194 profiles, including three air controls |
+| `metadata_functional.csv` | Corrected realm, locality, site and study metadata for the 191 retained profiles |
+| `taxonomic_matched_counts.npz` | Paired taxonomic counts, identifiers and features; 18,145 reads per profile |
+
+The analysis selects the 191 accessions in
+`config/samples/functional_accessions.txt`; only the documented air controls
+may be omitted from the source KO matrix. The local sample identifier `TX1_3`
+is retained. Twenty-six KOs absent from all retained profiles are removed.
+The paired taxonomic matrix contains 17,906 nonzero features.
+
+SHA-256 checksums, filenames and byte sizes are recorded in
+`config/functional_input_checksums.json`. The decompressed source KO matrix has
+SHA-256 `57455728bd3d1e7b56a7d83471e8eed2e9f0b547a5e50331d314ef270f629de1`.
+Counts represent protein-cluster members assigned to KO terms; each listed KO
+receives the full protein count. They are not read-mapping abundances.
+
+The source protein matrix contained 258 profiles; its 64-entry exclusion list
+produced the 194-profile KO matrix. Of the 341 taxonomic profiles, 195 were in
+the protein matrix before sample filtering and four were on its exclusion list,
+leaving 191 matched profiles. The numeric rule used to construct that exclusion
+list is not yet independently verified: `metagenome_totals.tsv` and
+`process_matrix.py` are required to establish the proposed 2,000-protein cutoff.
+The current Results therefore do not assert that cutoff.
+
 ## Raw sequences and archive
 
 Public source studies are identified by NCBI SRA/ENA run, BioSample and BioProject

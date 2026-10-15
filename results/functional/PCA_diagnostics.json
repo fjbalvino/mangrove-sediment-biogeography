@@ -1,0 +1,15 @@
+{
+  "PC1_variance_percent": 62.23735348388122,
+  "PC2_variance_percent": 9.275453208479675,
+  "PC1_spearman_rho_KO_assignment_total": 0.9960164645907962,
+  "PC1_spearman_rho_KO_richness": 0.9483370906894241,
+  "top100_absolute_PC1_loading_percent_by_class": {
+    "Absolute core": 2.933346562053995,
+    "Near-global": 27.420800715326497,
+    "Realm-core": 64.32949944502414,
+    "Periphery": 5.316353277595369
+  },
+  "Hellinger_PC1_variance_percent": 26.158849986772704,
+  "Hellinger_PC2_variance_percent": 13.27751407923206,
+  "Hellinger_PC1_abs_rho_KO_assignment_total": 0.7495074400661339
+}

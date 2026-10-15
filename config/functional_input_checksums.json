@@ -1,0 +1,17 @@
+[
+  {
+    "file": "functional_KO_counts_original.tsv.gz",
+    "bytes": 1645658,
+    "sha256": "359bee6a6586a3739f8ceb781a67007b857d518d59d011bde99b2f928e70f431"
+  },
+  {
+    "file": "metadata_functional.csv",
+    "bytes": 279135,
+    "sha256": "12960f46fce1c99eb1a57bfb11051d6f32c8e9c5d15d799a78e641de81646ddc"
+  },
+  {
+    "file": "taxonomic_matched_counts.npz",
+    "bytes": 1829397,
+    "sha256": "a95414635e32d2af496329603f6b4efb0b029387970964361dddd42a284df4d8"
+  }
+]

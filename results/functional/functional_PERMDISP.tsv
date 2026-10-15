@@ -1,0 +1,5 @@
+comparison	n	df	residual_df	F	P	parametric_P	permutations	seed	center	small_sample_bias_adjustment
+Three replicated realms	56	2	53	0.1939320135754991	0.8376	0.8242957931910336	9999	20261213	spatial median	True
+Tropical Atlantic vs Central Indo-Pacific	45	1	43	0.0805312423370015	0.7932	0.7779407377335081	9999	20261214	spatial median	True
+Tropical Atlantic vs Western Indo-Pacific	34	1	32	0.09823866296502055	0.7714	0.7559875827986781	9999	20261215	spatial median	True
+Central Indo-Pacific vs Western Indo-Pacific	33	1	31	1.1193815310852593	0.2994	0.29822673040814013	9999	20261216	spatial median	True

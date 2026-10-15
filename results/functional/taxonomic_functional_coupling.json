@@ -1,0 +1,20 @@
+{
+  "metagenome_level": {
+    "n": 191,
+    "pairs": 18145,
+    "r": 0.6779898967130156,
+    "P": 0.0001,
+    "P_two_sided": 0.0001,
+    "permutations": 9999,
+    "seed": 20261413
+  },
+  "site_centroid_level": {
+    "n": 57,
+    "pairs": 1596,
+    "r": 0.48989679342428577,
+    "P": 0.0001,
+    "P_two_sided": 0.0001,
+    "permutations": 9999,
+    "seed": 20261414
+  }
+}

@@ -17,6 +17,8 @@ The metadata and count object are joined by `run_accession`.
 | Ordination and geographic distance decay | 323 profiles from 122 sampling sites |
 | Compositional variation partitioning | 99 sites with complete environmental covariates |
 | Core-associated taxa | 339 profiles from 47 realm-locality units |
+| Functional atlas and taxonomic–functional coupling | 191 matched profiles; 17,482 KOs |
+| Functional geographic analyses | 184 profiles from 57 sites; primary realm tests use 56 sites |
 | iCAMP, separate completed analysis | 400 profiles, 1,892 genera, 24,692 within-realm pairs; 999 randomizations |
 
 The eight profiles from Mud Island represent one sampling site. The Temperate
@@ -51,6 +53,27 @@ separate from the 341-profile reference.
 models, sample handling and interpretation. Current numerical summaries are in
 `results/`; full tables, fitted objects and figures accompany the data archive.
 
+## Reproduce the functional atlas
+
+The functional atlas uses the 191 taxonomic profiles represented in the filtered
+protein-annotation matrix. Counts quantify assembled proteins assigned to KOs.
+The primary TA–CIP comparison uses one mean CLR profile per sampling site.
+
+Install `config/functional_requirements.txt` and place the three compact inputs
+listed in [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md) under `data/functional/`.
+Preview or run the workflow:
+
+```bash
+bash workflow/04_RUN_FUNCTIONAL_ANALYSES.sh --config config/functional.env.example
+bash workflow/04_RUN_FUNCTIONAL_ANALYSES.sh --config config/functional.env.example --execute
+```
+
+[Functional methods and interpretation](docs/FUNCTIONAL_ANALYSES.md) describe the
+class definitions, PERMANOVA and dispersion tests, count-adjusted analyses,
+taxonomic–functional coupling, and geographic sampling sensitivity.
+[Current results and Figure 4 caption](docs/FUNCTIONAL_RESULTS.md) use the same outputs.
+Compact numerical results are in `results/functional/`.
+
 ## Workflow blocks
 
 | Block | Objective |
@@ -62,7 +85,8 @@ models, sample handling and interpretation. Current numerical summaries are in
 | 05 | Core membership, realm restriction, core composition and Figure 3 |
 | 06 | Independent genus-level iCAMP analysis and sampling-structure assessment |
 | 07 | Assembly-to-KO annotation workflow; pending completion |
-| 08–10 | Functional biogeography and KO co-variation networks |
+| 08 | Functional atlas, regional tests, taxonomic–functional coupling and Figure 4 |
+| 09–10 | Separate regional functional and KO co-variation network analyses |
 
 Functional analyses retain their separately documented cohorts. Repository checks
 validate syntax, file integrity and statistical implementation invariants. They
