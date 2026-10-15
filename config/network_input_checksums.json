@@ -1,0 +1,22 @@
+{
+  "137_KO_function_dictionary_used.tsv": {
+    "sha256": "b212b6b6123ab1c5d66bc4a8038d3a964afb50db5edb7e4d969b2fd2bae98ae8",
+    "bytes": 2348419
+  },
+  "144_KO_to_KEGG_MODULE_long.tsv": {
+    "sha256": "cc044c4a5c3a654e8928703db14fbf87a11e68beee8f2bdfc3d85eb67885bd00",
+    "bytes": 16034
+  },
+  "functional_KO_counts_original.tsv.gz": {
+    "sha256": "359bee6a6586a3739f8ceb781a67007b857d518d59d011bde99b2f928e70f431",
+    "bytes": 1645658
+  },
+  "metadata_functional.csv": {
+    "sha256": "12960f46fce1c99eb1a57bfb11051d6f32c8e9c5d15d799a78e641de81646ddc",
+    "bytes": 279135
+  },
+  "KO_persistence_classes.tsv": {
+    "sha256": "768b72feee8c77a6af3b3a2ec1814c2704d23d34f3394d44ec4dc9032f0e84e6",
+    "bytes": 890685
+  }
+}

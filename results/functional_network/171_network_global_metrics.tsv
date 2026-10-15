@@ -1,0 +1,16 @@
+metric	value
+n_candidate_KOs	1500
+n_connected_KOs	327
+n_isolated_candidate_KOs	1173
+n_consensus_edges	1060
+edge_density_all_candidate_KOs	0.000942850789415166
+edge_density_connected_graph	0.0198870565280201
+n_components_among_connected_KOs	33
+largest_connected_component_size	254
+n_louvain_modules_all	40
+n_major_modules_ge_min_size	5
+n_KOs_in_major_modules	238
+modularity_louvain	0.531549650646877
+core_class_assortativity	0.245163910289598
+mean_degree_connected	6.48318042813456
+mean_strength_abs_connected	6.34645748582463

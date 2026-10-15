@@ -561,7 +561,10 @@ build_module_eigengenes <- function(Y, nodes, min_module_size) {
 
 main <- function() {
   validate_run(RUN156, "RUN156")
-  validate_run(RUN153, "RUN153")
+  # Explicit class tables supersede discovery through a historical run folder.
+  if (is.na(KO_CORE_CLASS_PATH) || !file.exists(KO_CORE_CLASS_PATH)) {
+    stop("No existe la tabla de clases funcionales: ", KO_CORE_CLASS_PATH)
+  }
 
   if (
     N_BOOT < 1L || MAX_KOS < 2L || MAX_N_PER_STRATUM < 1L ||
@@ -692,7 +695,8 @@ main <- function() {
     n_functional_samples <- n_functional_samples[is.finite(n_functional_samples)]
     if (length(n_functional_samples) != 1L ||
         n_functional_samples != EXPECTED_N_SAMPLES) {
-      stop("La clasificacion 153 no corresponde a 194 metagenomas.")
+      stop("La clasificacion 153 no corresponde a ", EXPECTED_N_SAMPLES,
+           " metagenomas.")
     }
   }
   if (any(!core_classes$functional_core_class %in% CLASS_LEVELS)) {
@@ -790,7 +794,7 @@ main <- function() {
   ]
 
   class_counts <- rbind(
-    class_count_table(core_classes, "all_detected_KOs_17508"),
+    class_count_table(core_classes, paste0("all_detected_KOs_", nrow(core_classes))),
     class_count_table(universe_annotation, "network_universe_5000"),
     class_count_table(candidate_annotation, "selected_candidates_1500")
   )

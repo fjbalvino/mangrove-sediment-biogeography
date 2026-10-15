@@ -1,0 +1,16 @@
+analysis	functional_core_class	observed_selected_proportion	null_expected_proportion	null_sd	difference	fold_enrichment	p_upper	p_two_sided	q_BY	selected_n	background_n	n_blocks	covariates
+Connected versus 1,500 candidates	absolute_global_core	0.036697247706422	0.0259795078281711	0.00545681059297596	0.0107177398782509	1.41254575812908	0.0422	0.0844	0.399583333333333	327	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Connected versus 1,500 candidates	near_global	0.730886850152905	0.731412949256518	0.0109962470461383	-0.000526099103612787	0.999280708528671	0.57	1	1	327	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Connected versus 1,500 candidates	realm_core_only	0.204892966360856	0.224074172632692	0.010690328633207	-0.0191812062718354	0.914397963895387	0.976	0.0956	1	327	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Connected versus 1,500 candidates	multi_realm_non_core	0.0275229357798165	0.0185333702826192	0.0049297077596848	0.0089895654971973	1.48504726931157	0.07	0.14	0.399583333333333	327	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Connected versus 1,500 candidates	realm_specific	0	0	0	0	1	1	1	1	327	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Major modules versus connected nodes	absolute_global_core	0.0378151260504202	0.0415847875457444	0.00472149110838762	-0.00376966149532428	0.909350009671743	0.8954	0.7044	1	238	327	7	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs
+Major modules versus connected nodes	near_global	0.827731092436975	0.81967065682044	0.0103880852177813	0.00806043561653502	1.00983374901996	0.2726	0.5452	1	238	327	7	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs
+Major modules versus connected nodes	realm_core_only	0.134453781512605	0.127565008800079	0.00988270555511417	0.00688877271252569	1.05400205148186	0.314	0.628	1	238	327	7	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs
+Major modules versus connected nodes	multi_realm_non_core	0	0.0111795468337365	0.00509272121690526	-0.0111795468337365	8.9448983968873e-07	1	0.0568	1	238	327	7	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs
+Major modules versus connected nodes	realm_specific	0	0	0	0	1	1	1	1	238	327	7	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs
+Major modules versus 1,500 candidates	absolute_global_core	0.0378151260504202	0.0299707000223574	0.00736689805809921	0.00784442602806275	1.26173640938807	0.2194	0.4388	1	238	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Major modules versus 1,500 candidates	near_global	0.827731092436975	0.818620867030549	0.0150292308393879	0.00911022540642581	1.0111287479492	0.3162	0.6324	1	238	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Major modules versus 1,500 candidates	realm_core_only	0.134453781512605	0.149618999430138	0.0135613226073643	-0.0151652179175331	0.898641101987684	0.898	0.3416	1	238	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Major modules versus 1,500 candidates	multi_realm_non_core	0	0.00178943351695549	0.00254957683289429	-0.00178943351695549	5.58832950313722e-06	1	1	1	238	1500	39	prevalence_prop;log10_total_count;CLR_variance
+Major modules versus 1,500 candidates	realm_specific	0	0	0	0	1	1	1	1	238	1500	39	prevalence_prop;log10_total_count;CLR_variance

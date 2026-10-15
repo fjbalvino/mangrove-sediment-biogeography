@@ -43,7 +43,7 @@ as_flag <- function(x) {
   tolower(trimws(as.character(x))) %in% c("1", "true", "t", "yes", "y")
 }
 
-BASE <- "/home/fjbalvino/Biogeografia_2026"
+BASE <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
 RESULTS_DIR <- file.path(BASE, "resultados")
 
 read_latest_by_number <- function(number) {
@@ -150,10 +150,10 @@ safe_numeric <- function(x) suppressWarnings(as.numeric(as.character(x)))
 normalize_module <- function(x) {
   raw <- toupper(trimws(as.character(x)))
   out <- rep(NA_character_, length(raw))
-  hit <- grepl("M0?[1-6]", raw)
+  hit <- grepl("M[0-9]+", raw)
   out[hit] <- sprintf(
     "M%02d",
-    as.integer(sub(".*M0?([1-6]).*", "\\1", raw[hit]))
+    as.integer(sub(".*M([0-9]+).*", "\\1", raw[hit]))
   )
   out
 }
@@ -231,11 +231,12 @@ MODULE_PALETTE <- c(
   "M01" = "#0072B2", "M02" = "#D55E00", "M03" = "#009E73",
   "M04" = "#CC79A7", "M05" = "#E69F00", "M06" = "#56B4E9"
 )
-TIER_ORDER <- c("Absolute global core", "Near-global", "Realm-core")
+TIER_ORDER <- c("Absolute global core", "Near-global", "Realm-core", "Peripheral")
 TIER_SHAPES <- c(
   "Absolute global core" = 22,
   "Near-global" = 21,
-  "Realm-core" = 24
+  "Realm-core" = 24,
+  "Peripheral" = 23
 )
 
 main <- function() {
@@ -350,6 +351,17 @@ main <- function() {
     module = normalize_module(get(module_col)),
     tier = normalize_tier(get(tier_col))
   )], by = "KO")
+  if (anyNA(nodes) || any(!is.finite(nodes$x)) || any(!is.finite(nodes$y))) {
+    stop("Hay nodos sin coordenadas, módulo o clase de persistencia.")
+  }
+  MAJOR_MODULES <- sort(unique(nodes$module))
+  if (length(MAJOR_MODULES) > length(MODULE_PALETTE)) {
+    MODULE_PALETTE <- setNames(grDevices::hcl.colors(length(MAJOR_MODULES), "Dark 3"),
+                               MAJOR_MODULES)
+  } else {
+    MODULE_PALETTE <- setNames(unname(MODULE_PALETTE[seq_along(MAJOR_MODULES)]),
+                               MAJOR_MODULES)
+  }
   nodes <- nodes[
     !is.na(KO) & nzchar(KO) & is.finite(x) & is.finite(y) &
       module %in% MAJOR_MODULES & tier %in% TIER_ORDER
@@ -394,8 +406,9 @@ main <- function() {
   observed_tiers <- setNames(integer(length(TIER_ORDER)), TIER_ORDER)
   observed_tiers[as.character(tier_counts$tier)] <- tier_counts$n_KOs
 
-  expected_modules <- c(66L, 62L, 48L, 33L, 16L, 12L)
-  expected_tiers <- c(9L, 195L, 33L)
+  expected_modules <- setNames(c(66L, 62L, 48L, 33L, 16L, 12L),
+                               sprintf("M%02d", 1:6))[MAJOR_MODULES]
+  expected_tiers <- c(9L, 195L, 33L, 0L)
 
   validation <- data.table::data.table(
     metric = c(
@@ -405,6 +418,7 @@ main <- function() {
       "n_absolute_global_core",
       "n_near_global",
       "n_realm_core",
+      "n_peripheral",
       "n_edge_perturbations"
     ),
     observed = c(
@@ -446,8 +460,8 @@ main <- function() {
   y_range <- diff(range(nodes$y))
   offsets <- data.table::data.table(
     module = factor(MAJOR_MODULES, levels = MAJOR_MODULES),
-    dx = c(-0.11, 0.06, 0.11, 0.02, -0.08, -0.03),
-    dy = c(-0.02, 0.08, -0.10, 0.09, 0.06, -0.03)
+    dx = rep_len(c(-0.11, -0.10, 0.14, 0.02, -0.08, -0.03), length(MAJOR_MODULES)),
+    dy = rep_len(c(-0.02, -0.08, 0.02, 0.09, 0.06, -0.03), length(MAJOR_MODULES))
   )
   module_centroids <- nodes[, .(
     x = median(x), y = median(y), n_KOs = .N
@@ -525,28 +539,20 @@ main <- function() {
     p_maxT_FWER = safe_numeric(p_maxT_FWER)
   )]
   enrichment <- enrichment[
-    module %in% c("M02", "M03", "M06") &
+    module %in% MAJOR_MODULES &
       q_BY <= 0.05 & p_maxT_FWER <= 0.05
   ]
-  enrichment[, category_short := data.table::fifelse(
-    grepl("information", category, ignore.case = TRUE),
-    "Information processing",
-    data.table::fifelse(
-      grepl("redox|energy", category, ignore.case = TRUE),
-      "Redox–energy",
-      "Transport / membrane"
-    )
-  )]
+  enrichment[, category_short := vapply(category, function(z) {
+    paste(strwrap(z, width = 23), collapse = "\n")
+  }, character(1))]
   enrichment[, row_label := paste0(module, " — ", category_short)]
-  enrichment <- enrichment[match(c("M02", "M03", "M06"), module)]
+  data.table::setorder(enrichment, module, category)
   enrichment[, row_label := factor(row_label, levels = rev(row_label))]
   enrichment[, module := factor(module, levels = MAJOR_MODULES)]
   enrichment[, point_label := sprintf("%.2f×; %d KOs",
                                        fold_enrichment, observed_n)]
 
-  if (nrow(enrichment) != 3L || anyNA(enrichment$module)) {
-    stop("No se recuperaron exactamente las especializaciones M02, M03 y M06.")
-  }
+  if (anyNA(enrichment$module)) stop("Especialización sin módulo válido.")
   write_tsv(enrichment,
             file.path(TABLES_DIR, "177_validated_functional_enrichment_used.tsv"))
 
@@ -574,7 +580,7 @@ main <- function() {
       range = c(3.8, 6.6), guide = "none"
     ) +
     ggplot2::scale_x_continuous(
-      limits = c(0.95, 4.55), breaks = c(1, 2, 3, 4),
+      limits = c(0.95, max(c(4.55, enrichment$fold_enrichment * 1.45))),
       expand = ggplot2::expansion(mult = c(0, 0))
     ) +
     ggplot2::coord_cartesian(clip = "off") +
@@ -586,6 +592,11 @@ main <- function() {
       axis.text.y = ggplot2::element_text(size = 8),
       plot.margin = ggplot2::margin(5, 14, 5, 6)
     )
+  if (nrow(enrichment) == 0L) {
+    p_b <- ggplot2::ggplot() + ggplot2::annotate("text", x = 0, y = 0,
+      label = "No category passed both adjusted thresholds", size = 3) +
+      ggplot2::labs(tag = "b") + ggplot2::theme_void()
+  }
 
   # ----------------------------------------------------------
   # Panel c: estabilidad de módulos
@@ -609,7 +620,9 @@ main <- function() {
     levels = stability[order(mean_stability), as.character(module)]
   )]
   stability[, value_label := sprintf("%.3f", mean_stability)]
-  if (nrow(stability) != 6L) stop("La tabla de estabilidad no contiene M01–M06.")
+  if (!setequal(as.character(stability$module), MAJOR_MODULES)) {
+    stop("La tabla de estabilidad no cubre todos los módulos mayores.")
+  }
   write_tsv(stability,
             file.path(TABLES_DIR, "177_module_membership_stability_used.tsv"))
 
@@ -618,7 +631,7 @@ main <- function() {
     ggplot2::aes(x = mean_stability, y = module, color = module)
   ) +
     ggplot2::geom_segment(
-      ggplot2::aes(x = 0.40, xend = mean_stability,
+      ggplot2::aes(x = 0, xend = mean_stability,
                    y = module, yend = module),
       color = "#D0D0D0", linewidth = 0.70
     ) +
@@ -629,7 +642,7 @@ main <- function() {
     ) +
     ggplot2::scale_color_manual(values = MODULE_PALETTE, guide = "none") +
     ggplot2::scale_x_continuous(
-      limits = c(0.40, 1.055), breaks = c(0.4, 0.6, 0.8, 1.0),
+      limits = c(0, 1.055), breaks = c(0, 0.25, 0.5, 0.75, 1.0),
       expand = ggplot2::expansion(mult = c(0, 0))
     ) +
     ggplot2::coord_cartesian(clip = "off") +

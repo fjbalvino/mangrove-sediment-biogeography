@@ -87,6 +87,7 @@ N_REWIRE <- as.integer(get_arg("--n_rewire", "999"))
 N_EDGE_BOOT <- as.integer(get_arg("--n_edge_boot", "500"))
 MIN_MODULE_SIZE <- as.integer(get_arg("--min_module_size", "10"))
 PROCESS_MIN_TOTAL <- as.integer(get_arg("--process_min_total", "3"))
+KEGG_MAPPING_COMPLETE <- as_flag(get_arg("--kegg_mapping_complete", "0"))
 BLOCK_TARGET_SIZE <- as.integer(get_arg("--block_target_size", "35"))
 BLOCK_MIN_SIZE <- as.integer(get_arg("--block_min_size", "12"))
 SEED <- as.integer(get_arg("--seed", "123"))
@@ -592,45 +593,33 @@ build_graph <- function(edges, all_vertices = NULL) {
   )
 }
 
-community_by_components <- function(g, method = "louvain") {
+community_partition <- function(g, method = "louvain") {
+  # Match inference in 10C: optimize on the complete graph, not separately
+  # within components (which changes the modularity normalization).
   vertex_names <- igraph::V(g)$name
-  out <- setNames(rep(NA_integer_, length(vertex_names)), vertex_names)
-  comp <- igraph::components(g)$membership
-  offset <- 0L
-
-  for (cc in sort(unique(comp))) {
-    vnames <- names(comp)[comp == cc]
-    sg <- igraph::induced_subgraph(g, vids = vnames)
-    if (igraph::vcount(sg) == 1L || igraph::ecount(sg) == 0L) {
-      offset <- offset + 1L
-      out[vnames] <- offset
-      next
-    }
-    weights <- igraph::E(sg)$weight
-    cl <- tryCatch({
-      if (method == "louvain") {
-        igraph::cluster_louvain(sg, weights = weights)
-      } else if (method == "infomap") {
-        igraph::cluster_infomap(sg, e.weights = weights)
-      } else if (method == "walktrap") {
-        igraph::cluster_walktrap(sg, weights = weights)
-      } else if (method == "leiden") {
-        igraph::cluster_leiden(
-          sg, objective_function = "modularity", weights = weights,
-          resolution = 1, n_iterations = 10
-        )
-      } else {
-        stop("Algoritmo no reconocido: ", method)
-      }
-    }, error = function(e) NULL)
-    local <- if (is.null(cl)) seq_along(vnames) else igraph::membership(cl)
-    local <- as.integer(factor(local))
-    names(local) <- vnames
-    local <- local + offset
-    out[vnames] <- local
-    offset <- max(local)
+  if (igraph::ecount(g) == 0L) {
+    return(setNames(seq_along(vertex_names), vertex_names))
   }
-  out
+  weights <- igraph::E(g)$weight
+  cl <- tryCatch({
+    if (method == "louvain") {
+      igraph::cluster_louvain(g, weights = weights)
+    } else if (method == "infomap") {
+      igraph::cluster_infomap(g, e.weights = weights)
+    } else if (method == "walktrap") {
+      igraph::cluster_walktrap(g, weights = weights)
+    } else if (method == "leiden") {
+      igraph::cluster_leiden(g, objective_function = "modularity",
+                            weights = weights, resolution = 1, n_iterations = 10)
+    } else {
+      stop("Algoritmo no reconocido: ", method)
+    }
+  }, error = function(e) {
+    stop("Community detection failed for ", method, ": ", conditionMessage(e))
+  })
+  membership <- igraph::membership(cl)
+  stopifnot(setequal(names(membership), vertex_names))
+  membership[vertex_names]
 }
 
 graph_metrics <- function(g, membership) {
@@ -814,7 +803,7 @@ main <- function() {
     "6. Major-module and module-specific enrichment additionally control graph degree and absolute strength.",
     "7. KOs, edges and graph partitions—not metagenomes—are the inferential units in post-network tests.",
     "8. Class assortativity is evaluated with degree-preserving graph rewiring.",
-    "9. Robustness is evaluated across edge thresholds, community algorithms and edge-stability perturbations.",
+    "9. Robustness is evaluated across edge thresholds, community algorithms and edge-stability perturbations, reclustering the full candidate graph as in primary inference.",
     "10. Functional and KEGG process enrichment is conditional/post-selection evidence because annotation and module discovery use the same network.",
     "11. KEGG categories can overlap; process results report BY FDR and permutation maxT family-wise correction.",
     "12. Co-abundance does not demonstrate direct interaction, causality, expression, activity, or biogeochemical flux."
@@ -835,7 +824,7 @@ main <- function() {
     summarize_classes(universe, "Network universe (5,000)"),
     summarize_classes(candidates, "Selected candidates (1,500)"),
     summarize_classes(candidates[connected == TRUE], "Consensus-connected"),
-    summarize_classes(major, "Six major modules")
+    summarize_classes(major, "Major modules")
   ), use.names = TRUE, fill = TRUE)
   nested[, functional_core_class := factor(
     functional_core_class, levels = CLASS_LEVELS
@@ -844,7 +833,7 @@ main <- function() {
     universe,
     levels = c(
       "Network universe (5,000)", "Selected candidates (1,500)",
-      "Consensus-connected", "Six major modules"
+      "Consensus-connected", "Major modules"
     )
   )]
   data.table::setorder(nested, universe, functional_core_class)
@@ -1034,7 +1023,12 @@ main <- function() {
   cat("[6] Probando enriquecimiento y solapamiento de procesos KEGG...\n")
   process_enrichment <- data.table::data.table()
   process_overlap <- data.table::data.table()
-  if (nrow(kegg_map) > 0L) {
+  writeLines(if (KEGG_MAPPING_COMPLETE) {
+    "KEGG process tests enabled: user asserted complete mapping coverage for the analysis universe."
+  } else {
+    "KEGG process tests omitted: the supplied snapshot is restricted to historical network nodes; missing links cannot be treated as confirmed absence."
+  }, file.path(TABLES_DIR, "174_KEGG_mapping_scope.txt"))
+  if (KEGG_MAPPING_COMPLETE && nrow(kegg_map) > 0L) {
     ko_col <- pick_col(names(kegg_map), c("KO", "ko"), TRUE, "KO en mapa KEGG")
     process_col <- pick_col(
       names(kegg_map),
@@ -1147,7 +1141,7 @@ main <- function() {
   ))
 
   cat("[7] Evaluando mezcla de clases con rewiring degree-preserving...\n")
-  g_primary <- build_graph(edges, all_vertices = connected_kos)
+  g_primary <- build_graph(edges, all_vertices = candidates$KO)
   vertex_classes <- candidates[
     match(igraph::V(g_primary)$name, KO)
   ]$functional_core_class
@@ -1270,7 +1264,7 @@ main <- function() {
              sign_consistency >= threshold$sign_consistency_min)
       ]
       g <- build_graph(ed, all_vertices = candidates$KO)
-      membership <- community_by_components(g, "louvain")
+      membership <- community_partition(g, "louvain")
       metrics <- graph_metrics(g, membership)
       predicted_reference <- membership_for_reference(membership, major$KO)
       edge_set <- unique(ed$pair_id)
@@ -1290,7 +1284,7 @@ main <- function() {
           length(intersect(edge_set, primary_edge_set)) /
             length(union(edge_set, primary_edge_set))
         ),
-        ARI_vs_primary_six_modules = adjusted_rand_index(
+        ARI_vs_primary_major_modules = adjusted_rand_index(
           major$module_label, predicted_reference
         ),
         major_node_retention = mean(
@@ -1314,13 +1308,13 @@ main <- function() {
   algorithm_rows <- vector("list", length(methods))
   for (i in seq_along(methods)) {
     method <- methods[i]
-    membership <- community_by_components(g_primary, method)
+    membership <- community_partition(g_primary, method)
     algorithm_memberships[[method]] <- membership
     metrics <- graph_metrics(g_primary, membership)
     predicted_reference <- membership_for_reference(membership, major$KO)
     algorithm_rows[[i]] <- data.table::data.table(
       method = method,
-      ARI_vs_primary_six_modules = adjusted_rand_index(
+      ARI_vs_primary_major_modules = adjusted_rand_index(
         major$module_label, predicted_reference
       ),
       modularity = metrics$modularity,
@@ -1366,8 +1360,8 @@ main <- function() {
     for (b in seq_len(N_EDGE_BOOT)) {
       keep <- stats::runif(nrow(edges_boot)) <= edges_boot$edge_stability
       ed_b <- edges_boot[keep]
-      g_b <- build_graph(ed_b, all_vertices = connected_kos)
-      membership_b <- community_by_components(g_b, "louvain")
+      g_b <- build_graph(ed_b, all_vertices = candidates$KO)
+      membership_b <- community_partition(g_b, "louvain")
       predicted_reference <- membership_for_reference(membership_b, major$KO)
       ari <- adjusted_rand_index(major$module_label, predicted_reference)
 
@@ -1508,7 +1502,7 @@ main <- function() {
       threshold_plot_data,
       ggplot2::aes(
         x = stability_min,
-        y = ARI_vs_primary_six_modules,
+        y = ARI_vs_primary_major_modules,
         color = factor(mean_abs_min),
         group = factor(mean_abs_min)
       )

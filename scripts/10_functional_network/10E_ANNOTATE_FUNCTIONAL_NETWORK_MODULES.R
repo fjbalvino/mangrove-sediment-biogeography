@@ -66,6 +66,7 @@ TOP_HUBS_PER_MODULE <- as.integer(get_arg("--top_hubs_per_module", "15"))
 TOP_HUBS_FIGURE <- as.integer(get_arg("--top_hubs_figure", "5"))
 TOP_KEGG_PER_MODULE <- as.integer(get_arg("--top_kegg_per_module", "8"))
 DPI <- as.integer(get_arg("--dpi", "600"))
+MAKE_FIGURES <- as_flag(get_arg("--make_figures", "1"))
 STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"))
 
 EXPECTED_NODES <- as.integer(get_arg("--expected_nodes", "237"))
@@ -138,15 +139,6 @@ FUNCTIONAL_CATEGORY_COLORS <- c(
   "Carbon / carbohydrate metabolism" = "#1F78B4",
   "Signal / stress / metals" = "#E66101",
   "Uncharacterized / other" = "#BDBDBD"
-)
-
-MODULE_PROGRAM_LABELS <- c(
-  "M01" = "Central metabolism and anabolic biosynthesis",
-  "M02" = "Information processing and protein biogenesis",
-  "M03" = "Redox-energy conservation and biosynthesis",
-  "M04" = "Biosynthetic maintenance and cell-envelope functions",
-  "M05" = "Outer-membrane assembly, export and environmental regulation",
-  "M06" = "Peptide and amino-acid transport"
 )
 
 clean_chr <- function(x) {
@@ -224,6 +216,7 @@ wrap_label <- function(x, width = 32L) {
 }
 
 save_gg <- function(plot, file_base, width, height, dpi) {
+  if (!MAKE_FIGURES) return(invisible(NULL))
   ggplot2::ggsave(
     paste0(file_base, ".pdf"),
     plot = plot,
@@ -309,7 +302,8 @@ main <- function() {
   sink(log_connection, split = TRUE)
   sink(log_connection, type = "message")
   on.exit({
-    while (sink.number(type = "message") > 0L) sink(type = "message")
+    # Message sinks report a connection number; 2 is the normal stderr.
+    if (sink.number(type = "message") != 2L) sink(type = "message")
     while (sink.number(type = "output") > 0L) sink(type = "output")
     close(log_connection)
   }, add = TRUE)
@@ -452,7 +446,9 @@ main <- function() {
   nodes[, functional_compartment := CLASS_LABELS[
     functional_core_class
   ]]
-  nodes[, module_program := MODULE_PROGRAM_LABELS[module_label]]
+  # Module IDs can change after cohort updates; historical biological labels
+  # must not be transferred to newly inferred communities.
+  nodes[, module_program := paste("Co-abundance module", module_label)]
 
   reference_match_n <- sum(
     nodes$KO %in% reference_nodes$KO & !is.na(nodes$functional_category)
@@ -1193,6 +1189,7 @@ main <- function() {
     "173_network_by_functional_category",
     "173_top_hubs_by_module"
   )
+  if (!MAKE_FIGURES) figure_bases <- character()
   figure_paths <- as.vector(outer(
     file.path(FIGURES_DIR, figure_bases),
     c(".pdf", ".png", ".tiff"),
@@ -1245,7 +1242,7 @@ main <- function() {
     "Functional annotation of consensus network modules",
     "",
     paste0(
-      "The six consensus-network modules were retained from scripts 171-172 ",
+      "The major consensus-network modules were retained from scripts 171-172 ",
       "without reinference of edges or community membership."
     ),
     paste0(

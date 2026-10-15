@@ -240,7 +240,8 @@ main <- function() {
   sink(log_connection, split = TRUE)
   sink(log_connection, type = "message")
   on.exit({
-    while (sink.number(type = "message") > 0L) sink(type = "message")
+    # Message sinks report a connection number; 2 is the normal stderr.
+    if (sink.number(type = "message") != 2L) sink(type = "message")
     while (sink.number(type = "output") > 0L) sink(type = "output")
     close(log_connection)
   }, add = TRUE)

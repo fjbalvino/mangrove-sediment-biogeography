@@ -1,0 +1,158 @@
+{
+  "cohort": 191,
+  "detected_KOs": 17482,
+  "candidate_KOs": 1500,
+  "connected_KOs": 327,
+  "consensus_edges": 1060,
+  "major_modules": 5,
+  "major_module_KOs": 238,
+  "major_subgraph_edges": 989,
+  "major_core_classes": {
+    "near_global": 197,
+    "realm_core_only": 32,
+    "absolute_global_core": 9
+  },
+  "supported_specializations": [
+    {
+      "module_label": "M01",
+      "category": "Information processing",
+      "observed_n": 29,
+      "expected_n": 13.7013402680536,
+      "null_sd": 2.56313247087741,
+      "fold_enrichment": 2.0772687255696,
+      "log2_fold_enrichment": 1.05468786229179,
+      "z_permutation": 5.96873548510327,
+      "p_empirical": 0.0002,
+      "q_BY": 0.0096758233110393,
+      "p_maxT_FWER": 0.0002,
+      "enrichment_type": "functional_category"
+    },
+    {
+      "module_label": "M04",
+      "category": "Amino acid / cofactor biosynthesis",
+      "observed_n": 14,
+      "expected_n": 5.6871374274855,
+      "null_sd": 1.86899273429669,
+      "fold_enrichment": 2.34357167105838,
+      "log2_fold_enrichment": 1.22870891596027,
+      "z_permutation": 4.44777682650687,
+      "p_empirical": 0.0002,
+      "q_BY": 0.0096758233110393,
+      "p_maxT_FWER": 0.0026,
+      "enrichment_type": "functional_category"
+    },
+    {
+      "module_label": "M05",
+      "category": "Transport / membrane systems",
+      "observed_n": 11,
+      "expected_n": 2.39607921584317,
+      "null_sd": 1.32508677923942,
+      "fold_enrichment": 3.97088585736488,
+      "log2_fold_enrichment": 1.98946089136342,
+      "z_permutation": 6.49309986255793,
+      "p_empirical": 0.0002,
+      "q_BY": 0.0096758233110393,
+      "p_maxT_FWER": 0.0002,
+      "enrichment_type": "functional_category"
+    }
+  ],
+  "module_stability": [
+    {
+      "module_label": "M01",
+      "n_KOs": 65,
+      "mean_stability": 0.865998076923077,
+      "median_stability": 0.9184375,
+      "min_stability": 0.43265625,
+      "q10_stability": 0.74920625
+    },
+    {
+      "module_label": "M02",
+      "n_KOs": 60,
+      "mean_stability": 0.420422598870057,
+      "median_stability": 0.418220338983051,
+      "min_stability": 0.171084745762712,
+      "q10_stability": 0.324796610169491
+    },
+    {
+      "module_label": "M03",
+      "n_KOs": 59,
+      "mean_stability": 0.38757919345412,
+      "median_stability": 0.377896551724137,
+      "min_stability": 0.233275862068965,
+      "q10_stability": 0.313965517241379
+    },
+    {
+      "module_label": "M04",
+      "n_KOs": 42,
+      "mean_stability": 0.516188153310105,
+      "median_stability": 0.56219512195122,
+      "min_stability": 0.0873658536585364,
+      "q10_stability": 0.302331707317072
+    },
+    {
+      "module_label": "M05",
+      "n_KOs": 12,
+      "mean_stability": 0.935666666666669,
+      "median_stability": 0.943818181818184,
+      "min_stability": 0.835454545454546,
+      "q10_stability": 0.937636363636366
+    }
+  ],
+  "community_algorithms": [
+    {
+      "method": "louvain",
+      "ARI_vs_primary_major_modules": 0.593483828112526,
+      "modularity": 0.543807842517493,
+      "n_modules": 41,
+      "n_large_modules": 6,
+      "largest_component": 254
+    },
+    {
+      "method": "infomap",
+      "ARI_vs_primary_major_modules": 0.44134576293976,
+      "modularity": 0.498619410801611,
+      "n_modules": 51,
+      "n_large_modules": 3,
+      "largest_component": 254
+    },
+    {
+      "method": "walktrap",
+      "ARI_vs_primary_major_modules": 0.399610862391921,
+      "modularity": 0.488242275760865,
+      "n_modules": 60,
+      "n_large_modules": 3,
+      "largest_component": 254
+    },
+    {
+      "method": "leiden",
+      "ARI_vs_primary_major_modules": 0.522487387721851,
+      "modularity": 0.565503606066371,
+      "n_modules": 40,
+      "n_large_modules": 6,
+      "largest_component": 254
+    }
+  ],
+  "threshold_ARI_range": [
+    0.367365271908274,
+    0.551257857196683
+  ],
+  "edge_perturbation_ARI_5_50_95": [
+    0.4020684391866794,
+    0.5299226789825631,
+    0.665703566576853
+  ],
+  "versions": {
+    "R": "4.3.3",
+    "igraph": "2.2.1",
+    "data.table": "1.17.8",
+    "ggplot2": "3.4.4",
+    "patchwork": "1.2.0"
+  },
+  "seed": 123,
+  "permutations": 4999,
+  "rewirings": 999,
+  "edge_perturbations": 500,
+  "community_scope": "whole candidate graph",
+  "KEGG_process_inference": "omitted: incomplete mapping scope",
+  "figures_uploaded": false
+}

@@ -439,6 +439,7 @@ main <- function() {
               "LATEST_144_annotate_functional_network_modules.txt")
   )
   invisible(lapply(latest_files, function(path) writeLines(outdir, path)))
+  writeLines("RUNNING", file.path(outdir, "STATUS.txt"))
   writeLines(c(
     "status\tRUNNING",
     paste0("started_utc\t", format(Sys.time(), tz = "UTC", usetz = TRUE))
@@ -644,12 +645,14 @@ main <- function() {
       paste0("completed_utc\t", format(Sys.time(), tz = "UTC", usetz = TRUE)),
       paste0("output_directory\t", outdir)
     ), file.path(logs_dir, "144_status.tsv"))
+    writeLines("PASS", file.path(outdir, "STATUS.txt"))
     cat("PASS: ", outdir, "\n", sep = "")
   }
 
   tryCatch(
     execute(),
     error = function(e) {
+      writeLines("FAIL", file.path(outdir, "STATUS.txt"))
       writeLines(c(
         "status\tFAIL",
         paste0("failed_utc\t", format(Sys.time(), tz = "UTC", usetz = TRUE)),

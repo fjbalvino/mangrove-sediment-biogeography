@@ -46,3 +46,5 @@ order	block	canonical_file	role
 10E	functional_network	scripts/10_functional_network/10E_ANNOTATE_FUNCTIONAL_NETWORK_MODULES.R	Module annotation
 10F	functional_network	scripts/10_functional_network/10F_VALIDATE_FUNCTIONAL_NETWORK.R	Network validation
 10G	functional_network	scripts/10_functional_network/10G_PLOT_FUNCTIONAL_NETWORK_MAIN.R	Current main network panel
+10H	functional_network	scripts/10_functional_network/10H_PREPARE_NETWORK_COHORT.py	Verify current cohort and adapt persistence classes for network inference
+10I	functional_network	scripts/10_functional_network/10I_VERIFY_NETWORK_OUTPUTS.py	Independent consensus and validation output checks

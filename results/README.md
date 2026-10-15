@@ -26,3 +26,16 @@ Figure 4 and Supplementary Figure S4 are generated locally under
 `figures/functional/` by the functional workflow. The PNG images are omitted from
 this repository update.
 The results text and caption are in `docs/FUNCTIONAL_RESULTS.md`.
+
+## Functional network
+
+`functional_network/` contains the rerun Figure 6 statistics for 191 profiles,
+including conditional enrichment, module stability, threshold and algorithm
+sensitivity, and 26 independent output checks. The full network contains 1,060
+associations among 327 connected KOs; five major modules contain 238 KOs.
+Historical 194-profile counts are not enforced as expected outcomes.
+
+Module composition and stability changed. The corrected text is in
+`docs/FUNCTIONAL_NETWORK_RESULTS.md`; execution instructions and the restricted
+scope of the supplied KEGG MODULE mapping are in
+`docs/FUNCTIONAL_NETWORK_ANALYSES.md`. Images and fitted R objects are omitted.

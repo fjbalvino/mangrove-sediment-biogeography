@@ -1,5 +1,12 @@
 # Data availability
 
+The Figure 6 rerun uses the same 191-profile functional cohort documented
+below. The companion `MAGENTA_red_191_20261015.zip` additionally supplies the
+frozen KO dictionary, restricted historical KEGG MODULE mapping, corrected
+network scripts, final tables and execution logs. Input checksums are in
+`config/network_input_checksums.json`; mapping limitations and reproduction
+instructions are in `docs/FUNCTIONAL_NETWORK_ANALYSES.md`.
+
 ## Taxonomic reference
 
 The current reference contains 341 profiles. The companion data archive supplies

@@ -4,7 +4,7 @@ validate: python-check bash-check r-parse r-tests functional-tests
 	python tools/validate_repository.py
 
 python-check:
-	python -m compileall -q scripts
+	python -m compileall -q scripts workflow
 
 bash-check:
 	@for script in workflow/*.sh; do bash -n "$$script" || exit $$?; done

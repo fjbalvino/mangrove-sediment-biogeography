@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "checks": {
+    "stage_156_completed": true,
+    "stage_171_completed": true,
+    "stage_173_completed": true,
+    "stage_174_completed": true,
+    "191_unique_samples": true,
+    "exact_cohort": true,
+    "no_air_controls": true,
+    "input_dimensions_and_prevalence_classes": true,
+    "CLR_transform_checks": true,
+    "1500_unique_candidates": true,
+    "100_subsamples_of_81": true,
+    "at_most_four_per_stratum": true,
+    "2000_edges_per_subsample": true,
+    "unique_edges_no_loops": true,
+    "all_endpoints_are_candidates": true,
+    "consensus_thresholds": true,
+    "independent_edge_frequency": true,
+    "independent_edge_weight": true,
+    "node_classes_match_atlas": true,
+    "major_modules_have_at_least_10_KOs": true,
+    "BY_adjustment_recomputed": true,
+    "supported_categories_pass_both_corrections": true,
+    "500_completed_perturbations": true,
+    "999_valid_rewirings": true,
+    "four_successful_community_algorithms": true,
+    "30_completed_threshold_combinations": true
+  },
+  "n_checks": 26
+}

@@ -74,6 +74,13 @@ taxonomic–functional coupling, and geographic sampling sensitivity.
 [Current results and Figure 4 caption](docs/FUNCTIONAL_RESULTS.md) use the same outputs.
 Compact numerical results are in `results/functional/`.
 
+The [functional network workflow](docs/FUNCTIONAL_NETWORK_ANALYSES.md) now uses
+the same 191-profile cohort. [Updated Figure 6 text and supplementary
+results](docs/FUNCTIONAL_NETWORK_RESULTS.md) report 1,060 associations, 327
+connected KOs and five major modules. Source statistics are in
+`results/functional_network/`. The standalone driver records all commands and
+performs independent output checks; images are generated locally.
+
 ## Workflow blocks
 
 | Block | Objective |
