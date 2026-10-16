@@ -29,6 +29,9 @@ suppressPackageStartupMessages({
 #   bioquimicas directas.
 # =============================================================================
 
+script_file <- sub("^--file=", "", grep("^--file=", commandArgs(), value=TRUE)[1L])
+source(file.path(dirname(normalizePath(script_file)), "lib", "functional_category_rules.R"))
+
 get_arg <- function(flag, default = NULL) {
   args <- commandArgs(trailingOnly = TRUE)
   hit <- which(args == flag)
@@ -42,7 +45,7 @@ as_flag <- function(x) {
   tolower(trimws(as.character(x))) %in% c("1", "true", "t", "yes", "y")
 }
 
-BASE <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
+BASE <- get_arg("--base", path.expand("~/Biogeografia_2026"))
 RESULTS_DIR <- get_arg("--results_dir", file.path(BASE, "resultados"))
 
 read_latest <- function(script_basename) {
@@ -67,7 +70,7 @@ TOP_HUBS_FIGURE <- as.integer(get_arg("--top_hubs_figure", "5"))
 TOP_KEGG_PER_MODULE <- as.integer(get_arg("--top_kegg_per_module", "8"))
 DPI <- as.integer(get_arg("--dpi", "600"))
 MAKE_FIGURES <- as_flag(get_arg("--make_figures", "1"))
-STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"))
+STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "0"))
 
 EXPECTED_NODES <- as.integer(get_arg("--expected_nodes", "237"))
 EXPECTED_EDGES <- as.integer(get_arg("--expected_edges", "1162"))
@@ -436,7 +439,9 @@ main <- function() {
     is.na(KO_function) & !is.na(KO_function_reference),
     KO_function := KO_function_reference
   ]
-  nodes[, functional_category := functional_category_reference]
+  nodes[, combined_category := functional_category_reference]
+  category_scores <- lapply(nodes$KO_function,function(z) score_functional_category(z,""))
+  nodes[, functional_category := vapply(category_scores,function(z) z$selected,character(1))]
   nodes[, functional_category_reference := NULL]
   nodes[, KO_function_reference := NULL]
 

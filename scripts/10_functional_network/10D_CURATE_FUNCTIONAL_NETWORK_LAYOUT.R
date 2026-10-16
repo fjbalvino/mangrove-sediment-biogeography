@@ -42,7 +42,7 @@ as_flag <- function(x) {
   tolower(trimws(as.character(x))) %in% c("1", "true", "t", "yes", "y")
 }
 
-BASE <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
+BASE <- get_arg("--base", path.expand("~/Biogeografia_2026"))
 RESULTS_DIR <- get_arg("--results_dir", file.path(BASE, "resultados"))
 
 read_latest <- function(script_basename) {
@@ -65,7 +65,7 @@ NITER_LAYOUT <- as.integer(get_arg("--niter_layout", "2000"))
 PLOT_WIDTH <- as.numeric(get_arg("--plot_width", "10"))
 PLOT_HEIGHT <- as.numeric(get_arg("--plot_height", "8"))
 DPI <- as.integer(get_arg("--dpi", "600"))
-STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"))
+STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "0"))
 
 EXPECTED_SOURCE_EDGES <- as.integer(
   get_arg("--expected_source_edges", "1223")

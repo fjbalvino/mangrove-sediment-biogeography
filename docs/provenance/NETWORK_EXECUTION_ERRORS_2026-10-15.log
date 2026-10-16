@@ -23,3 +23,24 @@ Correction: replace the main delivery with Functional_network_results.docx and p
 Recovered source: the complete editorial literature review saved as Estadistica/Markdown pegado.md on 2026-10-13. The linked chat itself could not be read in full; no claim of full chat recovery is made.
 Versioning: replace the existing companion archive identity under the stable name MAGENTA_functional_network.zip; do not create another dated archive.
 Scope: editorial separation and reporting only. The validated numerical outputs of the 191-profile rerun are unchanged. No image files are published.
+
+2026-10-15 | Later network parameter revision (Figure 6 at the time; now Figure 5)
+2026-10-15 User-reported attachment path error: image(20261015-205429).png. RESOLVED: local attachment now exists and was inspected. Cause of the earlier failure is unconfirmed.
+2026-10-15T21:05Z Figure stage G exited 1 with unexpected string constant after its PASS message. The source was edited while the scheduled renderer was reading it. Source now frozen and all R files parse; rerunning G and checking the process exit code, not the earlier status text.
+2026-10-15T21:07Z RESOLVED: frozen figure source rendered successfully with exit 0; subsequent independent verification passed. No numerical analysis affected.
+
+2026-10-15 | Study sensitivity setup | pandas alignment renamed run_accession index to index; R design creation stopped before inference. Corrected rename_axis; no statistical result was produced by the failed attempt.
+2026-10-15 | Primary rerun | 500 subsamples completed (1062 edges); obsolete Louvain object name remained in final RDS serialization. Replaced with current community object. Resuming from verified edge membership, not repeating inference.
+2026-10-15 | Threshold sensitivity cache | R environment keys exceeded the 10000-byte name limit for long edge lists. Switched to exact edge-vector comparisons in a short list. Enrichment had completed; validation was marked FAIL and restarted after correction.
+2026-10-15 | Auxiliary layout PNG | 172_network_by_module_unlabeled.png was truncated despite stage PASS; its vector PDF was intact. Regenerated that PNG from its own PDF at 300 dpi and verified decoding. Final delivered PNG/TIFF and embedded Word image require separate decoding/hash checks. Exact cause of the interrupted image write remains unconfirmed.
+2026-10-15 | Execution interface | One read-only process-start request failed with exec-server transport disconnected. Immediate read-only recovery succeeded; the existing validation session remained available. No write action was retried and no analysis process was restarted.
+2026-10-15 | Final export verification | The individual panel-a PNG was truncated (811008 bytes) despite a completed figure stage; its TIFF, PDF and composite PNG were intact. Re-exported the PNG losslessly from the verified 600-dpi TIFF and confirmed exact decoded-pixel equality. Main Word image unchanged. Cause of the incomplete PNG write is unconfirmed; no connection to the earlier chat errors is established.
+
+2026-10-16T23:18:39.897394+00:00 | Authorized text-only repository integration
+The earlier local checkout referenced an expired worktree. Recovered the current remote baseline and verified all 156 file Git object hashes before making changes.
+Found one stale compact table in the companion package: 173_network_module_functional_summary.tsv still described five modules. Replaced it from the completed stage 173 source (six modules, 236 KOs); the document generator now refreshes compact stage tables from the same verified runs used for manuscript text. All compact stage tables were compared against completed-stage outputs before host-path redaction; numerical contents are unchanged.
+A local R test invocation using -f was rejected by the test entry-point guard; rerunning with --file= passed. This was a launcher issue, not a statistical failure.
+Confirmed 39 network source-data checks, all 44 omission designs, 100,000 influential-case edge selections against stored independent R output, four functional tests and taxonomic invariant tests. No new full network inference was needed for this publication.
+Updated network Figure 5 references and the network supplement numbering S14-S27. Regional scripts and documents remain at the remote baseline in this network-only publication. No images, binary reports, raw matrices or fitted objects are included. Chat failure causes remain unconfirmed.
+
+Automatic approval review rejected a mixed-scope staging batch that included regional-analysis code and per-omission sample lists. No branch was updated. The replacement publication excludes all regional scripts/documents, removes accession lists from compact study summaries, and omits host-specific execution paths. Repository permissions were rechecked: the target is private and the connected account has push permission.

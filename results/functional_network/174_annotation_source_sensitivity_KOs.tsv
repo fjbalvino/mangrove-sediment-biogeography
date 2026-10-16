@@ -1,0 +1,237 @@
+KO	module_label	KO_function	functional_category	combined_category	category_changed
+K01876	M01	DARS2, aspS; aspartyl-tRNA synthetase [EC:6.1.1.12]	Information processing	Information processing	FALSE
+K01881	M01	PARS, proS; prolyl-tRNA synthetase [EC:6.1.1.15]	Information processing	Information processing	FALSE
+K03070	M01	secA; preprotein translocase subunit SecA [EC:7.4.2.8]	Information processing	Information processing	FALSE
+K00962	M01	pnp, PNPT1; polyribonucleotide nucleotidyltransferase [EC:2.7.7.8]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01875	M01	SARS, serS; seryl-tRNA synthetase [EC:6.1.1.11]	Information processing	Information processing	FALSE
+K01869	M01	LARS, leuS; leucyl-tRNA synthetase [EC:6.1.1.4]	Information processing	Information processing	FALSE
+K07478	M01	ycaJ; putative ATPase	Uncharacterized / other	Uncharacterized / other	FALSE
+K03703	M01	uvrC; excinuclease ABC subunit C	Transport / membrane systems	Transport / membrane systems	FALSE
+K02600	M01	nusA; transcription termination/antitermination protein NusA	Information processing	Information processing	FALSE
+K01887	M01	RARS, argS; arginyl-tRNA synthetase [EC:6.1.1.19]	Information processing	Information processing	FALSE
+K01872	M01	AARS, alaS; alanyl-tRNA synthetase [EC:6.1.1.7]	Information processing	Information processing	FALSE
+K06942	M01	ychF; ribosome-binding ATPase	Information processing	Information processing	FALSE
+K01890	M01	FARSB, pheT; phenylalanyl-tRNA synthetase beta chain [EC:6.1.1.20]	Information processing	Information processing	FALSE
+K02355	M01	fusA, GFM, EFG; elongation factor G	Information processing	Information processing	FALSE
+K00615	M01	E2.2.1.1, tktA, tktB; transketolase [EC:2.2.1.1]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K04567	M01	KARS, lysS; lysyl-tRNA synthetase, class II [EC:6.1.1.6]	Information processing	Information processing	FALSE
+K02470	M01	gyrB; DNA gyrase subunit B [EC:5.6.2.2]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01870	M01	IARS, ileS; isoleucyl-tRNA synthetase [EC:6.1.1.5]	Information processing	Information processing	FALSE
+K01873	M01	VARS, valS; valyl-tRNA synthetase [EC:6.1.1.9]	Information processing	Information processing	FALSE
+K02434	M01	gatB, PET112; aspartyl-tRNA(Asn)/glutamyl-tRNA(Gln) amidotransferase subunit B [EC:6.3.5.6 6.3.5.7]	Information processing	Information processing	FALSE
+K00927	M01	PGK, pgk; phosphoglycerate kinase [EC:2.7.2.3]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K02346	M01	dinB; DNA polymerase IV [EC:2.7.7.7]	Information processing	Information processing	FALSE
+K01883	M01	CARS, cysS; cysteinyl-tRNA synthetase [EC:6.1.1.16]	Information processing	Information processing	FALSE
+K03701	M01	uvrA; excinuclease ABC subunit A	Transport / membrane systems	Transport / membrane systems	FALSE
+K00820	M01	glmS, GFPT; glutamine---fructose-6-phosphate transaminase (isomerizing) [EC:2.6.1.16]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03076	M01	secY; preprotein translocase subunit SecY	Information processing	Information processing	FALSE
+K03702	M01	uvrB; excinuclease ABC subunit B	Transport / membrane systems	Transport / membrane systems	FALSE
+K03797	M01	E3.4.21.102, prc, ctpA; carboxyl-terminal processing protease [EC:3.4.21.102]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01924	M01	murC; UDP-N-acetylmuramate--alanine ligase [EC:6.3.2.8]	Uncharacterized / other	Uncharacterized / other	FALSE
+K11749	M01	rseP; regulator of sigma E protease [EC:3.4.24.-]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00789	M01	metK, MAT; S-adenosylmethionine synthetase [EC:2.5.1.6]	Information processing	Information processing	FALSE
+K01689	M01	ENO1_2_3, eno; enolase 1/2/3 [EC:4.2.1.11]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K03798	M01	ftsH, hflB; cell division protease FtsH [EC:3.4.24.-]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02519	M01	infB, MTIF2; translation initiation factor IF-2	Information processing	Information processing	FALSE
+K02469	M01	gyrA; DNA gyrase subunit A [EC:5.6.2.2]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03587	M01	ftsI; cell division protein FtsI (penicillin-binding protein 3) [EC:3.4.16.4]	Transport / membrane systems	Transport / membrane systems	FALSE
+K01892	M01	HARS, hisS; histidyl-tRNA synthetase [EC:6.1.1.21]	Information processing	Information processing	FALSE
+K02238	M01	comEC; competence protein ComEC	Uncharacterized / other	Uncharacterized / other	FALSE
+K00600	M01	glyA, SHMT; glycine hydroxymethyltransferase [EC:2.1.2.1]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K00951	M01	relA; GTP pyrophosphokinase [EC:2.7.6.5]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01889	M01	FARSA, pheS; phenylalanyl-tRNA synthetase alpha chain [EC:6.1.1.20]	Information processing	Information processing	FALSE
+K01937	M01	pyrG, CTPS; CTP synthase [EC:6.3.4.2]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01338	M01	lon; ATP-dependent Lon protease [EC:3.4.21.53]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01868	M01	TARS, thrS; threonyl-tRNA synthetase [EC:6.1.1.3]	Information processing	Information processing	FALSE
+K03590	M01	ftsA; cell division protein FtsA	Uncharacterized / other	Uncharacterized / other	FALSE
+K01874	M01	MARS, metG; methionyl-tRNA synthetase [EC:6.1.1.10]	Information processing	Information processing	FALSE
+K01928	M01	murE; UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase [EC:6.3.2.13]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02358	M01	tuf, TUFM; elongation factor Tu	Information processing	Information processing	FALSE
+K07462	M01	recJ; single-stranded-DNA-specific exonuclease [EC:3.1.-.-]	Uncharacterized / other	Uncharacterized / other	FALSE
+K04066	M01	priA; primosomal protein N' (replication factor Y) (superfamily II helicase) [EC:5.6.2.4]	Information processing	Information processing	FALSE
+K03086	M01	rpoD; RNA polymerase primary sigma factor	Information processing	Information processing	FALSE
+K01803	M01	TPI, tpiA; triosephosphate isomerase (TIM) [EC:5.3.1.1]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02004	M01	ABC.CD.P; putative ABC transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K15987	M01	hppA; K(+)-stimulated pyrophosphate-energized sodium pump [EC:7.2.3.1]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01885	M01	EARS, gltX; glutamyl-tRNA synthetase [EC:6.1.1.17]	Information processing	Information processing	FALSE
+K03531	M01	ftsZ; cell division protein FtsZ	Uncharacterized / other	Uncharacterized / other	FALSE
+K02669	M01	pilT; twitching motility protein PilT	Uncharacterized / other	Uncharacterized / other	FALSE
+K03106	M02	SRP54, ffh; signal recognition particle subunit SRP54 [EC:3.6.5.4]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00053	M02	ilvC; ketol-acid reductoisomerase [EC:1.1.1.86]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K00052	M02	leuB, IMDH; 3-isopropylmalate dehydrogenase [EC:1.1.1.85]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01956	M02	carA, CPA1; carbamoyl-phosphate synthase small subunit [EC:6.3.5.5]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K01756	M02	purB, ADSL; adenylosuccinate lyase [EC:4.3.2.2]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03110	M02	ftsY; fused signal recognition particle receptor	Uncharacterized / other	Uncharacterized / other	FALSE
+K00602	M02	purH; phosphoribosylaminoimidazolecarboxamide formyltransferase / IMP cyclohydrolase [EC:2.1.2.3 3.5.4.10]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03431	M02	glmM; phosphoglucosamine mutase [EC:5.4.2.10]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00800	M02	aroA; 3-phosphoshikimate 1-carboxyvinyltransferase [EC:2.5.1.19]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K01662	M02	dxs; 1-deoxy-D-xylulose-5-phosphate synthase [EC:2.2.1.7]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01755	M02	argH, ASL; argininosuccinate lyase [EC:4.3.2.1]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01696	M02	trpB; tryptophan synthase beta chain [EC:4.2.1.20]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00766	M02	trpD; anthranilate phosphoribosyltransferase [EC:2.4.2.18]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00606	M02	panB; 3-methyl-2-oxobutanoate hydroxymethyltransferase [EC:2.1.2.11]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K00013	M02	hisD; histidinol dehydrogenase [EC:1.1.1.23]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03526	M02	gcpE, ispG; (E)-4-hydroxy-3-methylbut-2-enyl-diphosphate synthase [EC:1.17.7.1 1.17.7.3]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01704	M02	leuD, IPMI-S; 3-isopropylmalate/(R)-2-methylmalate dehydratase small subunit [EC:4.2.1.33 4.2.1.35]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K01950	M02	E6.3.5.1, NADSYN1, QNS1, nadE; NAD+ synthase (glutamine-hydrolysing) [EC:6.3.5.1]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K01465	M02	URA4, pyrC; dihydroorotase [EC:3.5.2.3]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01810	M02	GPI, pgi; glucose-6-phosphate isomerase [EC:5.3.1.9]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K01951	M02	guaA, GMPS; GMP synthase (glutamine-hydrolysing) [EC:6.3.5.2]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01902	M02	sucD; succinyl-CoA synthetase alpha subunit [EC:6.2.1.5]	Information processing	Information processing	FALSE
+K00928	M02	lysC; aspartate kinase [EC:2.7.2.4]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00648	M02	fabH; 3-oxoacyl-[acyl-carrier-protein] synthase III [EC:2.3.1.180]	Uncharacterized / other	Uncharacterized / other	FALSE
+K18979	M02	queG; epoxyqueuosine reductase [EC:1.17.99.6]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00821	M02	argD; acetylornithine/N-succinyldiaminopimelate aminotransferase [EC:2.6.1.11 2.6.1.17]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K01736	M02	aroC; chorismate synthase [EC:4.2.3.5]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K03593	M02	mrp, NUBPL; ATP-binding protein involved in chromosome partitioning	Transport / membrane systems	Transport / membrane systems	FALSE
+K00611	M02	OTC, argF, argI; ornithine carbamoyltransferase [EC:2.1.3.3]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K11753	M02	ribF; riboflavin kinase / FMN adenylyltransferase [EC:2.7.1.26 2.7.7.2]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00645	M02	fabD, MCAT, MCT1; [acyl-carrier-protein] S-malonyltransferase [EC:2.3.1.39]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00024	M02	mdh; malate dehydrogenase [EC:1.1.1.37]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01916	M02	nadE; NAD+ synthase [EC:6.3.1.5]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00609	M02	pyrB, PYR2; aspartate carbamoyltransferase catalytic subunit [EC:2.1.3.2]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K03495	M02	gidA, mnmG, MTO1; tRNA uridine 5-carboxymethylaminomethyl modification enzyme	Information processing	Information processing	FALSE
+K14441	M02	rimO; ribosomal protein S12 methylthiotransferase [EC:2.8.4.4]	Information processing	Information processing	FALSE
+K00639	M02	kbl, GCAT; glycine C-acetyltransferase [EC:2.3.1.29]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01586	M02	lysA; diaminopimelate decarboxylase [EC:4.1.1.20]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K00931	M02	proB; glutamate 5-kinase [EC:2.7.2.11]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01255	M02	CARP, pepA; leucyl aminopeptidase [EC:3.4.11.1]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02517	M02	lpxL, htrB; Kdo2-lipid IVA lauroyltransferase/acyltransferase [EC:2.3.1.241 2.3.1.-]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01940	M02	argG, ASS1; argininosuccinate synthase [EC:6.3.4.5]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01712	M02	hutU, UROC1; urocanate hydratase [EC:4.2.1.49]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01903	M02	sucC; succinyl-CoA synthetase beta subunit [EC:6.2.1.5]	Information processing	Information processing	FALSE
+K07090	M02	K07090; uncharacterized protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K01745	M02	hutH, HAL; histidine ammonia-lyase [EC:4.3.1.3]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01817	M02	trpF; phosphoribosylanthranilate isomerase [EC:5.3.1.24]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01754	M02	E4.3.1.19, ilvA, tdcB; threonine dehydratase [EC:4.3.1.19]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K03524	M02	birA; BirA family transcriptional regulator, biotin operon repressor / biotin---[acetyl-CoA-carboxylase] ligase [EC:6.3.4.15]	Information processing	Information processing	FALSE
+K04487	M02	iscS, NFS1; cysteine desulfurase [EC:2.8.1.7]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00948	M02	PRPS, prsA; ribose-phosphate pyrophosphokinase [EC:2.7.6.1]	Carbon / carbohydrate metabolism	Carbon / carbohydrate metabolism	FALSE
+K03734	M02	apbE; FAD:protein FMN transferase [EC:2.7.1.180]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01657	M03	trpE; anthranilate synthase component I [EC:4.1.3.27]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01251	M03	AHCY, ahcY; adenosylhomocysteinase [EC:3.13.2.1]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00341	M03	nuoL; NADH-quinone oxidoreductase subunit L [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01703	M03	leuC, IPMI-L; 3-isopropylmalate/(R)-2-methylmalate dehydratase large subunit [EC:4.2.1.33 4.2.1.35]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K01952	M03	PFAS, purL; phosphoribosylformylglycinamidine synthase [EC:6.3.5.3]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01649	M03	leuA, IMS; 2-isopropylmalate synthase [EC:2.3.3.13]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K03723	M03	mfd; transcription-repair coupling factor (superfamily II helicase) [EC:5.6.2.4]	Information processing	Information processing	FALSE
+K09808	M03	lolC_E_F; lipoprotein-releasing system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K00239	M03	sdhA, frdA; succinate dehydrogenase flavoprotein subunit [EC:1.3.5.1]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03750	M03	moeA; molybdopterin molybdotransferase [EC:2.10.1.1]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00283	M03	gcvPB; glycine cleavage system P protein (glycine dehydrogenase) subunit 2 [EC:1.4.4.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00003	M03	hom; homoserine dehydrogenase [EC:1.1.1.3]	Anaerobic redox / energy	Amino acid / cofactor biosynthesis	TRUE
+K00297	M03	metF, MTHFR; methylenetetrahydrofolate reductase (NADH) [EC:1.5.1.54]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00812	M03	aspB; aspartate aminotransferase [EC:2.6.1.1]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00278	M03	nadB; L-aspartate oxidase [EC:1.4.3.16]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K01687	M03	ilvD; dihydroxy-acid dehydratase [EC:4.2.1.9]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K00382	M03	DLD, lpd, pdhD; dihydrolipoyl dehydrogenase [EC:1.8.1.4]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00337	M03	nuoH; NADH-quinone oxidoreductase subunit H [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01897	M03	ACSL, fadD; long-chain-fatty-acid---CoA ligase [EC:6.2.1.3]	Carbon / carbohydrate metabolism	Carbon / carbohydrate metabolism	FALSE
+K09458	M03	fabF, OXSM, CEM1; 3-oxoacyl-[acyl-carrier-protein] synthase II [EC:2.3.1.179]	Uncharacterized / other	Uncharacterized / other	FALSE
+K21071	M03	pfk, pfp; ATP-dependent phosphofructokinase / diphosphate-dependent phosphofructokinase [EC:2.7.1.11 2.7.1.90]	Carbon / carbohydrate metabolism	Carbon / carbohydrate metabolism	FALSE
+K00343	M03	nuoN; NADH-quinone oxidoreductase subunit N [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00336	M03	nuoG; NADH-quinone oxidoreductase subunit G [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00700	M03	GBE1, glgB; 1,4-alpha-glucan branching enzyme [EC:2.4.1.18]	Carbon / carbohydrate metabolism	Carbon / carbohydrate metabolism	FALSE
+K00342	M03	nuoM; NADH-quinone oxidoreductase subunit M [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01895	M03	ACSS1_2, acs; acetyl-CoA synthetase [EC:6.2.1.1]	Information processing	Anaerobic redox / energy	TRUE
+K01955	M03	carB, CPA2; carbamoyl-phosphate synthase large subunit [EC:6.3.5.5]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00548	M03	metH, MTR; 5-methyltetrahydrofolate--homocysteine methyltransferase [EC:2.1.1.13]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00266	M03	gltD; glutamate synthase (NADPH) small chain [EC:1.4.1.13]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K01938	M03	fhs; formate--tetrahydrofolate ligase [EC:6.3.4.3]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00975	M03	glgC; glucose-1-phosphate adenylyltransferase [EC:2.7.7.27]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K01681	M03	ACO; aconitate hydratase [EC:4.2.1.3]	Uncharacterized / other	Carbon / carbohydrate metabolism	TRUE
+K01915	M03	glnA, GLUL; glutamine synthetase [EC:6.3.1.2]	Information processing	Information processing	FALSE
+K00333	M03	nuoD; NADH-quinone oxidoreductase subunit D [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K04759	M03	feoB; ferrous iron transport protein B	Transport / membrane systems	Transport / membrane systems	FALSE
+K00334	M03	nuoE; NADH-quinone oxidoreductase subunit E [EC:7.1.1.2]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03522	M03	fixB, etfA; electron transfer flavoprotein alpha subunit	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03521	M03	fixA, etfB; electron transfer flavoprotein beta subunit	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01966	M03	PCCB, pccB; propionyl-CoA carboxylase beta subunit [EC:6.4.1.3 2.1.3.15]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03306	M03	TC.PIT; inorganic phosphate transporter, PiT family	Transport / membrane systems	Transport / membrane systems	FALSE
+K08483	M03	ptsI; phosphoenolpyruvate-protein phosphotransferase (PTS system enzyme I) [EC:2.7.3.9]	Carbon / carbohydrate metabolism	Carbon / carbohydrate metabolism	FALSE
+K06888	M03	K06888; uncharacterized protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K01912	M03	paaK; phenylacetate-CoA ligase [EC:6.2.1.30]	Carbon / carbohydrate metabolism	Carbon / carbohydrate metabolism	FALSE
+K12960	M03	mtaD; 5-methylthioadenosine/S-adenosylhomocysteine deaminase [EC:3.5.4.31 3.5.4.28]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00029	M03	maeB; malate dehydrogenase (oxaloacetate-decarboxylating)(NADP+) [EC:1.1.1.40]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00547	M03	mmuM, BHMT2; homocysteine S-methyltransferase [EC:2.1.1.10]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01733	M03	thrC; threonine synthase [EC:4.2.3.1]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K03296	M03	TC.HAE1; hydrophobic/amphiphilic exporter-1 (mainly G- bacteria), HAE1 family	Uncharacterized / other	Uncharacterized / other	FALSE
+K09181	M03	yfiQ; acetyltransferase	Uncharacterized / other	Uncharacterized / other	FALSE
+K03092	M04	rpoN; RNA polymerase sigma-54 factor	Information processing	Information processing	FALSE
+K02492	M04	hemA; glutamyl-tRNA reductase [EC:1.2.1.70]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01647	M04	CS, gltA, CIT; citrate synthase [EC:2.3.3.1]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K00864	M04	glpK, GK; glycerol kinase [EC:2.7.1.30]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02037	M04	pstC; phosphate transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K00259	M04	ald; alanine dehydrogenase [EC:1.4.1.1]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03644	M04	lipA, LIAS, LIP1, LIP5; lipoyl synthase [EC:2.8.1.8]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03770	M04	ppiD; peptidyl-prolyl cis-trans isomerase D [EC:5.2.1.8]	Uncharacterized / other	Uncharacterized / other	FALSE
+K12340	M04	tolC, bepC, cyaE, raxC, sapF, rsaF, hasF; outer membrane protein	Uncharacterized / other	Transport / membrane systems	TRUE
+K03771	M04	surA; peptidyl-prolyl cis-trans isomerase SurA [EC:5.2.1.8]	Uncharacterized / other	Uncharacterized / other	FALSE
+K06941	M04	rlmN; 23S rRNA (adenine2503-C2)-methyltransferase [EC:2.1.1.192]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01961	M04	accC; acetyl-CoA carboxylase, biotin carboxylase subunit [EC:6.4.1.2 6.3.4.14]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K07001	M04	K07001; NTE family protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K07712	M04	glnG, ntrC; two-component system, NtrC family, nitrogen regulation response regulator GlnG	Signal / stress / metals	Signal / stress / metals	FALSE
+K02065	M04	mlaF, linL, mkl; phospholipid/cholesterol/gamma-HCH transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K03585	M04	acrA, mexA, adeI, smeD, mtrC, cmeA; membrane fusion protein, multidrug efflux system	Transport / membrane systems	Transport / membrane systems	FALSE
+K04744	M04	lptD, imp, ostA; LPS-assembly protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K02038	M04	pstA; phosphate transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K00632	M04	fadA, fadI; acetyl-CoA acyltransferase [EC:2.3.1.16]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03688	M04	ubiB, aarF; ubiquinone biosynthesis protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K02066	M04	mlaE, linK; phospholipid/cholesterol/gamma-HCH transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K02040	M04	pstS; phosphate transport system substrate-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K00605	M04	gcvT, AMT; glycine cleavage system T protein (aminomethyltransferase) [EC:2.1.2.10]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00031	M04	IDH1, IDH2, icd, IDP; isocitrate dehydrogenase [EC:1.1.1.42]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K07289	M04	asmA; AsmA protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K07402	M04	xdhC; xanthine dehydrogenase accessory factor	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00681	M04	ggt; gamma-glutamyltranspeptidase / glutathione hydrolase [EC:2.3.2.2 3.4.19.13]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00826	M05	E2.6.1.42, ilvE; branched-chain amino acid aminotransferase [EC:2.6.1.42]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K06168	M05	CDK5RAP1, miaB; tRNA-2-methylthio-N6-dimethylallyladenosine synthase [EC:2.8.4.3]	Information processing	Information processing	FALSE
+K03572	M05	mutL; DNA mismatch repair protein MutL	Information processing	Information processing	FALSE
+K00058	M05	serA, PHGDH; D-3-phosphoglycerate dehydrogenase / 2-oxoglutarate reductase [EC:1.1.1.95 1.1.1.399]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03527	M05	ispH, lytB; 4-hydroxy-3-methylbut-2-en-1-yl diphosphate reductase [EC:1.17.7.4]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00088	M05	IMPDH, guaB; IMP dehydrogenase [EC:1.1.1.205]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K03631	M05	recN; DNA repair protein RecN (Recombination protein N)	Information processing	Information processing	FALSE
+K11085	M05	msbA; ATP-binding cassette, subfamily B, bacterial MsbA [EC:7.5.2.6]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03665	M05	hflX; GTPase	Uncharacterized / other	Uncharacterized / other	FALSE
+K03628	M05	rho; transcription termination factor Rho	Information processing	Information processing	FALSE
+K00764	M05	purF, PPAT; amidophosphoribosyltransferase [EC:2.4.2.14]	Uncharacterized / other	Uncharacterized / other	FALSE
+K04042	M05	glmU; bifunctional UDP-N-acetylglucosamine pyrophosphorylase / glucosamine-1-phosphate N-acetyltransferase [EC:2.7.7.23 2.3.1.157]	Uncharacterized / other	Uncharacterized / other	FALSE
+K03555	M05	mutS; DNA mismatch repair protein MutS	Information processing	Information processing	FALSE
+K01262	M05	pepP; Xaa-Pro aminopeptidase [EC:3.4.11.9]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00655	M05	plsC; 1-acyl-sn-glycerol-3-phosphate acyltransferase [EC:2.3.1.51]	Uncharacterized / other	Uncharacterized / other	FALSE
+K17758	M05	nnrD; ADP-dependent NAD(P)H-hydrate dehydratase [EC:4.2.1.136]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K17759	M05	NAXE, nnrE; NAD(P)H-hydrate epimerase [EC:5.1.99.6]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K12573	M05	rnr, vacB; ribonuclease R [EC:3.1.13.1]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02003	M05	ABC.CD.A; putative ABC transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K03544	M05	clpX, CLPX; ATP-dependent Clp protease ATP-binding subunit ClpX	Uncharacterized / other	Uncharacterized / other	FALSE
+K13038	M05	coaBC, dfp; phosphopantothenoylcysteine decarboxylase / phosphopantothenate---cysteine ligase [EC:4.1.1.36 6.3.2.5]	Transport / membrane systems	Transport / membrane systems	FALSE
+K03072	M05	secD; preprotein translocase subunit SecD	Information processing	Information processing	FALSE
+K11754	M05	folC; dihydrofolate synthase / folylpolyglutamate synthase [EC:6.3.2.12 6.3.2.17]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K06889	M05	K06889; uncharacterized protein	Uncharacterized / other	Uncharacterized / other	FALSE
+K03832	M05	tonB; periplasmic protein TonB	Uncharacterized / other	Uncharacterized / other	FALSE
+K03820	M05	lnt; apolipoprotein N-acyltransferase [EC:2.3.1.269]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00384	M05	trxB, TRR; thioredoxin reductase (NADPH) [EC:1.8.1.9]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K01714	M06	dapA; 4-hydroxy-tetrahydrodipicolinate synthase [EC:4.3.3.7]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00059	M06	fabG, OAR1; 3-oxoacyl-[acyl-carrier protein] reductase [EC:1.1.1.100]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K02034	M06	ABC.PE.P1; peptide/nickel transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K07588	M06	MMAA, argK; GTPase [EC:3.6.5.-]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01998	M06	livM; branched-chain amino acid transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K01995	M06	livG; branched-chain amino acid transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K01996	M06	livF; branched-chain amino acid transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K01439	M06	dapE; succinyl-diaminopimelate desuccinylase [EC:3.5.1.18]	Amino acid / cofactor biosynthesis	Amino acid / cofactor biosynthesis	FALSE
+K00111	M06	glpA, glpD; glycerol-3-phosphate dehydrogenase [EC:1.1.5.3]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K10823	M06	oppF; oligopeptide transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K00077	M06	panE, apbA; 2-dehydropantoate 2-reductase [EC:1.1.1.169]	Anaerobic redox / energy	Amino acid / cofactor biosynthesis	TRUE
+K02032	M06	ddpF; peptide/nickel transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K02031	M06	ddpD; peptide/nickel transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K01997	M06	livH; branched-chain amino acid transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K01999	M06	livK; branched-chain amino acid transport system substrate-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K01438	M06	argE; acetylornithine deacetylase [EC:3.5.1.16]	Uncharacterized / other	Uncharacterized / other	FALSE
+K00627	M06	DLAT, aceF, pdhC; pyruvate dehydrogenase E2 component (dihydrolipoyllysine-residue acetyltransferase) [EC:2.3.1.12]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00995	M06	PGS1, pgsA; CDP-diacylglycerol---glycerol-3-phosphate 3-phosphatidyltransferase [EC:2.7.8.5]	Uncharacterized / other	Uncharacterized / other	FALSE
+K02033	M06	ABC.PE.P; peptide/nickel transport system permease protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K19802	M06	ycjG, ykfB, dgcA; L-Ala-D/L-Glu epimerase / N-acetyl-D-glutamate racemase [EC:5.1.1.20 5.1.1.25]	Uncharacterized / other	Uncharacterized / other	FALSE
+K01739	M06	metB; cystathionine gamma-synthase [EC:2.5.1.48]	Uncharacterized / other	Amino acid / cofactor biosynthesis	TRUE
+K15583	M06	oppD; oligopeptide transport system ATP-binding protein	Transport / membrane systems	Transport / membrane systems	FALSE
+K00074	M06	paaH, hbd, fadB, mmgB; 3-hydroxybutyryl-CoA dehydrogenase [EC:1.1.1.157]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE
+K00528	M06	fpr; ferredoxin/flavodoxin---NADP+ reductase [EC:1.18.1.2 1.19.1.1]	Anaerobic redox / energy	Anaerobic redox / energy	FALSE

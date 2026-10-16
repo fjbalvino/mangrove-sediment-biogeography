@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Rerun the KO consensus network without imposing historical network counts."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,6 +13,8 @@ from datetime import datetime, timezone
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--rscript', default='Rscript')
+    p.add_argument('--workers', type=int, default=4)
+    p.add_argument('--skip-study-sensitivity', action='store_true')
     p.add_argument('--counts', type=Path, required=True)
     p.add_argument('--metadata', type=Path, required=True)
     p.add_argument('--atlas-classes', type=Path, required=True)
@@ -21,9 +24,25 @@ def main():
     p.add_argument('--stop-after', choices=['B', 'A', 'C', 'D', 'E', 'F', 'G'], default='F')
     args = p.parse_args()
     repo = Path(__file__).resolve().parents[1]
+    # Do not mix this frozen network with another cohort or annotation snapshot.
+    expected = json.loads((repo / 'config/network_input_checksums.json').read_text())
+    source_inputs = {
+        'functional_KO_counts_original.tsv.gz': args.counts,
+        'metadata_functional.csv': args.metadata,
+        'KO_persistence_classes.tsv': args.atlas_classes,
+        '137_KO_function_dictionary_used.tsv': args.annotations / '137_KO_function_dictionary_used.tsv',
+        '144_KO_to_KEGG_MODULE_long.tsv': args.annotations / '144_KO_to_KEGG_MODULE_long.tsv',
+    }
+    input_verification = {}
+    for name, path in source_inputs.items():
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest != expected[name]['sha256']:
+            raise ValueError(f'Input checksum mismatch: {name}; verify the source data before rerunning.')
+        input_verification[name] = {'path': str(path.resolve()), 'sha256': digest, 'status': 'PASS'}
     scripts = repo / 'scripts/10_functional_network'
     out = args.outdir.resolve()
     out.mkdir(parents=True, exist_ok=True)
+    (out / 'source_input_verification.json').write_text(json.dumps(input_verification, indent=2) + '\n')
     logs = out / 'execution_logs'
     logs.mkdir(exist_ok=True)
     inp = out / 'inputs'
@@ -95,10 +114,11 @@ def main():
                      '--strict_expected', 1, '--enforce_reference', 0,
                      '--expected_n_samples', audit['n_samples'], '--expected_total_kos', audit['n_KOs'],
                      '--expected_bootstrap_median_n', audit['samples_per_balanced_subsample'],
-                     '--seed', 123, '--n_boot', 100, '--max_kos', 1500,
+                     '--seed', 123, '--n_boot', 500, '--max_kos', 1500,
                      '--max_n_per_stratum', 4, '--target_edges_per_bootstrap', 2000,
                      '--consensus_stability_min', .80, '--sign_consistency_min', 1,
-                     '--consensus_mean_abs_min', .95, '--min_module_size', 10]
+                     '--consensus_mean_abs_min', .95, '--min_module_size', 10,
+                     '--community_method', 'leiden', '--resolution', 1, '--n_starts', 50, '--partition_seed', 2001]
         elif stage == 'D':
             extra = ['--run171', latest('171'), '--strict_expected', 0, '--seed', 123, '--dpi', 300]
         elif stage == 'E':
@@ -107,13 +127,23 @@ def main():
         elif stage == 'F':
             extra = ['--run156', latest('156'), '--run171', latest('171'), '--run173', latest('173'),
                      '--strict_expected', 0, '--enforce_manuscript_reference', 0,
-                     '--n_perm', 4999, '--n_rewire', 999, '--n_edge_boot', 500,
+                     '--n_perm', 4999, '--n_rewire', 999, '--n_edge_boot', 500, '--workers', args.workers,
                      '--kegg_mapping_complete', 0,
                      '--seed', 123, '--dpi', 300]
         elif stage == 'G':
             extra = ['--run171', latest('171'), '--run172', latest('172'),
                      '--run173', latest('173'), '--run174', latest('174'),
-                     '--outdir', out / 'main_figure', '--strict_expected', 0, '--dpi', 300]
+                     '--outdir', out / 'main_figure', '--strict_expected', 1, '--dpi', 600]
+        if stage == 'G' and args.start_at != 'G' and not args.skip_study_sensitivity:
+            study = out / 'study_sensitivity'
+            run('J_study_networks', [sys.executable, scripts / '10J_NETWORK_STUDY_SENSITIVITY.py',
+                '--run156', latest('156'), '--run171', latest('171'),
+                '--metadata', inp / 'metadata_191.tsv', '--outdir', study,
+                '--rscript', args.rscript, '--workers', args.workers])
+            run('J_study_partitions', [args.rscript, '--vanilla', scripts / 'lib/study_sensitivity.R',
+                'evaluate', study, latest('173'), latest('171')])
+            run('K_verify_study_sensitivity', [sys.executable, scripts / '10K_VERIFY_NETWORK_SENSITIVITY.py',
+                '--study', study, '--run156', latest('156'), '--rscript', args.rscript])
         script, = scripts.glob('10' + stage + '_*.R')
         run(stage, [args.rscript, '--vanilla', script, *common, *extra])
     if args.stop_after in ['F', 'G']:

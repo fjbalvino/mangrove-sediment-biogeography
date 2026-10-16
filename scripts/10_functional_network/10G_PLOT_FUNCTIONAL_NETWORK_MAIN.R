@@ -7,7 +7,7 @@
 #   Reproducible functional co-abundance structure
 #
 # Paneles:
-#   a) Subred de los seis módulos mayores
+#   a) Subred de los módulos mayores de la cohorte vigente
 #   b) Especialización funcional validada
 #   c) Estabilidad modular bajo perturbación de aristas
 #
@@ -43,7 +43,7 @@ as_flag <- function(x) {
   tolower(trimws(as.character(x))) %in% c("1", "true", "t", "yes", "y")
 }
 
-BASE <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
+BASE <- get_arg("--base", path.expand("~/Biogeografia_2026"))
 RESULTS_DIR <- file.path(BASE, "resultados")
 
 read_latest_by_number <- function(number) {
@@ -69,13 +69,14 @@ RUN171 <- get_arg("--run171", read_latest_by_number("171"))
 RUN172 <- get_arg("--run172", read_latest_by_number("172"))
 RUN173 <- get_arg("--run173", read_latest_by_number("173"))
 RUN174 <- get_arg("--run174", read_latest_by_number("174"))
+STUDY_SCORES <- get_arg("--study_scores",file.path(BASE,"study_sensitivity","study_exclusion_module_scores.tsv"))
 DPI <- suppressWarnings(as.integer(get_arg("--dpi", "600")))
 STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"))
 
 if (!is.finite(DPI) || DPI < 300L) stop("--dpi debe ser >= 300.")
 
 SCRIPT_ID <- "177_PLOT_FUNCTIONAL_NETWORK_PANEL_A_EDITORIAL"
-FIGURE_LAYOUT_VERSION <- "network_specialization_stability_20260826b"
+FIGURE_LAYOUT_VERSION <- "network_specialization_stability_current_cohort"
 STAMP <- format(Sys.time(), "%Y%m%d_%H%M%S")
 OUTDIR <- get_arg(
   "--outdir",
@@ -200,6 +201,7 @@ theme_editorial <- function(base_size = 9) {
       legend.title = ggplot2::element_text(size = 8, face = "bold"),
       plot.tag = ggplot2::element_text(size = 11, face = "bold"),
       plot.tag.position = "topleft",
+      plot.title = ggplot2::element_text(size = 9, face = "bold", hjust = 0),
       plot.caption = ggplot2::element_text(
         size = 7.5, color = "#444444", hjust = 0, lineheight = 0.95,
         margin = ggplot2::margin(t = 3)
@@ -218,6 +220,7 @@ theme_network <- function(base_size = 9) {
       legend.title = ggplot2::element_text(size = 8, face = "bold"),
       plot.tag = ggplot2::element_text(size = 11, face = "bold"),
       plot.tag.position = "topleft",
+      plot.title = ggplot2::element_text(size = 9, face = "bold", hjust = 0),
       plot.caption = ggplot2::element_text(
         size = 7.5, color = "#444444", hjust = 0, lineheight = 0.95,
         margin = ggplot2::margin(t = 3)
@@ -226,7 +229,6 @@ theme_network <- function(base_size = 9) {
     )
 }
 
-MAJOR_MODULES <- sprintf("M%02d", 1:6)
 MODULE_PALETTE <- c(
   "M01" = "#0072B2", "M02" = "#D55E00", "M03" = "#009E73",
   "M04" = "#CC79A7", "M05" = "#E69F00", "M06" = "#56B4E9"
@@ -257,6 +259,11 @@ main <- function() {
   assert_directory(RUN172, "RUN172")
   assert_directory(RUN173, "RUN173")
   assert_directory(RUN174, "RUN174")
+  for (run in c(RUN171, RUN172, RUN173, RUN174)) {
+    if (trimws(readLines(file.path(run, "STATUS.txt"), n = 1)) != "PASS") {
+      stop("Input stage did not complete successfully: ", run)
+    }
+  }
 
   paths <- list(
     metrics = file.path(RUN171, "tables", "171_network_global_metrics.tsv"),
@@ -273,6 +280,9 @@ main <- function() {
     ),
     validation_summary = file.path(
       RUN174, "tables", "174_summary.tsv"
+    ),
+    annotation_support = file.path(
+      RUN174, "tables", "174_annotation_source_support.tsv"
     )
   )
   invisible(lapply(paths, assert_file))
@@ -285,6 +295,7 @@ main <- function() {
   stability_raw <- read_tsv(paths$stability)
   perturbation_raw <- read_tsv(paths$perturbation)
   validation_summary_raw <- read_tsv(paths$validation_summary)
+  annotation_support <- read_tsv(paths$annotation_support)
 
   # 174_edge_perturbation_summary.tsv contiene una fila por perturbación
   # (columna `perturbation`), no una columna repetida `n_perturbations`.
@@ -406,36 +417,6 @@ main <- function() {
   observed_tiers <- setNames(integer(length(TIER_ORDER)), TIER_ORDER)
   observed_tiers[as.character(tier_counts$tier)] <- tier_counts$n_KOs
 
-  expected_modules <- setNames(c(66L, 62L, 48L, 33L, 16L, 12L),
-                               sprintf("M%02d", 1:6))[MAJOR_MODULES]
-  expected_tiers <- c(9L, 195L, 33L, 0L)
-
-  validation <- data.table::data.table(
-    metric = c(
-      "n_plotted_major_module_KOs",
-      "n_plotted_major_module_associations",
-      paste0("n_", MAJOR_MODULES),
-      "n_absolute_global_core",
-      "n_near_global",
-      "n_realm_core",
-      "n_peripheral",
-      "n_edge_perturbations"
-    ),
-    observed = c(
-      nrow(nodes), nrow(edges_plot), unname(observed_modules),
-      unname(observed_tiers), n_edge_perturbations
-    ),
-    expected = c(237L, 1162L, expected_modules, expected_tiers, 500L)
-  )
-  validation[, pass := observed == expected]
-  write_tsv(validation, file.path(TABLES_DIR, "177_expected_validation.tsv"))
-  if (STRICT_EXPECTED && any(!validation$pass)) {
-    stop(
-      "Fallaron validaciones de numeraria: ",
-      paste(validation[!pass, metric], collapse = ", ")
-    )
-  }
-
   metric_value <- function(metric_name) {
     metric_col <- pick_col(metrics_raw, c("^metric$", "^item$"),
                            "nombre de métrica")
@@ -450,6 +431,22 @@ main <- function() {
   }
   full_nodes <- metric_value("n_connected_KOs")
   full_edges <- metric_value("n_consensus_edges")
+  # Validate against the current inference, never historical manuscript counts.
+  primary_edges <- read_tsv(file.path(RUN171, "tables", "171_consensus_edges.tsv.gz"))
+  expected_edges <- primary_edges[KO1 %in% nodes$KO & KO2 %in% nodes$KO]
+  validation <- data.table::data.table(
+    metric = c("major_module_KOs", "major_modules", "major_subgraph_edges",
+               "edge_endpoints_match", "module_sizes_match_stability", "unique_KOs"),
+    pass = c(nrow(nodes) == metric_value("n_KOs_in_major_modules"),
+             length(MAJOR_MODULES) == metric_value("n_major_modules_ge_min_size"),
+             nrow(edges_plot) == nrow(expected_edges),
+             setequal(edges$edge_key, paste(pmin(expected_edges$KO1, expected_edges$KO2),
+                                           pmax(expected_edges$KO1, expected_edges$KO2), sep = "||")),
+             all(observed_modules[stability_raw$module_label] == stability_raw$n_KOs),
+             nrow(nodes) == data.table::uniqueN(nodes$KO))
+  )
+  write_tsv(validation, file.path(TABLES_DIR, "177_expected_validation.tsv"))
+  if (anyNA(validation$pass) || !all(validation$pass)) stop("Figure inputs do not match current inference.")
 
   # ----------------------------------------------------------
   # Panel a: subred funcional
@@ -460,42 +457,63 @@ main <- function() {
   y_range <- diff(range(nodes$y))
   offsets <- data.table::data.table(
     module = factor(MAJOR_MODULES, levels = MAJOR_MODULES),
-    dx = rep_len(c(-0.11, -0.10, 0.14, 0.02, -0.08, -0.03), length(MAJOR_MODULES)),
-    dy = rep_len(c(-0.02, -0.08, 0.02, 0.09, 0.06, -0.03), length(MAJOR_MODULES))
+    dx = rep_len(c(0.05, 0.10, -0.30, 0.38, 0.25, -0.08), length(MAJOR_MODULES)),
+    dy = rep_len(c(0.30, -0.35, 0.17, 0.38, -0.22, -0.23), length(MAJOR_MODULES))
   )
   module_centroids <- nodes[, .(
     x = median(x), y = median(y), n_KOs = .N
   ), by = module]
   module_centroids <- merge(module_centroids, offsets, by = "module",
                             all.x = TRUE, sort = FALSE)
+  # A functional name is assigned only to a supported category. Module IDs are
+  # size ranks, so names are rebuilt from the current enrichment output.
+  module_names <- data.table::data.table(module = MAJOR_MODULES, functional_name = "Diverse functions")
+  for (m in MAJOR_MODULES) {
+    hit <- annotation_support[module_label == m & primary_supported == TRUE]
+    if (nrow(hit)) {
+      category <- sub(" systems$", "", hit$category[1L])
+      category <- sub("Carbon / carbohydrate metabolism", "Carbon / carbohydrate\nmetabolism", category, fixed=TRUE)
+      category <- sub("Amino acid / cofactor biosynthesis", "Amino acid / cofactor\nbiosynthesis", category, fixed = TRUE)
+
+      if (!isTRUE(hit$combined_supported[1L])) category <- paste0(category, "*")
+      module_names[module == m, functional_name := category]
+    }
+  }
+  module_centroids <- merge(module_centroids, module_names, by = "module", all.x = TRUE, sort = FALSE)
   module_centroids[, `:=`(
     x_label = x + dx * x_range,
     y_label = y + dy * y_range,
-    label = paste0(module, "\n", "n=", n_KOs)
+    label = paste0(module, " · ", n_KOs, " KOs\n", functional_name)
   )]
 
   p_a <- ggplot2::ggplot() +
     ggplot2::geom_segment(
       data = edges_plot,
       ggplot2::aes(x = x, y = y, xend = xend, yend = yend),
-      color = "#8C8C8C", linewidth = 0.20, alpha = 0.17
+      color = "#7A7A7A", linewidth = 0.18, alpha = 0.28
     ) +
     ggplot2::geom_point(
       data = nodes,
       ggplot2::aes(x = x, y = y, fill = module, shape = tier),
-      color = "#3A3A3A", size = 1.90, stroke = 0.26, alpha = 0.96
+      color = "#222222", size = 1.55, stroke = 0.22, alpha = 0.96
+    ) +
+    ggplot2::geom_segment(
+      data = module_centroids,
+      ggplot2::aes(x = x, y = y, xend = x_label, yend = y_label, colour = module),
+      linewidth = 0.35, show.legend = FALSE
     ) +
     ggplot2::geom_label(
       data = module_centroids,
-      ggplot2::aes(x = x_label, y = y_label, label = label, fill = module),
-      color = "white", size = 2.75, fontface = "bold", linewidth = 0,
-      label.padding = grid::unit(1.15, "mm"), show.legend = FALSE
+      ggplot2::aes(x = x_label, y = y_label, label = label),
+      colour = "black", fill = "white", size = 2.9, fontface = "bold", label.size = 0,
+      label.padding = grid::unit(0.8, "mm"), show.legend = FALSE
     ) +
-    ggplot2::scale_fill_manual(values = MODULE_PALETTE, name = "Network module") +
+    ggplot2::scale_fill_manual(values = MODULE_PALETTE, guide = "none") +
+    ggplot2::scale_colour_manual(values = MODULE_PALETTE, guide = "none") +
     ggplot2::scale_shape_manual(values = TIER_SHAPES,
-                                name = "Conservation tier") +
+                                name = "Persistence class") +
     ggplot2::coord_equal(clip = "off") +
-    ggplot2::labs(tag = "a") +
+    ggplot2::labs(tag = "a", title = "Co-abundance network") +
     theme_network() +
     ggplot2::theme(
       legend.position = "bottom",
@@ -503,14 +521,9 @@ main <- function() {
       legend.justification = "left"
     ) +
     ggplot2::guides(
-      fill = ggplot2::guide_legend(
-        order = 1, nrow = 2, byrow = TRUE,
-        title.position = "top", title.hjust = 0,
-        override.aes = list(shape = 21, size = 3.2, alpha = 1)
-      ),
       shape = ggplot2::guide_legend(
         order = 2, nrow = 1, byrow = TRUE,
-        title.position = "top", title.hjust = 0,
+        title.position = "left", title.hjust = 0,
         override.aes = list(fill = "white", size = 3.2, alpha = 1)
       )
     )
@@ -543,14 +556,21 @@ main <- function() {
       q_BY <= 0.05 & p_maxT_FWER <= 0.05
   ]
   enrichment[, category_short := vapply(category, function(z) {
-    paste(strwrap(z, width = 23), collapse = "\n")
+    paste(strwrap(z, width = 24), collapse = "\n")
   }, character(1))]
-  enrichment[, row_label := paste0(module, " — ", category_short)]
+  enrichment <- merge(enrichment,
+    annotation_support[, .(module = module_label, category, combined_supported)],
+    by = c("module", "category"), all.x = TRUE, sort = FALSE)
+  enrichment[is.na(combined_supported), combined_supported := FALSE]
+  enrichment[, row_label := module]
   data.table::setorder(enrichment, module, category)
   enrichment[, row_label := factor(row_label, levels = rev(row_label))]
   enrichment[, module := factor(module, levels = MAJOR_MODULES)]
   enrichment[, point_label := sprintf("%.2f×; %d KOs",
                                        fold_enrichment, observed_n)]
+
+
+  enrichment[combined_supported == FALSE, point_label := paste0(point_label, "*")]
 
   if (anyNA(enrichment$module)) stop("Especialización sin módulo válido.")
   write_tsv(enrichment,
@@ -568,16 +588,22 @@ main <- function() {
       color = "#C7C7C7", linewidth = 0.80
     ) +
     ggplot2::geom_point(
-      ggplot2::aes(size = observed_n),
+      data = enrichment[combined_supported == TRUE],
+      ggplot2::aes(size = observed_n, fill = module), shape = 21, stroke = 0.55,
       alpha = 0.97, show.legend = FALSE
     ) +
+    ggplot2::geom_point(
+      data=enrichment[combined_supported==FALSE],
+      ggplot2::aes(size=observed_n),shape=21,stroke=0.75,fill="white",show.legend=FALSE
+    ) +
     ggplot2::geom_text(
-      ggplot2::aes(label = point_label), hjust = -0.14,
+      ggplot2::aes(label = point_label), hjust = 0, nudge_x = 0.24,
       color = "black", size = 2.75
     ) +
     ggplot2::scale_color_manual(values = MODULE_PALETTE, guide = "none") +
+    ggplot2::scale_fill_manual(values = MODULE_PALETTE, guide = "none") +
     ggplot2::scale_size_continuous(
-      range = c(3.8, 6.6), guide = "none"
+      range = c(3.2, 4.3), guide = "none"
     ) +
     ggplot2::scale_x_continuous(
       limits = c(0.95, max(c(4.55, enrichment$fold_enrichment * 1.45))),
@@ -585,7 +611,8 @@ main <- function() {
     ) +
     ggplot2::coord_cartesian(clip = "off") +
     ggplot2::labs(
-      x = "Fold enrichment", y = NULL, tag = "b"
+      x = "Fold enrichment", y = NULL, tag = "b", title = "Functional enrichment",
+      caption = "* Support varies with annotation source"
     ) +
     theme_editorial() +
     ggplot2::theme(
@@ -626,31 +653,32 @@ main <- function() {
   write_tsv(stability,
             file.path(TABLES_DIR, "177_module_membership_stability_used.tsv"))
 
-  p_c <- ggplot2::ggplot(
-    stability,
-    ggplot2::aes(x = mean_stability, y = module, color = module)
-  ) +
-    ggplot2::geom_segment(
-      ggplot2::aes(x = 0, xend = mean_stability,
-                   y = module, yend = module),
-      color = "#D0D0D0", linewidth = 0.70
-    ) +
-    ggplot2::geom_point(size = 3.8) +
-    ggplot2::geom_text(
-      ggplot2::aes(label = value_label), hjust = -0.30,
-      color = "black", size = 2.85
-    ) +
-    ggplot2::scale_color_manual(values = MODULE_PALETTE, guide = "none") +
-    ggplot2::scale_x_continuous(
-      limits = c(0, 1.055), breaks = c(0, 0.25, 0.5, 0.75, 1.0),
-      expand = ggplot2::expansion(mult = c(0, 0))
-    ) +
-    ggplot2::coord_cartesian(clip = "off") +
-    ggplot2::labs(
-      x = "Mean co-assignment probability", y = NULL, tag = "c"
-    ) +
+  study_scores <- read_tsv(STUDY_SCORES)
+  study_scores <- study_scores[grepl("^PRJ",study_id)]
+  stopifnot(data.table::uniqueN(study_scores$study_id)==43L)
+  study_stats <- study_scores[,.(study_median=median(within_module_coassignment),
+    study_min=min(within_module_coassignment),study_max=max(within_module_coassignment),
+    n_study_units=data.table::uniqueN(study_id)),by=.(module=module_label)]
+  stability[,module:=as.character(module)]
+  stability <- merge(stability,study_stats,by="module",all.x=TRUE,sort=FALSE)
+  stability[,y:=match(module,rev(MAJOR_MODULES))]
+  stopifnot(!anyNA(stability))
+  write_tsv(stability,file.path(TABLES_DIR,"177_module_membership_stability_used.tsv"))
+  p_c <- ggplot2::ggplot(stability,ggplot2::aes(colour=module)) +
+    ggplot2::geom_segment(ggplot2::aes(x=study_min,xend=study_max,y=y-0.12,yend=y-0.12),
+      linewidth=0.55,alpha=0.60) +
+    ggplot2::geom_point(ggplot2::aes(x=mean_stability,y=y+0.12),shape=16,size=2.7) +
+    ggplot2::geom_point(ggplot2::aes(x=study_median,y=y-0.12),shape=23,fill="white",size=2.6,stroke=0.65) +
+    ggplot2::scale_color_manual(values=MODULE_PALETTE,guide="none") +
+    ggplot2::scale_x_continuous(limits=c(0,1.035),breaks=c(0,.25,.5,.75,1),
+      expand=ggplot2::expansion(mult=c(0,0))) +
+    ggplot2::scale_y_continuous(breaks=seq_along(MAJOR_MODULES),labels=rev(MAJOR_MODULES),
+      limits=c(.55,length(MAJOR_MODULES)+.45),expand=ggplot2::expansion(mult=c(0,0))) +
+    ggplot2::labs(x="Within-module co-assignment",y=NULL,tag="c",title="Membership sensitivity",
+      subtitle="Circles: edge perturbation\nDiamonds: BioProject omission (range)") +
     theme_editorial() +
-    ggplot2::theme(plot.margin = ggplot2::margin(5, 18, 5, 6))
+    ggplot2::theme(plot.margin=ggplot2::margin(5,14,5,6),
+                   plot.subtitle=ggplot2::element_text(size=7.6,colour="black",lineheight=1.05))
 
   # ----------------------------------------------------------
   # Ensamblaje y exportación
@@ -661,14 +689,14 @@ main <- function() {
   composite <- p_a + p_b + p_c +
     patchwork::plot_layout(
       design = design,
-      widths = c(1.12, 1),
+      widths = c(1.55, 1),
       heights = c(1, 1),
       guides = "collect"
     ) &
     ggplot2::theme(
       legend.position = "bottom",
       legend.box = "vertical",
-      legend.justification = "left"
+      legend.justification = "center"
     )
 
   figure_specs <- list(
@@ -698,7 +726,7 @@ main <- function() {
     content = c(
       "Major-module functional co-abundance network",
       "Validated functional specialization",
-      "Module stability under edge perturbation"
+      "Membership sensitivity to edge perturbation and BioProject omission"
     ),
     source_run = c("RUN172/RUN173", "RUN174", "RUN174"),
     included_in_main_figure = TRUE

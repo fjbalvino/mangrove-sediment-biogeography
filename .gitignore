@@ -34,6 +34,8 @@ data/derived/
 cache/
 results/*
 !results/README.md
+!results/functional_network/
+!results/functional_network/**
 !results/functional_regional/
 !results/functional_regional/**
 resultados/
@@ -48,4 +50,16 @@ __pycache__/
 .Rhistory
 .Rproj.user/
 .DS_Store
+
+# Manuscript figures and binary reports are distributed outside the code repository.
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.pdf
+*.docx
+*.pptx
+*.zip
 

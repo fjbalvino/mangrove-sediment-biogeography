@@ -1,0 +1,6 @@
+analysis	covariates	block	n_KOs
+Module enrichment	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	3	46
+Module enrichment	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	2	45
+Module enrichment	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	4	57
+Module enrichment	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	1	75
+Module enrichment	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	5	13

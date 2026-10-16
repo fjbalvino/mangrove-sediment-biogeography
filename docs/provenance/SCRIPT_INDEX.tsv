@@ -53,3 +53,9 @@ order	block	canonical_file	role
 10G	functional_network	scripts/10_functional_network/10G_PLOT_FUNCTIONAL_NETWORK_MAIN.R	Current main network panel
 10H	functional_network	scripts/10_functional_network/10H_PREPARE_NETWORK_COHORT.py	Verify current cohort and adapt persistence classes for network inference
 10I	functional_network	scripts/10_functional_network/10I_VERIFY_NETWORK_OUTPUTS.py	Independent consensus and validation output checks
+10J	functional_network	scripts/10_functional_network/10J_NETWORK_STUDY_SENSITIVITY.py	10J NETWORK STUDY SENSITIVITY
+10K	functional_network	scripts/10_functional_network/10K_VERIFY_NETWORK_SENSITIVITY.py	10K VERIFY NETWORK SENSITIVITY
+10L	functional_network	scripts/10_functional_network/lib/functional_category_rules.R	functional category rules
+10L	functional_network	scripts/10_functional_network/lib/network_partition.R	network partition
+10L	functional_network	scripts/10_functional_network/lib/study_sensitivity.R	study sensitivity
+10L	functional_network	scripts/10_functional_network/lib/verify_study_edges.R	verify study edges

@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "reference": "171_FUNCTIONAL_KO_CONSENSUS_NETWORK_FINAL_20261015_222037",
+      "same_edges": true,
+      "max_mean_weight_difference": 9.992007221626409e-16
+    },
+    {
+      "reference": "171_FUNCTIONAL_KO_CONSENSUS_NETWORK_FINAL_20261016_065322",
+      "same_edges": true,
+      "max_mean_weight_difference": 9.992007221626409e-16
+    }
+  ],
+  "fresh_and_audited_primary_memberships_identical": true,
+  "n_subsamples": 500,
+  "new_inference_run": "source_runs/171_FUNCTIONAL_KO_CONSENSUS_NETWORK_FINAL_20261015_222037",
+  "finalized_run": "source_runs/171_FUNCTIONAL_KO_CONSENSUS_NETWORK_FINAL_20261016_072550",
+  "weight_serialization_tolerance": 1e-12,
+  "old_100_draw_results_superseded": true
+}

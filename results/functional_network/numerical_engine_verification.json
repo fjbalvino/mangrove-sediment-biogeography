@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "n_exact_edge_sets": 500,
+  "edges_checked": 1000000,
+  "same_sampling_design": true,
+  "max_weight_difference": 2.220446049250313e-15,
+  "reference_run171": "source_runs/171_FUNCTIONAL_KO_CONSENSUS_NETWORK_FINAL_20261016_065322"
+}

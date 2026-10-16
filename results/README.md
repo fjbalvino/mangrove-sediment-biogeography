@@ -29,13 +29,19 @@ The results text and caption are in `docs/FUNCTIONAL_RESULTS.md`.
 
 ## Functional network
 
-`functional_network/` contains the rerun Figure 6 statistics for 191 profiles,
-including conditional enrichment, module stability, threshold and algorithm
-sensitivity, and 26 independent output checks. The full network contains 1,060
-associations among 327 connected KOs; five major modules contain 238 KOs.
-Historical 194-profile counts are not enforced as expected outcomes.
+`functional_network/` contains the corrected Figure 5 statistics for 191 profiles.
+The full network has 1,062 associations among 327 connected KOs; six major
+modules contain 236 KOs and 999 associations. Enrichment uses 4,999 blocked
+permutations and the complete 42-comparison family. M01 and M06 retain support
+under both annotation treatments; M03 is annotation-sensitive.
 
-Module composition and stability changed. The corrected text is in
-`docs/FUNCTIONAL_NETWORK_RESULTS.md`; execution instructions and the restricted
-scope of the supplied KEGG MODULE mapping are in
-`docs/FUNCTIONAL_NETWORK_ANALYSES.md`. Images and fitted R objects are omitted.
+The tables include 500 edge perturbations, 30 threshold combinations, alternative
+community algorithms, and omission of each of 43 BioProjects. One unresolved
+project-label omission is reported separately. Omitting six PRJNA437562 profiles
+changes the network substantially; all 191 profiles remain in the primary analysis.
+
+The accepted text and caption are in `docs/FUNCTIONAL_NETWORK_RESULTS.md`;
+Supplementary Tables S14–S27 are in `docs/FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md`.
+Execution and input requirements are in `docs/FUNCTIONAL_NETWORK_ANALYSES.md`.
+Source-data verification records accompany the tables. Images, binary reports,
+raw matrices and fitted objects are excluded from the repository.

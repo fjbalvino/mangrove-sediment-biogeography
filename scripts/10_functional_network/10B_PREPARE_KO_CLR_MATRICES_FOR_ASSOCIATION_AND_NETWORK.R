@@ -395,7 +395,7 @@ main <- function() {
 
   base <- get_arg(
     "--base",
-    Sys.getenv("BIOGEOGRAPHY_BASE", "/home/fjbalvino/Biogeografia_2026")
+    Sys.getenv("BIOGEOGRAPHY_BASE", path.expand("~/Biogeografia_2026"))
   )
   results_dir <- get_arg("--results_dir", file.path(base, "resultados"))
   run134 <- get_arg(

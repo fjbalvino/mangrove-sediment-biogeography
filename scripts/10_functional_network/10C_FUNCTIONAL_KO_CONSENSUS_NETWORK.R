@@ -57,7 +57,7 @@ as_flag <- function(x) {
   tolower(trimws(as.character(x))) %in% c("1", "true", "t", "yes", "y")
 }
 
-BASE <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
+BASE <- get_arg("--base", path.expand("~/Biogeografia_2026"))
 RESULTS_DIR <- get_arg("--results_dir", file.path(BASE, "resultados"))
 
 read_latest <- function(script_basename) {
@@ -123,7 +123,14 @@ KO_DICT_PATH <- get_arg(
 )
 
 SEED <- as.integer(get_arg("--seed", "123"))
-N_BOOT <- as.integer(get_arg("--n_boot", "100"))
+REUSE_EDGE_RUN <- get_arg("--reuse_edge_run", "")
+N_BOOT <- as.integer(get_arg("--n_boot", "500"))
+COMMUNITY_METHOD <- get_arg("--community_method", "leiden")
+RESOLUTION <- as.numeric(get_arg("--resolution", "1"))
+N_STARTS <- as.integer(get_arg("--n_starts", "50"))
+PARTITION_SEED <- as.integer(get_arg("--partition_seed", "2001"))
+script_file <- sub("^--file=", "", grep("^--file=", commandArgs(), value=TRUE)[1L])
+source(file.path(dirname(normalizePath(script_file)), "lib", "network_partition.R"))
 MAX_KOS <- as.integer(get_arg("--max_kos", "1500"))
 MAX_N_PER_STRATUM <- as.integer(get_arg("--max_n_per_stratum", "4"))
 MIN_BOOTSTRAP_SAMPLES <- as.integer(
@@ -152,10 +159,10 @@ COUNTRY_COL_ARG <- get_arg("--country_col", "auto")
 LOCALITY_COL_ARG <- get_arg("--locality_col", "auto")
 
 STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"))
-ENFORCE_REFERENCE <- as_flag(get_arg("--enforce_reference", "1"))
+ENFORCE_REFERENCE <- as_flag(get_arg("--enforce_reference", "0"))
 
-EXPECTED_N_SAMPLES <- as.integer(get_arg("--expected_n_samples", "194"))
-EXPECTED_TOTAL_KOS <- as.integer(get_arg("--expected_total_kos", "17508"))
+EXPECTED_N_SAMPLES <- as.integer(get_arg("--expected_n_samples", "191"))
+EXPECTED_TOTAL_KOS <- as.integer(get_arg("--expected_total_kos", "17482"))
 EXPECTED_NETWORK_UNIVERSE <- as.integer(
   get_arg("--expected_network_universe", "5000")
 )
@@ -163,7 +170,7 @@ EXPECTED_SELECTED_KOS <- as.integer(
   get_arg("--expected_selected_kos", "1500")
 )
 EXPECTED_BOOTSTRAP_MEDIAN_N <- as.numeric(
-  get_arg("--expected_bootstrap_median_n", "84")
+  get_arg("--expected_bootstrap_median_n", "81")
 )
 REFERENCE_CONSENSUS_EDGES <- as.integer(
   get_arg("--reference_consensus_edges", "1223")
@@ -903,11 +910,30 @@ main <- function() {
     sep = ""
   )
 
-  cat("[4] Infiriendo aristas de proporcionalidad en 100 submuestreos...\n")
+  cat("[4] Infiriendo aristas de proporcionalidad en ", N_BOOT, " submuestreos...\n",sep="")
   upper_indices <- which(
     upper.tri(matrix(FALSE, nrow = ncol(Y), ncol = ncol(Y)), diag = FALSE),
     arr.ind = TRUE
   )
+  if(nzchar(REUSE_EDGE_RUN)) {
+    cached_tables <- file.path(REUSE_EDGE_RUN,"tables")
+    cached_design <- data.table::fread(file.path(cached_tables,"171_bootstrap_design.tsv.gz"))
+    stopifnot(identical(as.data.frame(cached_design),bootstrap_design))
+    cached_candidates <- read_tsv(file.path(cached_tables,"171_candidate_KO_selection.tsv"))
+    stopifnot(identical(cached_candidates$KO,candidate_annotation$KO))
+    cached_params <- read_tsv(file.path(cached_tables,"171_parameters.tsv"))
+    for(key in c("ko_clr_path","metadata_path","ko_stats_path")) {
+      cached_path <- cached_params$value[cached_params$parameter==key]
+      current_path <- switch(key,ko_clr_path=KO_CLR_PATH,metadata_path=METADATA_PATH,ko_stats_path=KO_STATS_PATH)
+      stopifnot(length(cached_path)==1L, file.exists(cached_path),
+        unname(tools::md5sum(cached_path))==unname(tools::md5sum(current_path)))
+    }
+    all_edges <- data.table::fread(file.path(cached_tables,"171_bootstrap_edge_membership.tsv.gz"))
+    stopifnot(data.table::uniqueN(all_edges$bootstrap_id)==N_BOOT)
+    edge_counts <- as.integer(table(factor(all_edges$bootstrap_id,levels=seq_len(N_BOOT))))
+    stopifnot(all(edge_counts==TARGET_EDGES_PER_BOOTSTRAP))
+    writeLines(REUSE_EDGE_RUN,file.path(OUTDIR,"REUSED_EDGE_RUN.txt"))
+  } else {
   edge_list <- vector("list", N_BOOT)
   edge_counts <- integer(N_BOOT)
 
@@ -940,6 +966,7 @@ main <- function() {
   all_edges <- data.table::rbindlist(edge_list, use.names = TRUE, fill = TRUE)
   rm(edge_list)
   gc()
+  }
   if (nrow(all_edges) == 0L) stop("No se recuperaron aristas.")
 
   data.table::fwrite(
@@ -1030,10 +1057,11 @@ main <- function() {
   )
   igraph::E(graph)$weight_abs <- igraph::E(graph)$mean_abs_weight
   components_full <- igraph::components(graph)
-  louvain <- igraph::cluster_louvain(
-    graph,
-    weights = igraph::E(graph)$weight_abs
-  )
+  partition <- fit_network_partition(graph, method=COMMUNITY_METHOD, resolution=RESOLUTION,
+    seeds=PARTITION_SEED + seq_len(N_STARTS)-1L, weights=igraph::E(graph)$weight_abs)
+  community_fit <- partition$community
+  write_tsv(partition$fits, file.path(TABLES_DIR,"171_partition_multistart.tsv"))
+  saveRDS(partition, file.path(RDS_DIR,"171_partition_multistart.rds"))
 
   all_node_metrics <- data.frame(
     KO = igraph::V(graph)$name,
@@ -1043,7 +1071,7 @@ main <- function() {
       weights = igraph::E(graph)$weight_abs
     ),
     component = as.integer(components_full$membership),
-    module = as.integer(igraph::membership(louvain)),
+    module = as.integer(igraph::membership(community_fit)),
     stringsAsFactors = FALSE
   )
 
@@ -1193,10 +1221,10 @@ main <- function() {
       "edge_density_connected_graph",
       "n_components_among_connected_KOs",
       "largest_connected_component_size",
-      "n_louvain_modules_all",
+      "n_community_modules_connected",
       "n_major_modules_ge_min_size",
       "n_KOs_in_major_modules",
-      "modularity_louvain",
+      "modularity_primary",
       "core_class_assortativity",
       "mean_degree_connected",
       "mean_strength_abs_connected"
@@ -1213,7 +1241,7 @@ main <- function() {
       length(unique(connected_annotation$module)),
       length(major_modules),
       nrow(major_annotation),
-      igraph::modularity(louvain),
+      partition$Q,
       class_assortativity,
       mean(connected_annotation$degree),
       mean(connected_annotation$strength_abs)
@@ -1445,6 +1473,8 @@ main <- function() {
     ),
     stringsAsFactors = FALSE
   )
+  parameters <- rbind(parameters, data.frame(parameter=c("community_method","resolution","n_starts","partition_seed_first","best_partition_seed","best_modularity"),
+    value=c(COMMUNITY_METHOD,RESOLUTION,N_STARTS,PARTITION_SEED,partition$best_seed,partition$Q)))
   write_tsv(parameters, file.path(TABLES_DIR, "171_parameters.tsv"))
 
   methods_text <- c(
@@ -1482,7 +1512,7 @@ main <- function() {
       CONSENSUS_MEAN_ABS_MIN, "."
     ),
     paste0(
-      "Modules were identified by Louvain community detection using absolute ",
+      "Modules were identified by ", COMMUNITY_METHOD, " community detection at resolution ", RESOLUTION, "; the highest modularity among ",N_STARTS," starts was retained using absolute ",
       "consensus weights; biological interpretation was restricted to modules ",
       "containing at least ", MIN_MODULE_SIZE, " KOs."
     ),
@@ -1521,7 +1551,7 @@ main <- function() {
       "edge_density_connected_graph",
       "n_major_modules",
       "n_KOs_in_major_modules",
-      "modularity_louvain",
+      "modularity_primary",
       "core_class_assortativity",
       "reference_counts_all_match",
       "candidate_KO_selection",
@@ -1556,7 +1586,7 @@ main <- function() {
       connected_graph_density,
       length(major_modules),
       nrow(major_annotation),
-      igraph::modularity(louvain),
+      partition$Q,
       class_assortativity,
       all(reference_check$matches_reference),
       file.path(TABLES_DIR, "171_candidate_KO_selection.tsv"),
@@ -1578,7 +1608,8 @@ main <- function() {
   saveRDS(
     list(
       graph = graph,
-      louvain = louvain,
+      community = community_fit,
+      partition_multistart = partition,
       nodes = nodes,
       consensus_edges = as.data.frame(consensus_edges),
       candidate_annotation = candidate_annotation,
@@ -1601,7 +1632,7 @@ main <- function() {
   cat("Connected nodes: ", nrow(connected_annotation), "\n", sep = "")
   cat("Major modules: ", length(major_modules), "\n", sep = "")
   cat("KOs in major modules: ", nrow(major_annotation), "\n", sep = "")
-  cat("Modularity: ", signif(igraph::modularity(louvain), 5), "\n", sep = "")
+  cat("Modularity: ", signif(partition$Q, 5), "\n", sep = "")
   cat("Reference counts all match: ", all(reference_check$matches_reference), "\n", sep = "")
   cat("Validation:\n")
   print(validation, row.names = FALSE)

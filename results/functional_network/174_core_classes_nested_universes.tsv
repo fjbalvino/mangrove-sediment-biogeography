@@ -1,0 +1,16 @@
+functional_core_class	n_KOs	universe	total_KOs	proportion
+absolute_global_core	24	Network universe (5,000)	5000	0.0048
+near_global	1043	Network universe (5,000)	5000	0.2086
+realm_core_only	1384	Network universe (5,000)	5000	0.2768
+multi_realm_non_core	2549	Network universe (5,000)	5000	0.5098
+absolute_global_core	15	Selected candidates (1,500)	1500	0.01
+near_global	490	Selected candidates (1,500)	1500	0.326666666666667
+realm_core_only	671	Selected candidates (1,500)	1500	0.447333333333333
+multi_realm_non_core	324	Selected candidates (1,500)	1500	0.216
+absolute_global_core	12	Consensus-connected	327	0.036697247706422
+near_global	238	Consensus-connected	327	0.72782874617737
+realm_core_only	68	Consensus-connected	327	0.207951070336391
+multi_realm_non_core	9	Consensus-connected	327	0.0275229357798165
+absolute_global_core	9	Major modules	236	0.038135593220339
+near_global	194	Major modules	236	0.822033898305085
+realm_core_only	33	Major modules	236	0.139830508474576

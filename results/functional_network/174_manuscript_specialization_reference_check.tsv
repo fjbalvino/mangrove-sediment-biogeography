@@ -1,0 +1,4 @@
+check	pass
+exact_supported_module_category_pairs	FALSE
+fold_enrichment_within_reported_range_2.22_3.36	FALSE
+BY_q_values_compatible_with_reported_0.0061	FALSE

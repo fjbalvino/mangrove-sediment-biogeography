@@ -1,0 +1,86 @@
+analysis	covariates	block	n_KOs
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	23	16
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	13	18
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	27	18
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	39	20
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	22	15
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	25	29
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	24	35
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	9	13
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	14	37
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	1	25
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	34	58
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	30	39
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	21	55
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	29	49
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	16	33
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	12	21
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	5	48
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	11	34
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	28	59
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	35	53
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	18	39
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	4	16
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	8	53
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	17	28
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	3	31
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	37	52
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	19	38
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	2	59
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	6	51
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	31	27
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	26	64
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	20	25
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	38	40
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	36	61
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	33	48
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	7	59
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	15	68
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	32	52
+Connected versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	10	14
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	1	38
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	5	46
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	7	41
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	6	56
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	4	57
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	2	76
+Major modules versus connected nodes	prevalence_prop;log10_total_count;CLR_variance;degree;strength_abs	3	13
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	7	16
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	25	31
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	21	17
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	37	14
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	12	37
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	14	23
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	6	19
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	15	13
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	22	34
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	2	25
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	38	30
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	13	17
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	24	52
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	10	39
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	5	38
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	27	45
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	35	24
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	8	22
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	39	34
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	16	49
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	20	61
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	4	38
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	1	32
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	31	59
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	11	31
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	34	44
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	32	74
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	33	73
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	17	52
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	29	55
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	30	20
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	23	26
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	19	59
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	9	41
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	28	61
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	18	40
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	3	69
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	26	69
+Major modules versus 1,500 candidates	prevalence_prop;log10_total_count;CLR_variance	36	17

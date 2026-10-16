@@ -29,6 +29,10 @@ suppressPackageStartupMessages({
   }
 })
 
+script_file <- sub("^--file=", "", grep("^--file=", commandArgs(), value = TRUE)[1L])
+source(file.path(dirname(normalizePath(script_file)), "lib", "functional_category_rules.R"))
+source(file.path(dirname(normalizePath(script_file)), "lib", "network_partition.R"))
+
 get_arg <- function(flag, default = NULL) {
   args <- commandArgs(trailingOnly = TRUE)
   hit <- which(args == flag)
@@ -41,7 +45,7 @@ as_flag <- function(x) {
 }
 
 BASE <- normalizePath(
-  get_arg("--base", "/home/fjbalvino/Biogeografia_2026"),
+  get_arg("--base", path.expand("~/Biogeografia_2026")),
   mustWork = FALSE
 )
 RESULTS_DIR <- file.path(BASE, "resultados")
@@ -85,6 +89,7 @@ RUN173 <- get_arg(
 N_PERM <- as.integer(get_arg("--n_perm", "4999"))
 N_REWIRE <- as.integer(get_arg("--n_rewire", "999"))
 N_EDGE_BOOT <- as.integer(get_arg("--n_edge_boot", "500"))
+N_WORKERS <- as.integer(get_arg("--workers", "4"))
 MIN_MODULE_SIZE <- as.integer(get_arg("--min_module_size", "10"))
 PROCESS_MIN_TOTAL <- as.integer(get_arg("--process_min_total", "3"))
 KEGG_MAPPING_COMPLETE <- as_flag(get_arg("--kegg_mapping_complete", "0"))
@@ -92,9 +97,9 @@ BLOCK_TARGET_SIZE <- as.integer(get_arg("--block_target_size", "35"))
 BLOCK_MIN_SIZE <- as.integer(get_arg("--block_min_size", "12"))
 SEED <- as.integer(get_arg("--seed", "123"))
 DPI <- as.integer(get_arg("--dpi", "600"))
-STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "1"))
+STRICT_EXPECTED <- as_flag(get_arg("--strict_expected", "0"))
 ENFORCE_MANUSCRIPT_REFERENCE <- as_flag(
-  get_arg("--enforce_manuscript_reference", "1")
+  get_arg("--enforce_manuscript_reference", "0")
 )
 
 EXPECTED <- list(
@@ -287,7 +292,9 @@ standardize_KO_table <- function(dt, label) {
     module_display = c("module_display"),
     module_program = c("module_program"),
     major_module = c("major_module", "is_major_module"),
-    functional_category = c("functional_category")
+    functional_category = c("functional_category"),
+    combined_category = c("combined_category"),
+    KO_function = c("KO_function")
   )
 
   for (nm in names(aliases)) {
@@ -351,8 +358,7 @@ standardize_edges <- function(dt, label) {
   out[, mean_abs_weight := if (is.na(weight_col)) 1 else abs(safe_num(dt[[weight_col]]))]
   out <- out[!is.na(KO1) & !is.na(KO2) & KO1 != KO2]
   out[, pair_id := canonical_pair(KO1, KO2)]
-  data.table::setorder(out, pair_id, -edge_stability, -mean_abs_weight)
-  out <- out[!duplicated(pair_id)]
+  if(anyDuplicated(out$pair_id)) stop("Duplicate edges in ",label)
   out
 }
 
@@ -569,8 +575,7 @@ build_graph <- function(edges, all_vertices = NULL) {
     if (!is.null(all_vertices)) igraph::V(g)$name <- all_vertices
     return(g)
   }
-  data.table::setorder(ed, pair_id, -mean_abs_weight)
-  ed <- ed[!duplicated(pair_id)]
+  if(anyDuplicated(ed$pair_id)) stop("Duplicate graph edges")
   edge_df <- data.frame(
     from = ed$KO1,
     to = ed$KO2,
@@ -587,39 +592,11 @@ build_graph <- function(edges, all_vertices = NULL) {
     directed = FALSE,
     vertices = data.frame(name = vertices, stringsAsFactors = FALSE)
   )
-  igraph::simplify(
-    g, remove.multiple = TRUE, remove.loops = TRUE,
-    edge.attr.comb = list(weight = "max")
-  )
+  g
 }
 
-community_partition <- function(g, method = "louvain") {
-  # Match inference in 10C: optimize on the complete graph, not separately
-  # within components (which changes the modularity normalization).
-  vertex_names <- igraph::V(g)$name
-  if (igraph::ecount(g) == 0L) {
-    return(setNames(seq_along(vertex_names), vertex_names))
-  }
-  weights <- igraph::E(g)$weight
-  cl <- tryCatch({
-    if (method == "louvain") {
-      igraph::cluster_louvain(g, weights = weights)
-    } else if (method == "infomap") {
-      igraph::cluster_infomap(g, e.weights = weights)
-    } else if (method == "walktrap") {
-      igraph::cluster_walktrap(g, weights = weights)
-    } else if (method == "leiden") {
-      igraph::cluster_leiden(g, objective_function = "modularity",
-                            weights = weights, resolution = 1, n_iterations = 10)
-    } else {
-      stop("Algoritmo no reconocido: ", method)
-    }
-  }, error = function(e) {
-    stop("Community detection failed for ", method, ": ", conditionMessage(e))
-  })
-  membership <- igraph::membership(cl)
-  stopifnot(setequal(names(membership), vertex_names))
-  membership[vertex_names]
+community_partition <- function(g, method = "leiden") {
+  fit_network_partition(g,method=method,resolution=1,seeds=2001:2050)$membership
 }
 
 graph_metrics <- function(g, membership) {
@@ -741,6 +718,7 @@ main <- function() {
     stop("Hay nodos 165 ausentes de los candidatos 163.")
   }
 
+  candidate_order <- read_tsv(paths$candidates)$KO
   connected_kos <- sort(unique(c(edges$KO1, edges$KO2)))
   candidates[, connected := KO %in% connected_kos]
   candidates[, major_module := KO %in% major$KO]
@@ -952,7 +930,7 @@ main <- function() {
   if ("functional_category" %in% names(major)) {
     major[, functional_category := clean_chr(functional_category)]
     major[is.na(functional_category), functional_category := "Unannotated"]
-    functional_levels <- sort(unique(major$functional_category))
+    functional_levels <- FUNCTIONAL_CATEGORY_ORDER
     major[, functional_idx := match(functional_category, functional_levels)]
     functional_enrichment <- run_label_enrichment(
       major$module_idx,
@@ -976,6 +954,29 @@ main <- function() {
   write_tsv(supported_functional, file.path(
     TABLES_DIR, "174_supported_module_functional_specialization.tsv"
   ))
+
+  # Primary categories use KO descriptions only; the partial KEGG mapping is a sensitivity.
+  require_cols(major,c("KO_function","combined_category"),"major-module annotation")
+  scored_dictionary <- lapply(major$KO_function,function(z) score_functional_category(z,""))
+  dictionary_category <- vapply(scored_dictionary,function(z) z$selected,character(1))
+  stopifnot(identical(major$functional_category,dictionary_category))
+  audit_dictionary <- major[,.(KO,module_label,KO_function,functional_category,combined_category,
+    category_changed=functional_category != combined_category)]
+  write_tsv(audit_dictionary,file.path(TABLES_DIR,"174_annotation_source_sensitivity_KOs.tsv"))
+  combined_levels <- FUNCTIONAL_CATEGORY_ORDER
+  combined_enrichment <- run_label_enrichment(major$module_idx,match(major$combined_category,combined_levels),
+    module_levels,combined_levels,perm_module_matrix,"KO_description_plus_partial_MODULE")
+  write_tsv(functional_enrichment,file.path(TABLES_DIR,"174_dictionary_only_enrichment.tsv"))
+  write_tsv(combined_enrichment,file.path(TABLES_DIR,"174_combined_annotation_enrichment.tsv"))
+  annotation_support <- merge(
+    functional_enrichment[,.(module_label,category,observed_n,fold_enrichment,q_BY,p_maxT_FWER)],
+    combined_enrichment[,.(module_label,category,combined_observed_n=observed_n,
+      combined_fold=fold_enrichment,combined_q_BY=q_BY,combined_maxT_P=p_maxT_FWER)],
+    by=c("module_label","category"),all=TRUE,sort=TRUE)
+  annotation_support[,primary_supported := q_BY<=.05 & p_maxT_FWER<=.05]
+  annotation_support[,combined_supported := combined_q_BY<=.05 & combined_maxT_P<=.05]
+  annotation_support[,supported_both_sources := primary_supported & combined_supported]
+  write_tsv(annotation_support,file.path(TABLES_DIR,"174_annotation_source_support.tsv"))
 
   expected_supported <- data.table::data.table(
     module_label = c("M02", "M03", "M06"),
@@ -1141,6 +1142,7 @@ main <- function() {
   ))
 
   cat("[7] Evaluando mezcla de clases con rewiring degree-preserving...\n")
+  candidates <- candidates[match(candidate_selection$KO,KO)]
   g_primary <- build_graph(edges, all_vertices = candidates$KO)
   vertex_classes <- candidates[
     match(igraph::V(g_primary)$name, KO)
@@ -1253,6 +1255,7 @@ main <- function() {
       mean_abs_min = c(0.90, 0.95, 0.97),
       sign_consistency_min = c(0.95, 1.00)
     )
+    partition_cache <- list(edge_sets=list(), memberships=list())
     primary_edge_set <- unique(edges$pair_id)
     rows <- vector("list", nrow(grid))
     for (i in seq_len(nrow(grid))) {
@@ -1264,7 +1267,15 @@ main <- function() {
              sign_consistency >= threshold$sign_consistency_min)
       ]
       g <- build_graph(ed, all_vertices = candidates$KO)
-      membership <- community_partition(g, "louvain")
+      cache_hit <- which(vapply(partition_cache$edge_sets,identical,logical(1),ed$pair_id))
+      if(length(cache_hit)) {
+        membership <- partition_cache$memberships[[cache_hit[1L]]]
+      } else {
+        membership <- community_partition(g,"leiden")
+        k <- length(partition_cache$edge_sets)+1L
+        partition_cache$edge_sets[[k]] <- ed$pair_id
+        partition_cache$memberships[[k]] <- membership
+      }
       metrics <- graph_metrics(g, membership)
       predicted_reference <- membership_for_reference(membership, major$KO)
       edge_set <- unique(ed$pair_id)
@@ -1324,6 +1335,7 @@ main <- function() {
     )
   }
   algorithm_sensitivity <- data.table::rbindlist(algorithm_rows)
+  stopifnot(abs(algorithm_sensitivity[method=="leiden"]$ARI_vs_primary_major_modules-1)<1e-12)
   algorithm_pairwise <- data.table::data.table()
   if (length(methods) >= 2L) {
     pairs <- t(utils::combn(methods, 2))
@@ -1332,8 +1344,8 @@ main <- function() {
         method1 = pairs[i, 1],
         method2 = pairs[i, 2],
         ARI_pairwise = adjusted_rand_index(
-          algorithm_memberships[[pairs[i, 1]]],
-          algorithm_memberships[[pairs[i, 2]]]
+          algorithm_memberships[[pairs[i, 1]]][connected_kos],
+          algorithm_memberships[[pairs[i, 2]]][connected_kos]
         )
       )
     }))
@@ -1357,33 +1369,31 @@ main <- function() {
     boot_rows <- vector("list", N_EDGE_BOOT)
     set.seed(SEED + 600L)
 
-    for (b in seq_len(N_EDGE_BOOT)) {
-      keep <- stats::runif(nrow(edges_boot)) <= edges_boot$edge_stability
-      ed_b <- edges_boot[keep]
-      g_b <- build_graph(ed_b, all_vertices = candidates$KO)
-      membership_b <- community_partition(g_b, "louvain")
-      predicted_reference <- membership_for_reference(membership_b, major$KO)
-      ari <- adjusted_rand_index(major$module_label, predicted_reference)
-
-      for (module_i in module_levels) {
-        kos <- major[module_label == module_i]$KO
-        if (length(kos) <= 1L) {
-          node_accumulator[kos] <- node_accumulator[kos] + 1
-          next
-        }
-        memberships <- predicted_reference[match(kos, major$KO)]
+    keep_masks <- lapply(seq_len(N_EDGE_BOOT),function(b)
+      stats::runif(nrow(edges_boot)) <= edges_boot$edge_stability)
+    one_perturbation <- function(b) {
+      ed_b <- edges_boot[keep_masks[[b]]]
+      g_b <- build_graph(ed_b,all_vertices=candidates$KO)
+      membership_b <- community_partition(g_b,"leiden")
+      predicted_reference <- membership_for_reference(membership_b,major$KO)
+      node_scores <- setNames(numeric(nrow(major)),major$KO)
+      for(module_i in module_levels) {
+        kos <- major[module_label==module_i]$KO
+        memberships <- predicted_reference[match(kos,major$KO)]
         cluster_sizes <- table(memberships)
-        scores <- (as.numeric(cluster_sizes[memberships]) - 1) / (length(kos) - 1)
-        node_accumulator[kos] <- node_accumulator[kos] + scores
+        node_scores[kos] <- (as.numeric(cluster_sizes[memberships])-1)/(length(kos)-1)
       }
-      boot_rows[[b]] <- data.table::data.table(
-        perturbation = b,
-        retained_edges = nrow(ed_b),
-        retained_edge_fraction = nrow(ed_b) / nrow(edges_boot),
-        ARI_vs_primary_modules = ari
-      )
-      progress_tick(b, N_EDGE_BOOT, "edge perturbations", every = 50L)
+      progress_tick(b,N_EDGE_BOOT,"edge perturbations",every=50L)
+      list(scores=node_scores,row=data.table::data.table(perturbation=b,
+        retained_edges=nrow(ed_b),retained_edge_fraction=nrow(ed_b)/nrow(edges_boot),
+        ARI_vs_primary_modules=adjusted_rand_index(major$module_label,predicted_reference)))
     }
+    results <- if(.Platform$OS.type=="unix" && N_WORKERS>1L) {
+      parallel::mclapply(seq_len(N_EDGE_BOOT),one_perturbation,mc.cores=N_WORKERS,mc.set.seed=FALSE)
+    } else lapply(seq_len(N_EDGE_BOOT),one_perturbation)
+    if(any(vapply(results,inherits,logical(1),"try-error"))) stop("A perturbation worker failed")
+    node_accumulator <- Reduce(`+`,lapply(results,`[[`,"scores"))
+    boot_rows <- lapply(results,`[[`,"row")
     edge_boot_summary <- data.table::rbindlist(boot_rows)
     node_stability <- data.table::data.table(
       KO = names(node_accumulator),

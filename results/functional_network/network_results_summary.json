@@ -1,158 +1,112 @@
 {
-  "cohort": 191,
-  "detected_KOs": 17482,
-  "candidate_KOs": 1500,
-  "connected_KOs": 327,
-  "consensus_edges": 1060,
-  "major_modules": 5,
-  "major_module_KOs": 238,
-  "major_subgraph_edges": 989,
-  "major_core_classes": {
-    "near_global": 197,
-    "realm_core_only": 32,
-    "absolute_global_core": 9
-  },
-  "supported_specializations": [
+  "n_samples": 191,
+  "n_candidates": 1500,
+  "n_subsamples": 500,
+  "n_connected": 327,
+  "n_edges": 1062,
+  "n_major_modules": 6,
+  "n_major_KOs": 236,
+  "n_displayed_edges": 999,
+  "near_global_major": 194,
+  "supported_categories": [
+    {
+      "module_label": "M06",
+      "category": "Transport / membrane systems",
+      "observed_n": 11,
+      "expected_n": 3.89317863572715,
+      "null_sd": 1.60773922277807,
+      "fold_enrichment": 2.61769460191699,
+      "log2_fold_enrichment": 1.38829679247019,
+      "z_permutation": 4.42038190247838,
+      "p_empirical": 0.0002,
+      "q_BY": 0.018172319787923,
+      "p_maxT_FWER": 0.002,
+      "enrichment_type": "functional_category"
+    },
     {
       "module_label": "M01",
       "category": "Information processing",
-      "observed_n": 29,
-      "expected_n": 13.7013402680536,
-      "null_sd": 2.56313247087741,
-      "fold_enrichment": 2.0772687255696,
-      "log2_fold_enrichment": 1.05468786229179,
-      "z_permutation": 5.96873548510327,
+      "observed_n": 28,
+      "expected_n": 12.7305461092218,
+      "null_sd": 2.61264989955092,
+      "fold_enrichment": 2.15410609393781,
+      "log2_fold_enrichment": 1.10708930718417,
+      "z_permutation": 5.84443169879087,
       "p_empirical": 0.0002,
-      "q_BY": 0.0096758233110393,
+      "q_BY": 0.018172319787923,
       "p_maxT_FWER": 0.0002,
       "enrichment_type": "functional_category"
     },
     {
-      "module_label": "M04",
-      "category": "Amino acid / cofactor biosynthesis",
-      "observed_n": 14,
-      "expected_n": 5.6871374274855,
-      "null_sd": 1.86899273429669,
-      "fold_enrichment": 2.34357167105838,
-      "log2_fold_enrichment": 1.22870891596027,
-      "z_permutation": 4.44777682650687,
-      "p_empirical": 0.0002,
-      "q_BY": 0.0096758233110393,
-      "p_maxT_FWER": 0.0026,
-      "enrichment_type": "functional_category"
-    },
-    {
-      "module_label": "M05",
-      "category": "Transport / membrane systems",
-      "observed_n": 11,
-      "expected_n": 2.39607921584317,
-      "null_sd": 1.32508677923942,
-      "fold_enrichment": 3.97088585736488,
-      "log2_fold_enrichment": 1.98946089136342,
-      "z_permutation": 6.49309986255793,
-      "p_empirical": 0.0002,
-      "q_BY": 0.0096758233110393,
-      "p_maxT_FWER": 0.0002,
+      "module_label": "M03",
+      "category": "Carbon / carbohydrate metabolism",
+      "observed_n": 5,
+      "expected_n": 1.09321864372875,
+      "null_sd": 0.877963752409346,
+      "fold_enrichment": 3.45213133278925,
+      "log2_fold_enrichment": 1.78748735141129,
+      "z_permutation": 4.44982078764653,
+      "p_empirical": 0.0004,
+      "q_BY": 0.0242297597172307,
+      "p_maxT_FWER": 0.002,
       "enrichment_type": "functional_category"
     }
   ],
   "module_stability": [
     {
       "module_label": "M01",
-      "n_KOs": 65,
-      "mean_stability": 0.865998076923077,
-      "median_stability": 0.9184375,
-      "min_stability": 0.43265625,
-      "q10_stability": 0.74920625
+      "n_KOs": 57,
+      "mean_stability": 0.965172932330825,
+      "median_stability": 0.982142857142854,
+      "min_stability": 0.786535714285713,
+      "q10_stability": 0.887842857142855
     },
     {
       "module_label": "M02",
-      "n_KOs": 60,
-      "mean_stability": 0.420422598870057,
-      "median_stability": 0.418220338983051,
-      "min_stability": 0.171084745762712,
-      "q10_stability": 0.324796610169491
+      "n_KOs": 52,
+      "mean_stability": 0.760778280542984,
+      "median_stability": 0.858372549019605,
+      "min_stability": 0.302705882352941,
+      "q10_stability": 0.433043137254902
     },
     {
       "module_label": "M03",
-      "n_KOs": 59,
-      "mean_stability": 0.38757919345412,
-      "median_stability": 0.377896551724137,
-      "min_stability": 0.233275862068965,
-      "q10_stability": 0.313965517241379
+      "n_KOs": 49,
+      "mean_stability": 0.757059523809524,
+      "median_stability": 0.811666666666667,
+      "min_stability": 0.424208333333334,
+      "q10_stability": 0.575483333333333
     },
     {
       "module_label": "M04",
-      "n_KOs": 42,
-      "mean_stability": 0.516188153310105,
-      "median_stability": 0.56219512195122,
-      "min_stability": 0.0873658536585364,
-      "q10_stability": 0.302331707317072
+      "n_KOs": 27,
+      "mean_stability": 0.73663247863248,
+      "median_stability": 0.82523076923077,
+      "min_stability": 0.356769230769231,
+      "q10_stability": 0.446984615384614
     },
     {
       "module_label": "M05",
-      "n_KOs": 12,
-      "mean_stability": 0.935666666666669,
-      "median_stability": 0.943818181818184,
-      "min_stability": 0.835454545454546,
-      "q10_stability": 0.937636363636366
+      "n_KOs": 27,
+      "mean_stability": 0.88087749287749,
+      "median_stability": 0.921769230769228,
+      "min_stability": 0.470307692307692,
+      "q10_stability": 0.786246153846152
+    },
+    {
+      "module_label": "M06",
+      "n_KOs": 24,
+      "mean_stability": 0.825507246376811,
+      "median_stability": 0.839347826086956,
+      "min_stability": 0.711130434782609,
+      "q10_stability": 0.769078260869565
     }
   ],
-  "community_algorithms": [
-    {
-      "method": "louvain",
-      "ARI_vs_primary_major_modules": 0.593483828112526,
-      "modularity": 0.543807842517493,
-      "n_modules": 41,
-      "n_large_modules": 6,
-      "largest_component": 254
-    },
-    {
-      "method": "infomap",
-      "ARI_vs_primary_major_modules": 0.44134576293976,
-      "modularity": 0.498619410801611,
-      "n_modules": 51,
-      "n_large_modules": 3,
-      "largest_component": 254
-    },
-    {
-      "method": "walktrap",
-      "ARI_vs_primary_major_modules": 0.399610862391921,
-      "modularity": 0.488242275760865,
-      "n_modules": 60,
-      "n_large_modules": 3,
-      "largest_component": 254
-    },
-    {
-      "method": "leiden",
-      "ARI_vs_primary_major_modules": 0.522487387721851,
-      "modularity": 0.565503606066371,
-      "n_modules": 40,
-      "n_large_modules": 6,
-      "largest_component": 254
-    }
+  "n_study_units": 44,
+  "study_ARIs_range": [
+    0.0993693443561133,
+    1.0
   ],
-  "threshold_ARI_range": [
-    0.367365271908274,
-    0.551257857196683
-  ],
-  "edge_perturbation_ARI_5_50_95": [
-    0.4020684391866794,
-    0.5299226789825631,
-    0.665703566576853
-  ],
-  "versions": {
-    "R": "4.3.3",
-    "igraph": "2.2.1",
-    "data.table": "1.17.8",
-    "ggplot2": "3.4.4",
-    "patchwork": "1.2.0"
-  },
-  "seed": 123,
-  "permutations": 4999,
-  "rewirings": 999,
-  "edge_perturbations": 500,
-  "community_scope": "whole candidate graph",
-  "KEGG_process_inference": "omitted: incomplete mapping scope",
-  "figures_uploaded": false
+  "manuscript_words": 228,
+  "caption_words": 185
 }

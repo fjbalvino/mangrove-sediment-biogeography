@@ -1,0 +1,7 @@
+method1	method2	ARI_pairwise
+louvain	infomap	0.563743262792121
+louvain	walktrap	0.452110853569398
+louvain	leiden	0.935522514144317
+infomap	walktrap	0.754690020462123
+infomap	leiden	0.551610345003105
+walktrap	leiden	0.453754589210025

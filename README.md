@@ -19,7 +19,8 @@ The metadata and count object are joined by `run_accession`.
 | Core-associated taxa | 339 profiles from 47 realm-locality units |
 | Functional atlas and taxonomic–functional coupling | 191 matched profiles; 17,482 KOs |
 | Functional geographic analyses | 184 profiles from 57 sites; primary realm tests use 56 sites |
-| Functional prevalence and persistence intersections (Figure 5) | 191 profiles for classification; 188 eligible profiles in three realms for balanced named-locality comparisons |
+| Functional co-abundance network (Figure 5) | 191 profiles; 1,500 candidate KOs; 500 locality-capped subsamples of 81 profiles |
+| Functional prevalence and persistence intersections (Figure 6) | 191 profiles for classification; 188 eligible profiles in three realms for balanced named-locality comparisons |
 | iCAMP, separate completed analysis | 400 profiles, 1,892 genera, 24,692 within-realm pairs; 999 randomizations |
 
 The eight profiles from Mud Island represent one sampling site. The Temperate
@@ -75,10 +76,18 @@ taxonomic–functional coupling, and geographic sampling sensitivity.
 [Current results and Figure 4 caption](docs/FUNCTIONAL_RESULTS.md) use the same outputs.
 Compact numerical results are in `results/functional/`.
 
-The [Figure 5 workflow](docs/FUNCTIONAL_REGIONAL_ANALYSES.md) uses the corrected
+The [functional network workflow](docs/FUNCTIONAL_NETWORK_ANALYSES.md) now uses
+the same 191-profile cohort. [Figure 5 results and caption](docs/FUNCTIONAL_NETWORK_RESULTS.md)
+report 1,062 associations among 327 connected KOs and six major modules containing 236 KOs. Information-processing and transport/membrane enrichment remain supported across annotation treatments; carbon/carbohydrate enrichment is annotation-sensitive.
+[Supplementary results and methods](docs/FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md)
+provide the complete enrichment tests and sensitivity analyses. Source statistics are in
+`results/functional_network/`. The standalone driver records all commands and
+performs independent output checks; images are generated locally.
+
+The [Figure 6 workflow](docs/FUNCTIONAL_REGIONAL_ANALYSES.md) uses the corrected
 191-profile cohort for prevalence and persistence, with 499 balanced selections
 under three-realm × six-locality and three-realm × four-locality designs.
-[Results and the Figure 5 caption](docs/FUNCTIONAL_REGIONAL_RESULTS.md) and
+[Results and the Figure 6 caption](docs/FUNCTIONAL_REGIONAL_RESULTS.md) and
 [separate supplementary results](docs/FUNCTIONAL_REGIONAL_SUPPLEMENTARY_RESULTS.md)
 replace the historical claim of a consistent Shell advantage, which the corrected
 analysis does not reproduce. Run `workflow/06_RUN_FUNCTIONAL_REGIONAL.sh` with
@@ -86,13 +95,7 @@ the four inputs in the companion `MAGENTA_Figure_5.zip`; compact verified summar
 are in `results/functional_regional/`. This analysis uses named localities, not the
 coordinate-defined sites used for the atlas geographic comparisons. The restored main figure includes six selected Shell process scores (33 KOs) and locality-centroid turnover for all 26 named localities, with 23 shown on the map. Process effects use the exact balanced selections and are independently checked in R; annotation-total sensitivity is retained.
 
-The [functional network workflow](docs/FUNCTIONAL_NETWORK_ANALYSES.md) now uses
-the same 191-profile cohort. [Figure 6 results and caption](docs/FUNCTIONAL_NETWORK_RESULTS.md)
-report 1,060 associations, 327 connected KOs and five major modules.
-[Supplementary results and methods](docs/FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md)
-provide the complete enrichment tests and sensitivity analyses. Source statistics are in
-`results/functional_network/`. The standalone driver records all commands and
-performs independent output checks; images are generated locally.
+The current manuscript places the network in Figure 5 and regional differentiation in Figure 6. Regional scripts and their existing documentation retain their historical Figure 5 export names; this publication updates only the network analysis.
 
 ## Workflow blocks
 
