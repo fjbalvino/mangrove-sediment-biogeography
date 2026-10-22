@@ -3,10 +3,21 @@
 Reproducible code for taxonomic diversity, composition, core-associated taxa,
 community assembly and functional biogeography in the MAGENTA project.
 
+## Manuscript and graphical abstract
+
+Current manuscript title: **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**.
+
+The [graphical abstract caption and artwork specification](docs/GRAPHICAL_ABSTRACT.md)
+summarize taxonomic biogeography and shared functional potential using the current
+analysis-specific cohorts. The caption distinguishes the separate 400-profile
+iCAMP analysis from the taxonomic reference and the 191-profile functional cohort.
+Figure files and input datasets are reserved for the final compendium.
+
+
 ## Reference data and analyses
 
-The taxonomic reference contains **341 metagenomes**, each with **18,145 retained
-reads**, and one accession manifest: `config/samples/taxonomic_accessions.txt`.
+The taxonomic reference contains **341 metagenomes**, each with **18,145 rarefied
+classification counts**, and one accession manifest: `config/samples/taxonomic_accessions.txt`.
 The metadata and count object are joined by `run_accession`.
 
 | Analysis | Analytical units |
@@ -53,7 +64,8 @@ separate from the 341-profile reference.
 
 [The analysis guide](docs/TAXONOMIC_ANALYSES.md) defines the statistical units,
 models, sample handling and interpretation. Current numerical summaries are in
-`results/`; full tables, fitted objects and figures accompany the data archive.
+`results/`; full tables, fitted objects and figures are held in companion packages for the
+planned data and figure compendium.
 
 ## Reproduce the functional atlas
 
@@ -95,7 +107,7 @@ the four inputs in the companion `MAGENTA_Figure_5.zip`; compact verified summar
 are in `results/functional_regional/`. This analysis uses named localities, not the
 coordinate-defined sites used for the atlas geographic comparisons. The restored main figure includes six selected Shell process scores (33 KOs) and locality-centroid turnover for all 26 named localities, with 23 shown on the map. Process effects use the exact balanced selections and are independently checked in R; annotation-total sensitivity is retained.
 
-The current manuscript places the network in Figure 5 and regional differentiation in Figure 6. Regional scripts and their existing documentation retain their historical Figure 5 export names; this publication updates only the network analysis.
+The current manuscript places the network in Figure 5 and regional differentiation in Figure 6. Regional scripts and companion package names retain their historical Figure 5 identifiers; the manuscript figure numbers take precedence for captions and cross-references.
 
 ## Workflow blocks
 

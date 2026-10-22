@@ -1,6 +1,18 @@
 # Data availability
 
-The Figure 6 rerun uses the same 191-profile functional cohort documented
+## Publication status
+
+This repository contains code, documentation and compact aggregate result
+summaries. The current manuscript-title and graphical-abstract update adds text
+only. Databases, input matrices, full analysis objects and figure files are
+reserved for the final data and figure compendium.
+
+The companion packages named below refer to working analysis deliverables, not
+to a published data deposit. No public archive DOI has yet been assigned.
+
+## Functional network (Figure 5)
+
+The Figure 5 network analysis uses the same 191-profile functional cohort documented
 below. The companion `MAGENTA_functional_network.zip` additionally supplies the
 frozen KO dictionary, restricted historical KEGG MODULE mapping, corrected
 network scripts, final tables and execution logs. Input checksums are in
@@ -14,7 +26,7 @@ these files, used directly without another classification or rarefaction step:
 
 | File | Contents | Configuration |
 | --- | --- | --- |
-| `data/phyloseq_taxonomic.rds` | Counts, taxonomy and sample metadata; 341 profiles, 24,045 input features, 18,145 reads per profile | `MAGENTA_PHYLOSEQ` |
+| `data/phyloseq_taxonomic.rds` | Counts, taxonomy and sample metadata; 341 profiles, 24,045 input features, 18,145 rarefied classification counts per profile | `MAGENTA_PHYLOSEQ` |
 | `data/metadata_taxonomic.csv` | Environmental covariates, regional assignments, sampling units and source-material annotations | `MAGENTA_METADATA_CSV` |
 | `config/samples/taxonomic_accessions.txt` | Reference accession manifest, also present in this repository | `ALPHA_SAMPLE_MANIFEST`; `CORE_SAMPLE_MANIFEST` |
 
@@ -76,7 +88,7 @@ The input files remain outside the code repository.
 | --- | --- |
 | `functional_KO_counts_original.tsv.gz` | Source KO matrix: 17,508 KOs and 194 profiles, including three air controls |
 | `metadata_functional.csv` | Corrected realm, locality, site and study metadata for the 191 retained profiles |
-| `taxonomic_matched_counts.npz` | Paired taxonomic counts, identifiers and features; 18,145 reads per profile |
+| `taxonomic_matched_counts.npz` | Paired taxonomic counts, identifiers and features; 18,145 rarefied classification counts per profile |
 
 The analysis selects the 191 accessions in
 `config/samples/functional_accessions.txt`; only the documented air controls
@@ -98,9 +110,9 @@ list is not yet independently verified: `metagenome_totals.tsv` and
 `process_matrix.py` are required to establish the proposed 2,000-protein cutoff.
 The current Results therefore do not assert that cutoff.
 
-## Functional prevalence and regional differentiation (Figure 5)
+## Functional prevalence and regional differentiation (Figure 6)
 
-The companion `MAGENTA_Figure_5.zip` provides the original KO matrix and corrected
+The companion `MAGENTA_Figure_5.zip` retains its historical package name and provides the original KO matrix and corrected
 functional metadata above, plus `KO_persistence_classes.tsv` (the current atlas
 classification used for independent reconciliation) and `KO_function_dictionary.tsv`
 (a frozen KO description dictionary). Their hashes and sizes are in
@@ -125,7 +137,8 @@ accessions. Newly generated Mexican Atlantic reads were submitted under
 [PRJNA1502944](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1502944); local study
 identifiers are retained until the complete public crosswalk is supplied.
 
-Large input objects and full results are distributed in the companion archive,
-not in GitHub. No public archive DOI has yet been assigned. Third-party sequence,
+Large input objects and full results remain in companion working packages outside
+GitHub. Their consolidation, together with figure files, into the final compendium
+is pending; this update does not publish that deposit. Third-party sequence,
 occurrence, environmental and reference-tree data retain their original licenses
 and accession-level attribution.
