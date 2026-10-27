@@ -2,6 +2,7 @@
 
 ## 0.2.0 — 2026-10-26
 
+- Clarified that this is the manuscript's analysis repository in the README, citation metadata and execution guide.
 - Reorganized the repository entry point around the current manuscript and its six result sections, with a short introduction and summary.
 - Added an ordered execution guide, environment instructions and a cohort/supplement map.
 - Replaced personal-machine paths with configurable local paths; completed acquisition and environmental configuration.

@@ -1,5 +1,5 @@
 {
-  "title": "MAGENTA: reproducible code for taxonomic and functional biogeography of mangrove microbiomes",
+  "title": "Mangrove microbiome biogeography: manuscript analysis code",
   "description": "Source code, portable configuration, cohort manifests and methods for the manuscript A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes. Biological databases, numerical result tables and figures are distributed separately; the companion data deposit is pending.",
   "upload_type": "software",
   "access_right": "open",

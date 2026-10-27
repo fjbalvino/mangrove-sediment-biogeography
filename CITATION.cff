@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite the associated manuscript and the archived software release."
-title: "MAGENTA: reproducible code for taxonomic and functional biogeography of mangrove microbiomes"
+title: "Mangrove microbiome biogeography: manuscript analysis code"
 type: software
 version: 0.2.0
 date-released: 2026-10-26

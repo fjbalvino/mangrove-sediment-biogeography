@@ -1,4 +1,4 @@
-# How to run the MAGENTA workflows
+# How to run the manuscript analyses
 
 Use the [installation guide](../docs/INSTALLATION.md) and [input inventory](../DATA_AVAILABILITY.md) first. Copy `config/project.env.example` to `config/project.env` and edit it. The default local configuration is loaded automatically; `--config FILE` or `MAGENTA_CONFIG` selects another file.
 
@@ -80,8 +80,8 @@ Generated matrices, figures, fitted objects and reports stay in local output dir
 
 ```bash
 make validate
-bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../MAGENTA_code.zip
-bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../MAGENTA_code.zip --execute
+bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../manuscript_code.zip
+bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../manuscript_code.zip --execute
 ```
 
 The exporter packages only verified source files, even when local data/results are present. It does not include Git history. A recovery backup is a separate artifact.

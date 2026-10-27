@@ -1,12 +1,12 @@
-# MAGENTA · Mangrove microbiome biogeography
+# Mangrove microbiome biogeography — manuscript analysis code
 
-Analysis code for **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**.
+Code and documentation accompanying **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**.
 
 ## Overview
 
 Mangrove microorganisms contribute to carbon and nutrient transformations across contrasting coastal environments. MAGENTA (**MAngrove GENe caTAlogue**) brings together read-based taxonomic profiles, gene-centred functional profiles and environmental metadata to ask how geographically different communities retain shared functional potential.
 
-This repository contains the analysis scripts, configuration templates, accession manifests and documentation. **Input datasets, reference databases, numerical result tables, fitted objects and figures are distributed separately.** The companion Zenodo data and figure deposit is being prepared; no DOI is available yet. See [data availability](DATA_AVAILABILITY.md).
+This repository accompanies the manuscript and contains its analysis scripts, configuration templates, accession manifests and documentation. **Input datasets, reference databases, numerical result tables, fitted objects and figures are distributed separately.** The companion Zenodo data and figure deposit is being prepared; no DOI is available yet. See [data availability](DATA_AVAILABILITY.md).
 
 ## Manuscript summary
 
@@ -78,8 +78,8 @@ Tiny accession manifests and curated process definitions remain as configuration
 
 ```bash
 make validate
-bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../MAGENTA_code.zip
-bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../MAGENTA_code.zip --execute
+bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../manuscript_code.zip
+bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../manuscript_code.zip --execute
 ```
 
 Validation checks source syntax, statistical contracts, workflow portability, the code-only boundary and SHA-256 integrity. It does not replace rerunning the manuscript with its archived inputs. After source edits, run `make manifest` before validation.
