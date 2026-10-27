@@ -1,4 +1,4 @@
-# Figure 5: functional prevalence and regional differentiation
+# Figure 6: functional prevalence and regional differentiation
 
 ## Scope and inputs
 
@@ -32,9 +32,9 @@ The original six process groups are frozen in `config/functional_process_catalog
 
 For the map, use all 191 profiles, including Tropical Eastern Pacific, and the same full Shell CLR. Average CLR coordinates within REALM × Country × core_locality. Country does not subdivide any canonical realm-locality unit in this cohort (checked). Give all 26 locality profiles equal weight in the global centroid. Map colour is the RMS Aitchison distance from each locality centroid to that global centroid. Place the 23 located localities at component-wise medians of complete observed coordinate pairs, representing 184 profiles. Guanxi, Hainan and Rabigh Lagoon have no coordinates; retain their centroids but do not place them. The map therefore contains 23 named-locality units, not the 57 coordinate-defined sites used in Figure 4. Resample profiles within each locality 500 times, recomputing the global centroid, to report uncertainty; never replace the direct map estimate with the bootstrap median. Singletons can vary only through the resampled global reference. This bootstrap does not account for study or locality selection. The 5th–95th percentiles are descriptive resampling intervals and can exclude the direct estimate.
 
-Script 09F independently recomputes all 1,146 standardized scores, 11,976 raw/conditional score R2 values and 26 map distances in base R using linear-model residual sums of squares and independently reconstructed CLR profiles. Agreement is required within 1e-12. Objects are saved as `181_182_process_map_objects.npz`; full per-draw tables, catalog inclusion/exclusion and sample-locality manifests are exported. Scripts 158 and 179 supply the historical methods, not historical sample identifiers or effect sizes. Natural Earth basemap geometry is frozen under `config/maps` with source and SHA-256; it does not determine realm assignments.
+Script 09F independently recomputes all 1,146 standardized scores, 11,976 raw/conditional score R2 values and 26 map distances in base R using linear-model residual sums of squares and independently reconstructed CLR profiles. Agreement is required within 1e-12. Objects are saved as `181_182_process_map_objects.npz`; full per-draw tables, catalog inclusion/exclusion and sample-locality manifests are exported. Scripts 158 and 179 supply the historical methods, not historical sample identifiers or effect sizes. Natural Earth basemap geometry is external (`WORLD_MAP` or `--world-map`); its source and SHA-256 remain in `config/maps/SOURCE.json`; it does not determine realm assignments.
 
-The main Figure 5 preserves the original image's scientific structure: persistence/prevalence crosswalk, intersection effects, selected-process heatmap/effects, and geographic Shell map. Prevalence distributions, paired sensitivities, annotation-total/dispersion diagnostics and locality-bootstrap intervals appear in the supplement. The older exploratory per-KO SS decomposition remains in reproducibility tables but is not used as a substitute for process-score analysis or emphasized in the manuscript.
+The main Figure 6 preserves the original image's scientific structure: persistence/prevalence crosswalk, intersection effects, selected-process heatmap/effects, and geographic Shell map. Prevalence distributions, paired sensitivities, annotation-total/dispersion diagnostics and locality-bootstrap intervals appear in the supplement. The older exploratory per-KO SS decomposition remains in reproducibility tables but is not used as a substitute for process-score analysis or emphasized in the manuscript.
 
 ## Reproduction and outputs
 
@@ -47,13 +47,14 @@ bash workflow/06_RUN_FUNCTIONAL_REGIONAL.sh --inputs /path/to/inputs --outdir /p
 
 When valid balanced outputs already exist, add `--complete-panels` to recompute the process/map analyses and figures while verifying and reusing those outputs.
 
-Set `RSCRIPT` and `PYTHON` if executables have non-default paths. The workflow verifies inputs and selections, computes all retained analyses, records session information and renders the assembled Figure 5, individual panels and three supplementary figures as 600-dpi PNG/TIFF and vector PDF. Filenames and output directories are canonical and replaced on rerun. It does not invoke Git or publish files. Full per-selection statistics, selected accessions, classifications, skipped exclusions and fitted objects accompany the reproducibility package. Compact verified summaries are in `results/functional_regional/`.
+Set `R_BIN` and `PYTHON_BIN` in `config/project.env` (legacy `RSCRIPT` and `PYTHON` overrides also work) if executables have non-default paths. The workflow verifies inputs and selections, computes all retained analyses, records session information and renders the assembled Figure 6, individual panels and three supplementary figures as 600-dpi PNG/TIFF and vector PDF. Filenames and output directories are canonical and replaced on rerun. It does not invoke Git or publish files. Full per-selection statistics, selected accessions, classifications, skipped exclusions and fitted objects accompany the reproducibility package. Archived summaries are external under `data/reference_results/functional_regional/`. Historical `Figure_5*` output filenames are retained for the manuscript's Figure 6.
 
-Country boundaries use black lines of 0.65 pt in the global map and both insets. To redraw only panel d and the assembled Figure 5 as PNG files from existing validated tables, without rerunning analyses or regenerating the other exports:
+Country boundaries use black lines of 0.65 pt in the global map and both insets. To redraw only panel d and the assembled Figure 6 as PNG files from existing validated tables, without rerunning analyses or regenerating the other exports:
 
 ```bash
 python3 scripts/09_functional_regional_differentiation/09B_PLOT_FUNCTIONAL_REGIONAL_DIFFERENTIATION.py \
-  --tables /path/to/results/tables --outdir /path/to/results/plots --map-only
+  --tables /path/to/results/tables --outdir /path/to/results/plots \
+  --world-map /path/to/ne_110m_admin_0_countries.geojson --map-only
 ```
 
 The Word report builder uses `python-docx` from the same requirements file. It writes the Results with the assembled figure and the Supplementary Results as separate documents; `--main-only` updates only the main report. Both use plain 11-point text and bold titles.

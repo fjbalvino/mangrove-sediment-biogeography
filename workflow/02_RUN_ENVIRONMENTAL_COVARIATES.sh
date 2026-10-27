@@ -2,18 +2,19 @@
 
 # Safe orchestrator for environmental, anthropogenic, biodiversity, and MEOW
 # covariates. Default is dry-run; pass --execute only after the exact archived
-# raster/vector assets have been declared in config/landalab.env.
+# raster/vector assets have been declared in config/project.env.
 
-set +e
+set -uo pipefail
 
 PACKAGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG="$PACKAGE_ROOT/config/landalab.env"
+CONFIG=""
 BASE_METADATA=""
 EXECUTE=0
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --config)
+      [[ $# -ge 2 ]] || { echo "--config requires a file" >&2; exit 2; }
       CONFIG="$2"
       shift 2
       ;;
@@ -25,6 +26,10 @@ while [ "$#" -gt 0 ]; do
       EXECUTE=1
       shift
       ;;
+    --help|-h)
+      printf "Usage: %s [--config FILE] [--execute]\n" "$0"
+      exit 0
+      ;;
     *)
       printf "Argumento desconocido: %s\n" "$1"
       exit 2
@@ -32,14 +37,9 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ ! -f "$CONFIG" ]; then
-  printf "ERROR: no existe config: %s\n" "$CONFIG"
-  exit 2
-fi
+source "$PACKAGE_ROOT/workflow/lib/config.sh"
+magenta_load_config "$CONFIG" || exit $?
 
-# shellcheck disable=SC1090
-source "$CONFIG"
-export PATH="/data/bin:$(dirname "$PYTHON_BIN"):$(dirname "$R_BIN"):$PATH"
 
 if [ -z "$BASE_METADATA" ]; then
   BASE_METADATA="$MAGENTA_METADATA_CURATED"
@@ -52,7 +52,9 @@ DIAG_DIR="$RUN_DIR/diagnostics"
 MANIFEST_DIR="$RUN_DIR/manifests"
 LOG_DIR="$RUN_DIR/logs"
 
-mkdir -p "$TABLE_DIR" "$DIAG_DIR" "$MANIFEST_DIR" "$LOG_DIR" "$ENVIRONMENTAL_CACHE"
+if ((EXECUTE)); then
+  mkdir -p "$TABLE_DIR" "$DIAG_DIR" "$MANIFEST_DIR" "$LOG_DIR" "$ENVIRONMENTAL_CACHE" || exit $?
+fi
 
 REFERENCE_METADATA="$TABLE_DIR/02A_metadata_reference.csv"
 HII_METADATA="$TABLE_DIR/02B_metadata_human_footprint.csv"
@@ -176,7 +178,7 @@ if [ "$RC" -eq 0 ]; then
     "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02G_VALIDATE_ENVIRONMENTAL_METADATA.py" \
     --metadata "$MEOW_METADATA" \
     --out-dir "$RUN_DIR/02G_validation" \
-    --expected-rows 341
+    --expected-rows "$EXPECTED_TAXONOMIC_SAMPLES"
   RC=$?
 fi
 
@@ -185,6 +187,7 @@ if [ "$EXECUTE" -eq 1 ] && [ "$RC" -eq 0 ]; then
     printf "ERROR: el destino final ya existe y no será sobrescrito: %s\n" "$ENVIRONMENTAL_METADATA_FINAL"
     RC=3
   else
+    mkdir -p "$(dirname "$ENVIRONMENTAL_METADATA_FINAL")" || exit $?
     cp --preserve=mode,timestamps "$MEOW_METADATA" "$ENVIRONMENTAL_METADATA_FINAL"
     RC=$?
   fi

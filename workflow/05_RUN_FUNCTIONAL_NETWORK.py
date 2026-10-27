@@ -12,7 +12,11 @@ from datetime import datetime, timezone
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--rscript', default='Rscript')
+    repo = Path(__file__).resolve().parents[1]
+    p.add_argument('--dry-run', action='store_true', help='Preview the plan without reading data, creating directories or launching jobs.')
+    p.add_argument('--accessions', type=Path, default=repo / 'config/samples/functional_accessions.txt')
+    p.add_argument('--input-checksums', type=Path, default=repo / 'config/network_input_checksums.json')
+    p.add_argument('--rscript', default=os.environ.get('R_BIN', 'Rscript'))
     p.add_argument('--workers', type=int, default=4)
     p.add_argument('--skip-study-sensitivity', action='store_true')
     p.add_argument('--counts', type=Path, required=True)
@@ -23,9 +27,21 @@ def main():
     p.add_argument('--start-at', choices=['prepare', 'B', 'A', 'C', 'D', 'E', 'F', 'G'], default='prepare')
     p.add_argument('--stop-after', choices=['B', 'A', 'C', 'D', 'E', 'F', 'G'], default='F')
     args = p.parse_args()
-    repo = Path(__file__).resolve().parents[1]
+    stages = ['B', 'A', 'C', 'D', 'E', 'F', 'G']
+    start = stages.index('B' if args.start_at == 'prepare' else args.start_at)
+    if start > stages.index(args.stop_after):
+        p.error('--start-at must precede or equal --stop-after')
+    if args.workers < 1:
+        p.error('--workers must be positive')
+    if args.dry_run:
+        plan = {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()}
+        plan['stages'] = (['prepare'] if args.start_at == 'prepare' else []) + stages[start:stages.index(args.stop_after) + 1]
+        plan['runtime'] = {'R': '4.3.3', 'igraph': '2.2.1', 'data.table': '1.17.8'}
+        plan['status'] = 'PREVIEW ONLY: input checksums and scientific outputs have not been verified'
+        print(json.dumps(plan, indent=2))
+        return
     # Do not mix this frozen network with another cohort or annotation snapshot.
-    expected = json.loads((repo / 'config/network_input_checksums.json').read_text())
+    expected = json.loads(args.input_checksums.read_text())
     source_inputs = {
         'functional_KO_counts_original.tsv.gz': args.counts,
         'metadata_functional.csv': args.metadata,
@@ -76,7 +92,7 @@ def main():
         run('prepare', [sys.executable, scripts / '10H_PREPARE_NETWORK_COHORT.py',
                        '--counts', args.counts, '--metadata', args.metadata,
                        '--atlas-classes', args.atlas_classes,
-                       '--accessions', repo / 'config/samples/functional_accessions.txt',
+                       '--accessions', args.accessions,
                        '--outdir', inp])
     audit = json.loads((inp / 'cohort_audit.json').read_text())
     common = ['--base', out]

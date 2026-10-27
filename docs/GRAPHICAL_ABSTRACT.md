@@ -49,11 +49,11 @@ topology.
 
 | Component | Canonical evidence |
 | --- | --- |
-| Taxonomic reference and core-associated fraction | [Taxonomic methods](TAXONOMIC_ANALYSES.md) and [taxonomic summary](../results/taxonomic_summary.json) |
-| Separate iCAMP cohort and process assignments | [iCAMP summary](../results/icamp/summary.json) |
-| Functional persistence and annotation-count shares | [Functional class summary](../results/functional/functional_class_summary.tsv) |
-| Geographic taxonomic–functional contrast | [Distance-decay estimates](../results/functional/geographic_distance_decay.json) |
-| Prevalence-class ordering and KO counts | [Balanced comparison statistics](../results/functional_regional/180_verified_main_statistics.tsv) and [persistence–prevalence crosswalk](../results/functional_regional/180_persistence_prevalence_crosswalk.tsv) |
+| Taxonomic reference and core-associated fraction | [Taxonomic methods](TAXONOMIC_ANALYSES.md) and taxonomic summary (`data/reference_results/taxonomic_summary.json`, external companion) |
+| Separate iCAMP cohort and process assignments | iCAMP summary (`data/reference_results/icamp/summary.json`, external companion) |
+| Functional persistence and annotation-count shares | Functional class summary (`data/reference_results/functional/functional_class_summary.tsv`, external companion) |
+| Geographic taxonomic–functional contrast | Distance-decay estimates (`data/reference_results/functional/geographic_distance_decay.json`, external companion) |
+| Prevalence-class ordering and KO counts | Balanced comparison statistics (`data/reference_results/functional_regional/180_verified_main_statistics.tsv`, external companion) and persistence–prevalence crosswalk (`data/reference_results/functional_regional/180_persistence_prevalence_crosswalk.tsv`, external companion) |
 | Module counts, supported enrichment and sample sensitivity | [Figure 5 results](FUNCTIONAL_NETWORK_RESULTS.md) and [network supplementary results](FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md) |
 
 ## Figure delivery

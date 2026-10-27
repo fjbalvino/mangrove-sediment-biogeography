@@ -17,7 +17,8 @@ while (($#)); do
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
-if [[ -n "$CONFIG" ]]; then source "$CONFIG"; fi
+source "$PACKAGE_ROOT/workflow/lib/config.sh"
+magenta_load_config "$CONFIG"
 cd "$PACKAGE_ROOT"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 FUNCTIONAL_INPUT_DIR="${FUNCTIONAL_INPUT_DIR:-data/functional}"
@@ -40,6 +41,6 @@ if ((EXECUTE)); then
 fi
 run "$PYTHON_BIN" scripts/08_functional_atlas/08A_ANALYSE_FUNCTIONAL_ATLAS.py \
   --inputs "$FUNCTIONAL_INPUT_DIR" --output "$FUNCTIONAL_OUTPUT_DIR" \
-  --sample-manifest config/samples/functional_accessions.txt
+  --sample-manifest "$FUNCTIONAL_SAMPLE_MANIFEST"
 run "$PYTHON_BIN" scripts/08_functional_atlas/08B_PLOT_FUNCTIONAL_ATLAS.py \
   --results "$FUNCTIONAL_OUTPUT_DIR" --output "$FUNCTIONAL_FIGURE_DIR"

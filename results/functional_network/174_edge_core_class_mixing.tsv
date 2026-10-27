@@ -1,9 +1,0 @@
-edge_type	n_edges	proportion
-near_global__near_global	838	0.789077212806026
-realm_core_only__realm_core_only	34	0.032015065913371
-near_global__realm_core_only	136	0.128060263653484
-multi_realm_non_core__multi_realm_non_core	4	0.00376647834274953
-absolute_global_core__near_global	43	0.0404896421845574
-multi_realm_non_core__realm_core_only	1	0.000941619585687382
-absolute_global_core__absolute_global_core	4	0.00376647834274953
-absolute_global_core__realm_core_only	2	0.00188323917137476

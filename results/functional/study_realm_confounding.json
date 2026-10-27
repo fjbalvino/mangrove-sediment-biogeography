@@ -1,6 +1,0 @@
-{
-  "studies_spanning_more_than_one_realm": 0,
-  "study_blocked_realm_test_estimable": false,
-  "sites_containing_multiple_study_identifiers": 1,
-  "reason": "Realm labels are invariant within study blocks; no cross-realm exchanges are available."
-}

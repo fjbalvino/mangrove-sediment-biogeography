@@ -1,9 +1,0 @@
-{
-  "status": "PASS",
-  "case": "omit_09",
-  "BioProject": "PRJNA437562",
-  "n_independent_R_subsamples": 50,
-  "n_edge_selections_compared": 100000,
-  "all_edge_sets_identical": true,
-  "omission_cohort_n": 185
-}

@@ -3,16 +3,17 @@
 # Safe orchestrator for the taxonomic acquisition/profiling block.
 # Default is dry-run. Pass --execute to start data acquisition and long jobs.
 
-set +e
+set -uo pipefail
 
 PACKAGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG="$PACKAGE_ROOT/config/landalab.env"
+CONFIG=""
 EXECUTE=0
 LOCAL_FASTQ_MAP=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --config)
+      [[ $# -ge 2 ]] || { echo "--config requires a file" >&2; exit 2; }
       CONFIG="$2"
       shift 2
       ;;
@@ -24,6 +25,10 @@ while [ "$#" -gt 0 ]; do
       EXECUTE=1
       shift
       ;;
+    --help|-h)
+      printf "Usage: %s [--config FILE] [--execute]\n" "$0"
+      exit 0
+      ;;
     *)
       printf "Argumento desconocido: %s\n" "$1"
       exit 2
@@ -31,14 +36,9 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ ! -f "$CONFIG" ]; then
-  printf "ERROR: no existe config: %s\n" "$CONFIG"
-  exit 2
-fi
+source "$PACKAGE_ROOT/workflow/lib/config.sh"
+magenta_load_config "$CONFIG" || exit $?
 
-# shellcheck disable=SC1090
-source "$CONFIG"
-export PATH="/data/bin:$(dirname "$PYTHON_BIN"):$(dirname "$R_BIN"):$PATH"
 
 STAMP="$(date -u +%Y%m%d_%H%M%S)"
 RUN_DIR="$MAGENTA_PIPELINE_RESULTS/01_TAXONOMIC_PREPROCESSING_${STAMP}"
@@ -48,7 +48,9 @@ QC_DIR="$RUN_DIR/fastqc_raw"
 FASTP_REPORT_DIR="$RUN_DIR/fastp_reports"
 LOG_DIR="$RUN_DIR/logs"
 
-mkdir -p "$META_DIR" "$MANIFEST_DIR" "$QC_DIR" "$FASTP_REPORT_DIR" "$LOG_DIR"
+if ((EXECUTE)); then
+  mkdir -p "$META_DIR" "$MANIFEST_DIR" "$QC_DIR" "$FASTP_REPORT_DIR" "$LOG_DIR" || exit $?
+fi
 
 METADATA_FROZEN="$META_DIR/01A_metadata_frozen_enriched.csv"
 PUBLIC_METADATA="$META_DIR/01A_public_ENA_SRA_metadata.csv"

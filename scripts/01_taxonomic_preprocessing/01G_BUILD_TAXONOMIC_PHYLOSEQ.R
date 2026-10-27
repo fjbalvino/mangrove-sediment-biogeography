@@ -35,15 +35,17 @@ as_integer_arg <- function(flag, default) {
 
 COUNT_TABLE <- get_arg("--kraken-count-table")
 METADATA <- get_arg("--metadata")
-TAXDUMP_DIR <- get_arg("--taxdump-dir", "/data/BD/kraken2db_full")
+BASE <- Sys.getenv("BIOGEOGRAPHY_BASE", unset = ".")
+DATA_DIR <- Sys.getenv("MAGENTA_DATA_DIR", unset = file.path(BASE, "data"))
+TAXDUMP_DIR <- get_arg("--taxdump-dir", Sys.getenv("NCBI_TAXDUMP_DIR", unset = file.path(DATA_DIR, "references", "taxdump")))
 OUTPUT_RDS <- get_arg(
   "--out-rds",
-  "/data/Magenta/phyloseq_MAGENTA_EcologicalClass_MangroveSedimentOnly_TX1_3_OK.rds"
+  Sys.getenv("PHYLOSEQ_405", unset = file.path(DATA_DIR, "phyloseq_source.rds"))
 )
 AUDIT_DIR <- get_arg(
   "--audit-dir",
   file.path(
-    "/home/fjbalvino/Biogeografia_2026/resultados",
+    Sys.getenv("BIOGEOGRAPHY_RESULTS", unset = file.path(BASE, "results")),
     paste0("01G_BUILD_TAXONOMIC_PHYLOSEQ_", format(Sys.time(), "%Y%m%d_%H%M%S"))
   )
 )

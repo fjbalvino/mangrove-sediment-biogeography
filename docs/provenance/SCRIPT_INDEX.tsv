@@ -21,7 +21,7 @@ order	block	canonical_file	role
 03D	alpha_diversity	scripts/03_alpha_diversity/03D_PLOT_REMAINING_SIGNIFICANT_GAM_EFFECTS.R	Plot supplementary GAM effects
 03E	alpha_diversity	scripts/03_alpha_diversity/03E_HILL_DIVERSITY_SITE_INFERENCE.R	Site-level Hill diversity inference and q0/q2 plots
 03F	alpha_diversity	scripts/03_alpha_diversity/03F_TAXONOMIC_DOMINANCE.R	Taxonomic dominance and leading annotation groups
-03G	alpha_diversity	scripts/03_alpha_diversity/03G_COMPOSE_TAXONOMIC_FIGURE.R	Compose Figure 2 from fitted outputs and retained iCAMP estimates
+03G	alpha_diversity	scripts/03_alpha_diversity/03G_COMPOSE_TAXONOMIC_FIGURE.R	Compose historical taxonomic/iCAMP layout; see manuscript guide
 03H	alpha_diversity	scripts/03_alpha_diversity/_gam_outputs.R	Shared GAM tables, diagnostics and figures
 04A	beta_diversity	scripts/04_beta_diversity/04A_NMDS_AITCHISON_LONGITUDE.R	Aitchison NMDS
 04B	beta_diversity	scripts/04_beta_diversity/04B_DISTANCE_DECAY_AND_MANTEL.R	Distance decay and Mantel tests
@@ -35,11 +35,11 @@ order	block	canonical_file	role
 05F	taxonomic_core	scripts/05_taxonomic_core_biogeography/05F_SUMMARIZE_CORE_RESULTS.R	Reconcile core features, read denominators and statistics
 06A	community_assembly	scripts/06_community_assembly/06A_ICAMP_GENUS_COMMUNITY_ASSEMBLY.R	Primary iCAMP inference
 06B	community_assembly	scripts/06_community_assembly/06B_ICAMP_ROBUSTNESS_REALM_STUDY_LOCALITY.R	Sampling-structure robustness
-07	functional_annotation	scripts/07_functional_annotation_PENDING/README.md	MEGAHIT-to-KO pipeline
+07	functional_annotation	scripts/07_functional_annotation_PENDING/README.md	Pending original validated MEGAHIT-to-KO code; requirements only
 08A	functional_atlas	scripts/08_functional_atlas/08A_ANALYSE_FUNCTIONAL_ATLAS.py	Functional classes, PCA, site-level regional tests, coupling and distance decay
 08B	functional_atlas	scripts/08_functional_atlas/08B_PLOT_FUNCTIONAL_ATLAS.py	Compose Figure 4 and the functional ordination sensitivity figure
 09A	functional_regional	scripts/09_functional_regional_differentiation/09A_FUNCTIONAL_PREVALENCE_REGIONAL_DIFFERENTIATION.R	Standalone persistence/prevalence regional analysis
-09B	functional_regional	scripts/09_functional_regional_differentiation/09B_PLOT_FUNCTIONAL_REGIONAL_DIFFERENTIATION.py	Assemble Figure 5 and supplementary diagnostics from verified tables
+09B	functional_regional	scripts/09_functional_regional_differentiation/09B_PLOT_FUNCTIONAL_REGIONAL_DIFFERENTIATION.py	Assemble manuscript Figure 6 from verified tables; historical Figure_5 filenames
 09C	functional_regional	scripts/09_functional_regional_differentiation/09C_AUDIT_FUNCTIONAL_CONTRIBUTIONS.py	Exploratory conditional realm sum-of-squares decomposition within Shell
 09D	functional_regional	scripts/09_functional_regional_differentiation/09D_VERIFY_FUNCTIONAL_REGIONAL_OUTPUTS.py	Independent accession, paired-selection and numerical output verification
 09E	functional_regional	scripts/09_functional_regional_differentiation/09E_FUNCTIONAL_PROCESSES_AND_MAP.py	Selected Shell process scores and locality turnover adapted from original 158 and 179

@@ -1,17 +1,31 @@
 {
-  "title": "Global biogeography of mangrove sediment microbiomes: reproducible analysis workflow",
-  "description": "Versioned source code, configuration templates and provenance for taxonomic, environmental, community-assembly and functional analyses of global mangrove sediment microbiomes.",
+  "title": "MAGENTA: reproducible code for taxonomic and functional biogeography of mangrove microbiomes",
+  "description": "Source code, portable configuration, cohort manifests and methods for the manuscript A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes. Biological databases, numerical result tables and figures are distributed separately; the companion data deposit is pending.",
   "upload_type": "software",
   "access_right": "open",
   "license": "MIT",
   "creators": [
-    {"name": "Balvino-Olvera, Francisco J."},
-    {"name": "Bustos-Díaz, Edder D."},
-    {"name": "González-González, Irma"},
-    {"name": "Méndez-Castro, Laura Iveth"},
-    {"name": "Sélem-Mojica, Nelly"},
-    {"name": "Jiménez, Diego J."},
-    {"name": "Vázquez-Rosas-Landa, Mirna"}
+    {
+      "name": "Balvino-Olvera, Francisco J."
+    },
+    {
+      "name": "Bustos-Díaz, Edder D."
+    },
+    {
+      "name": "González-González, Irma"
+    },
+    {
+      "name": "Méndez-Castro, Laura Iveth"
+    },
+    {
+      "name": "Sélem-Mojica, Nelly"
+    },
+    {
+      "name": "Jiménez, Diego J."
+    },
+    {
+      "name": "Vázquez-Rosas-Landa, Mirna"
+    }
   ],
   "keywords": [
     "mangrove sediment",
@@ -23,15 +37,10 @@
   ],
   "related_identifiers": [
     {
-      "identifier": "https://github.com/fjbalvino/magenta",
-      "relation": "isSupplementTo",
-      "resource_type": "software"
-    },
-    {
       "identifier": "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1502944",
       "relation": "isSupplementTo",
       "resource_type": "dataset"
     }
-  ]
+  ],
+  "version": "0.2.0"
 }
-

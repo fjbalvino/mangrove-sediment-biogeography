@@ -56,18 +56,16 @@ as_flag <- function(x, label) {
   stop(label, " must be 0/1 or false/true.")
 }
 
-BASE <- get_arg("--base", "/home/fjbalvino/Biogeografia_2026")
+BASE <- get_arg("--base", Sys.getenv("BIOGEOGRAPHY_BASE", unset = "."))
+FUNCTIONAL_INPUT_DIR <- Sys.getenv("FUNCTIONAL_INPUT_DIR", unset = file.path(BASE, "data", "functional"))
 RESULTS_DIR <- get_arg("--results_dir", file.path(BASE, "resultados"))
 METADATA_FILE <- get_arg(
   "--metadata",
-  "/data/Magenta/data/metadata/Metadata_2026_completa.csv"
+  file.path(FUNCTIONAL_INPUT_DIR, "metadata_functional.csv")
 )
 KO_MATRIX_FILE <- get_arg(
   "--ko_matrix",
-  paste0(
-    "/data/Magenta/results/035.metagenome_assembly_annotation/",
-    "final_results/MATRIX_KEGG_ko.tsv"
-  )
+  file.path(FUNCTIONAL_INPUT_DIR, "functional_KO_counts_original.tsv.gz")
 )
 
 RUN_COL_ARG <- get_arg("--run_col", "run_accession")

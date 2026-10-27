@@ -19,3 +19,5 @@ igraph	functional consensus-network inference and validation
 KEGGREST	optional creation of a frozen KEGG annotation snapshot
 ggrepel	non-overlapping figure labels
 ggnewscale	multiple figure color scales
+R.utils	compressed input handling for network and regional analyses
+jsonlite	structured audit and JSON provenance output

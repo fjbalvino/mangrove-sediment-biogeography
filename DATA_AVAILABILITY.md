@@ -2,13 +2,13 @@
 
 ## Publication status
 
-This repository contains code, documentation and compact aggregate result
-summaries. The current manuscript-title and graphical-abstract update adds text
-only. Databases, input matrices, full analysis objects and figure files are
-reserved for the final data and figure compendium.
+This repository contains source code, documentation and reproducibility configuration only. Input matrices, reference databases, numerical result tables, fitted objects, maps and figure files are distributed separately.
 
-The companion packages named below refer to working analysis deliverables, not
-to a published data deposit. No public archive DOI has yet been assigned.
+**The Zenodo data/figure deposit is pending; no DOI has been assigned.** Package names below identify existing working deliverables, not public deposits. The repository reorganization preserved 72 original files in a separate staging package with a path/size/SHA-256 migration manifest. That package contains the previously tracked results, basemap and execution log; it does not yet contain every input, full analysis object or publication figure.
+
+For local reproduction, use `config/project.env` to point at your extracted data. The planned layout is `data/` for biological inputs, `data/functional/network_annotations/` for frozen network annotations, `data/maps/` for the basemap and `data/reference_results/` for archived numerical summaries. Fresh outputs go to `results/` or the configured destination.
+
+Accession lists, the small curated process catalog and checksums remain in `config/` as analysis definitions. Markdown results/captions remain as text sources for report builders. No image or biological database is stored in the current code tree. Earlier Git history is preserved.
 
 ## Functional network (Figure 5)
 
@@ -21,7 +21,7 @@ instructions are in `docs/FUNCTIONAL_NETWORK_ANALYSES.md`.
 
 ## Taxonomic reference
 
-The current reference contains 341 profiles. The companion data archive supplies
+The current reference contains 341 profiles. The existing companion working packages provide
 these files, used directly without another classification or rarefaction step:
 
 | File | Contents | Configuration |
@@ -64,8 +64,8 @@ reproduce the models.
 
 The retained iCAMP estimates use their original 400-profile, 1,892-genus analysis,
 24,692 within-realm pairs and 999 randomizations. They were not recalculated from
-the 341-profile reference. The verified process table is included under
-`results/icamp/`; the companion archive also includes the original supplementary
+the 341-profile reference. The verified process table is distributed externally under
+`data/reference_results/icamp/`; the companion archive also includes the original supplementary
 workbook and audit text supporting it.
 
 Independent reproduction requires the original count object, embedded metadata
@@ -119,8 +119,7 @@ classification used for independent reconciliation) and `KO_function_dictionary.
 `config/functional_regional_input_checksums.json`. The same 191-accession manifest
 governs selection; no taxonomic object is required. The package also includes full
 per-selection results, RDS and NPZ analysis objects, assembled and separate figure panels,
-two Word reports with images, logs, exact commands for landalab and the proposed
-repository changes. Inputs and full analysis objects remain outside GitHub.
+two Word reports with images, logs and execution records. Inputs and full analysis objects remain outside GitHub.
 
 Classification uses 191 profiles and 26 named realm-localities. Balanced comparisons
 use 188 eligible profiles in Central Indo-Pacific, Tropical Atlantic and Western
@@ -142,3 +141,13 @@ GitHub. Their consolidation, together with figure files, into the final compendi
 is pending; this update does not publish that deposit. Third-party sequence,
 occurrence, environmental and reference-tree data retain their original licenses
 and accession-level attribution.
+
+## External basemap
+
+The regional plotter requires `--world-map FILE` (the workflow reads `WORLD_MAP`). Place the frozen Natural Earth GeoJSON at `data/maps/ne_110m_admin_0_countries.geojson` or supply another local path. [Source, license and checksum](config/maps/SOURCE.json) remain in the code repository; the geometry is external. It is a plotting background and does not define realm assignments.
+
+## Completing the data and figure deposit
+
+Consolidate the input objects and corrected metadata above, exact reference versions/caches, complete statistical outputs and fitted objects, final manuscript figures and supplements, licenses and a checksum inventory. Recover the original iCAMP tree/pairwise objects and the original validated upstream functional scripts before claiming complete end-to-end reproduction. Obtain missing raw-read accession crosswalks and verify the upstream protein-filter rule.
+
+The input inventories/checksums document required assets, not a claim that all assets were available or rerun during the repository update. Once a Zenodo record exists, add its real DOI here and in the manuscript availability statement. `.zenodo.json` describes a possible software archive; it is not a published data deposit or a data DOI.

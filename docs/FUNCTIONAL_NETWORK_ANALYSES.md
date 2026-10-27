@@ -81,23 +81,14 @@ output directory. `--start-at` permits continuation from existing completed
 stages without overwriting them; output directories have timestamps.
 
 The inferential environment is pinned to R 4.3.3, data.table 1.17.8 and igraph
-2.2.1, matching the supplied Landa runtime report. Auxiliary annotation plots are disabled in the driver (`--make_figures 0`);
+2.2.1, matching the archived runtime report. Auxiliary annotation plots are disabled in the driver (`--make_figures 0`);
 the main figure remains a separate stage. Plotting additionally needs
 ggplot2 and patchwork; compressed input reading uses R.utils. Python requires
 the packages in `config/functional_requirements.txt`.
 
-For the standalone companion package, extract or refresh the same package directory:
+Use the complete portable command in [the execution guide](../workflow/00_README_HOW_TO_RUN.md). Add `--dry-run` to preview the stage plan without reading data or creating outputs. Source inputs, annotations and the output directory are explicit local arguments; `--accessions` and `--input-checksums` select the cohort and checksum configuration. The manuscript recipe retains its frozen scientific checks.
 
-```bash
-unzip -o MAGENTA_functional_network.zip
-bash MAGENTA_red_191/ejecutar_en_landa.sh
-```
-
-The wrapper uses `Rscript` unless `RSCRIPT` is explicitly set and writes its
-execution record beneath `MAGENTA_red_191/reanalisis/`. Timestamped computation
-directories preserve individual run provenance; they are not parallel versions
-of the published manuscript or scripts. Figures are generated locally and are
-not uploaded by this workflow.
+Execution logs are written beneath the selected output directory. Timestamped computation directories preserve individual run provenance. Figures are generated locally and are not uploaded by the workflow. Archived numerical summaries belong under `data/reference_results/functional_network/`, outside Git.
 
 ## Editorial delivery
 
@@ -126,4 +117,4 @@ python tools/build_functional_network_documents.py --repository . --figure /path
 
 Word text uses Arial 11, black, with bold titles only. The main report embeds Figure 5; the separate supplementary report retains all 42 primary category tests, the informative annotation comparison, and grouped threshold results. Complete sensitivity tables remain in TSV files.
 
-Repository summaries omit per-omission accession lists and host-specific execution paths. Complete sample manifests remain in the companion archive and are regenerated locally. The network is Figure 5 in the current manuscript; the regional workflow retains its historical filenames in this network-only update.
+The external archived summaries omit per-omission accession lists and host-specific execution paths. Complete sample manifests remain in the companion archive and are regenerated locally. The network is Figure 5 in the current manuscript; the regional workflow retains its historical filenames for compatibility with archived outputs.

@@ -1,135 +1,91 @@
-# Global biogeography of mangrove microbiomes
+# MAGENTA · Mangrove microbiome biogeography
 
-Reproducible code for taxonomic diversity, composition, core-associated taxa,
-community assembly and functional biogeography in the MAGENTA project.
+Analysis code for **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**.
 
-## Manuscript and graphical abstract
+## Overview
 
-Current manuscript title: **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**.
+Mangrove microorganisms contribute to carbon and nutrient transformations across contrasting coastal environments. MAGENTA (**MAngrove GENe caTAlogue**) brings together read-based taxonomic profiles, gene-centred functional profiles and environmental metadata to ask how geographically different communities retain shared functional potential.
 
-The [graphical abstract caption and artwork specification](docs/GRAPHICAL_ABSTRACT.md)
-summarize taxonomic biogeography and shared functional potential using the current
-analysis-specific cohorts. The caption distinguishes the separate 400-profile
-iCAMP analysis from the taxonomic reference and the 191-profile functional cohort.
-Figure files and input datasets are reserved for the final compendium.
+This repository contains the analysis scripts, configuration templates, accession manifests and documentation. **Input datasets, reference databases, numerical result tables, fitted objects and figures are distributed separately.** The companion Zenodo data and figure deposit is being prepared; no DOI is available yet. See [data availability](DATA_AVAILABILITY.md).
 
+## Manuscript summary
 
-## Reference data and analyses
+The atlas combines **341 taxonomic profiles across five marine realms** with functional profiles from **191 of those metagenomes**, comprising **17,482 KEGG orthologues (KOs)**. Taxonomic diversity and composition varied geographically and with environmental setting. Core-associated taxa comprised 27.4% of eligible features and accounted for 62.6% of counts assigned to those features. Absolute-core, near-global and realm-core KOs together represented 14.5% of detected KOs and 86.2% of KO annotation counts. Taxonomic and functional dissimilarities were strongly correlated, while functional similarity declined more slowly with geographic distance. Co-abundance analyses identified recurring functional modules, with membership sensitive to sample inclusion. These findings describe shared encoded potential alongside regional differentiation; study differences limit attribution to ecological mechanisms.
 
-The taxonomic reference contains **341 metagenomes**, each with **18,145 rarefied
-classification counts**, and one accession manifest: `config/samples/taxonomic_accessions.txt`.
-The metadata and count object are joined by `run_accession`.
+Functional counts represent protein-cluster members assigned to KOs. They do not measure expression, metabolic activity or flux. A separate **400-profile iCAMP analysis** must not be confused with the taxonomic or functional reference cohorts.
 
-| Analysis | Analytical units |
-| --- | --- |
-| Hill diversity q0, q1 and q2 | 341 profiles across five marine realms |
-| Primary diversity comparisons | 120 sites in three realms with at least five sites |
-| Environmental Shannon GAM | 274 profiles from 33 localities; 14 environmental predictors |
-| Ordination and geographic distance decay | 323 profiles from 122 sampling sites |
-| Compositional variation partitioning | 99 sites with complete environmental covariates |
-| Core-associated taxa | 339 profiles from 47 realm-locality units |
-| Functional atlas and taxonomic–functional coupling | 191 matched profiles; 17,482 KOs |
-| Functional geographic analyses | 184 profiles from 57 sites; primary realm tests use 56 sites |
-| Functional co-abundance network (Figure 5) | 191 profiles; 1,500 candidate KOs; 500 locality-capped subsamples of 81 profiles |
-| Functional prevalence and persistence intersections (Figure 6) | 191 profiles for classification; 188 eligible profiles in three realms for balanced named-locality comparisons |
-| iCAMP, separate completed analysis | 400 profiles, 1,892 genera, 24,692 within-realm pairs; 999 randomizations |
+## Pipeline workflow
 
-The eight profiles from Mud Island represent one sampling site. The Temperate
-Northern Atlantic and Tropical Eastern Pacific each have one site and are shown
-descriptively, without contributing to primary site-level realm comparisons.
-Two profiles from Fujian have supported realm assignments but unresolved exact
-localities; they remain in the reference and are omitted only where locality or
-coordinates are required.
+| Stage | Purpose | Source scripts | Manuscript context |
+| --- | --- | --- | --- |
+| 01 | Acquire metadata and reads; QC, classify and select profiles | [01_taxonomic_preprocessing](scripts/01_taxonomic_preprocessing) | Atlas construction; Figure 1 |
+| 02 | Reconstruct environmental and geographic covariates | [02_environmental_covariates](scripts/02_environmental_covariates) | Environmental setting; Figure 2 |
+| 03 | Diversity, GAMs, composition, distance decay and taxonomic core | [03](scripts/03_alpha_diversity), [04](scripts/04_beta_diversity), [05](scripts/05_taxonomic_core_biogeography) | Figures 2–3 |
+| Separate cohort | Community assembly and robustness | [06_community_assembly](scripts/06_community_assembly) | Figure 3; Table S8 |
+| Pending upstream block | Assembly → proteins → clustering → KO matrix | [07_functional_annotation_PENDING](scripts/07_functional_annotation_PENDING) | Methods; original validated code still needed |
+| 04 | Functional atlas, regional tests and taxonomic–functional coupling | [08_functional_atlas](scripts/08_functional_atlas) | Figure 4 |
+| 05 | KO co-abundance network and sensitivity analyses | [10_functional_network](scripts/10_functional_network) | Figure 5 |
+| 06 | Prevalence, persistence and balanced regional differentiation | [09_functional_regional_differentiation](scripts/09_functional_regional_differentiation) | Figure 6 |
 
-Sampling material varies across the retained reference: 242 profiles have
-record-level support for mangrove sediment or soil, 46 represent enriched,
-mixed, cultured or plant-tissue material, and 53 require further source
-clarification. These annotations are retained in the metadata. Results describe
-this specified reference; they do not establish that every profile represents
-an unmanipulated natural sediment community.
+The [manuscript guide](docs/MANUSCRIPT_GUIDE.md) maps every result section, supplementary table group and analysis cohort to the code. Existing script names are retained to preserve provenance; the execution guide follows the current manuscript order. This is a read-based/gene-centred workflow, with no MAG-binning stage.
 
-## Reproduce the taxonomic analyses
+## Prerequisites and installation
 
-Place the files specified in [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md) under
-`data/` and review `config/taxonomic.env.example`. Preview the analysis sequence:
+Use Bash, Python and R on Linux or a compatible Unix environment. The [installation guide](docs/INSTALLATION.md) separates dependencies for statistical analyses from tools and external databases needed for raw-read processing. Resource requirements depend on the chosen stage; raw-read classification and assembly need substantially more storage and memory than documentation checks.
 
 ```bash
-bash workflow/03_RUN_TAXONOMIC_ANALYSES.sh --config config/taxonomic.env.example --core
+git clone https://github.com/fjbalvino/mangrove-sediment-biogeography.git
+cd mangrove-sediment-biogeography
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r config/functional_requirements.txt
+cp config/project.env.example config/project.env
 ```
 
-Add `--execute` to run it. Each analysis writes to its current output directory;
-filenames have no version suffixes. iCAMP retains its separately completed result
-and is not rerun by this workflow. Its input, metadata and estimates are kept
-separate from the 341-profile reference.
+Edit `config/project.env` for your local inputs, outputs and executables. Obtain the required external inputs before executing analyses. Cloning this repository alone does not supply them.
 
-[The analysis guide](docs/TAXONOMIC_ANALYSES.md) defines the statistical units,
-models, sample handling and interpretation. Current numerical summaries are in
-`results/`; full tables, fitted objects and figures are held in companion packages for the
-planned data and figure compendium.
+## Usage
 
-## Reproduce the functional atlas
-
-The functional atlas uses the 191 taxonomic profiles represented in the filtered
-protein-annotation matrix. Counts quantify assembled proteins assigned to KOs.
-The primary TA–CIP comparison uses one mean CLR profile per sampling site.
-
-Install `config/functional_requirements.txt` and place the three compact inputs
-listed in [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md) under `data/functional/`.
-Preview or run the workflow:
+Preview the main entry points without running analyses or creating output directories:
 
 ```bash
-bash workflow/04_RUN_FUNCTIONAL_ANALYSES.sh --config config/functional.env.example
-bash workflow/04_RUN_FUNCTIONAL_ANALYSES.sh --config config/functional.env.example --execute
+bash workflow/01_RUN_TAXONOMIC_PREPROCESSING.sh
+bash workflow/02_RUN_ENVIRONMENTAL_COVARIATES.sh
+bash workflow/03_RUN_TAXONOMIC_ANALYSES.sh --core
+bash workflow/04_RUN_FUNCTIONAL_ANALYSES.sh
+bash workflow/06_RUN_FUNCTIONAL_REGIONAL.sh
 ```
 
-[Functional methods and interpretation](docs/FUNCTIONAL_ANALYSES.md) describe the
-class definitions, PERMANOVA and dispersion tests, count-adjusted analyses,
-taxonomic–functional coupling, and geographic sampling sensitivity.
-[Current results and Figure 4 caption](docs/FUNCTIONAL_RESULTS.md) use the same outputs.
-Compact numerical results are in `results/functional/`.
+Add `--execute` to a shell workflow after checking its configuration. The network driver has its own `--dry-run` option. See [00_README_HOW_TO_RUN](workflow/00_README_HOW_TO_RUN.md) for the complete commands, inputs and independent iCAMP execution.
 
-The [functional network workflow](docs/FUNCTIONAL_NETWORK_ANALYSES.md) now uses
-the same 191-profile cohort. [Figure 5 results and caption](docs/FUNCTIONAL_NETWORK_RESULTS.md)
-report 1,062 associations among 327 connected KOs and six major modules containing 236 KOs. Information-processing and transport/membrane enrichment remain supported across annotation treatments; carbon/carbohydrate enrichment is annotation-sensitive.
-[Supplementary results and methods](docs/FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md)
-provide the complete enrichment tests and sensitivity analyses. Source statistics are in
-`results/functional_network/`. The standalone driver records all commands and
-performs independent output checks; images are generated locally.
+Paths are configurable and do not depend on an institutional server. The supplied recipes retain the manuscript's cohort manifests, scientific thresholds and validation checks. Adapting them to another study requires reviewing those definitions as well as replacing the inputs.
 
-The [Figure 6 workflow](docs/FUNCTIONAL_REGIONAL_ANALYSES.md) uses the corrected
-191-profile cohort for prevalence and persistence, with 499 balanced selections
-under three-realm × six-locality and three-realm × four-locality designs.
-[Results and the Figure 6 caption](docs/FUNCTIONAL_REGIONAL_RESULTS.md) and
-[separate supplementary results](docs/FUNCTIONAL_REGIONAL_SUPPLEMENTARY_RESULTS.md)
-replace the historical claim of a consistent Shell advantage, which the corrected
-analysis does not reproduce. Run `workflow/06_RUN_FUNCTIONAL_REGIONAL.sh` with
-the four inputs in the companion `MAGENTA_Figure_5.zip`; compact verified summaries
-are in `results/functional_regional/`. This analysis uses named localities, not the
-coordinate-defined sites used for the atlas geographic comparisons. The restored main figure includes six selected Shell process scores (33 KOs) and locality-centroid turnover for all 26 named localities, with 23 shown on the map. Process effects use the exact balanced selections and are independently checked in R; annotation-total sensitivity is retained.
+## Repository and output directories
 
-The current manuscript places the network in Figure 5 and regional differentiation in Figure 6. Regional scripts and companion package names retain their historical Figure 5 identifiers; the manuscript figure numbers take precedence for captions and cross-references.
-
-## Workflow blocks
-
-| Block | Objective |
+| Directory | Contents |
 | --- | --- |
-| 01 | Metadata, sequence QC, Kraken2, taxonomic counts and reference selection |
-| 02 | Human Footprint, WorldClim, GBIF, SoilGrids and MEOW covariates |
-| 03 | Hill diversity, environmental GAM, dominance and Figure 2 |
-| 04 | NMDS, distance decay, regional PERMANOVA and dbRDA/VPA |
-| 05 | Core membership, realm restriction, core composition and Figure 3 |
-| 06 | Independent genus-level iCAMP analysis and sampling-structure assessment |
-| 07 | Assembly-to-KO annotation workflow; pending completion |
-| 08 | Functional atlas, regional tests, taxonomic–functional coupling and Figure 4 |
-| 09–10 | Separate regional functional and KO co-variation network analyses |
+| `config/` | Portable settings, dependencies, cohort IDs, input hashes and analysis rules |
+| `scripts/` | Numbered scientific analysis modules |
+| `workflow/` | Execution guide and orchestration entry points |
+| `docs/` | Methods, manuscript context and text sources for report builders |
+| `tests/`, `tools/` | Statistical regression checks, validation and code export |
+| `data/` | Local inputs only; excluded from Git except its README |
+| `results/`, `figures/` | Locally generated outputs; excluded from Git except the results README |
 
-Functional analyses retain their separately documented cohorts. Repository checks
-validate syntax, file integrity and statistical implementation invariants. They
-do not replace execution of the analyses with their input data.
+Tiny accession manifests and curated process definitions remain as configuration, not biological count databases. Figure-generation code is included; image files are not.
 
-## Availability and citation
+## Validation and code export
 
-A public archive DOI has not yet been assigned. Input checksums and requirements
-are in [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md). Code is MIT licensed;
-third-party data retain their source attribution and terms. Citation metadata
-are in `CITATION.cff`.
+```bash
+make validate
+bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../MAGENTA_code.zip
+bash workflow/99_BUILD_EXPORT_BUNDLE.sh --output ../MAGENTA_code.zip --execute
+```
+
+Validation checks source syntax, statistical contracts, workflow portability, the code-only boundary and SHA-256 integrity. It does not replace rerunning the manuscript with its archived inputs. After source edits, run `make manifest` before validation.
+
+## Citation, license and acknowledgements
+
+Use [CITATION.cff](CITATION.cff) for software attribution and cite the manuscript when its publication details are available. Code is released under the [MIT license](LICENSE); external datasets retain their own licenses.
+
+The presentation of the workflow, installation and usage sections was inspired by [MetaGenome-MAG-Analysis](https://github.com/SongzeCHEN/MetaGenome-MAG-Analysis). Its MAG assembly/binning methods were not imported into this study. [REA](https://github.com/morluto/rea) was used for static inspection of the reference source archive; [redesign provenance](docs/provenance/REPOSITORY_REDESIGN.md) records its scope.

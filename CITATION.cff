@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite the associated manuscript and the archived software release."
-title: "Global biogeography of mangrove sediment microbiomes: reproducible analysis workflow"
+title: "MAGENTA: reproducible code for taxonomic and functional biogeography of mangrove microbiomes"
 type: software
-version: 0.1.0
-date-released: 2026-09-08
+version: 0.2.0
+date-released: 2026-10-26
 repository-code: "https://github.com/fjbalvino/mangrove-sediment-biogeography"
 url: "https://github.com/fjbalvino/mangrove-sediment-biogeography"
 license: MIT

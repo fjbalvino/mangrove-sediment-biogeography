@@ -1,45 +1,67 @@
-# Private machine configuration and credentials
-config/landalab.env
+# Machine configuration and credentials
 *.env
 *.pem
 *.key
 .Renviron
 
-# Raw sequencing data and large biological objects
+# Inputs, outputs, figures, caches and local environments
+data/*
+!data/README.md
+results/*
+!results/README.md
+figures/
+resultados/
+cache/
+exports/
+.venv/
+venv/
+renv/library/
+
+# Biological, numerical and geospatial assets belong in the data companion
 *.fastq
-*.fastq.gz
 *.fq
-*.fq.gz
-*.fasta.gz
-*.fa.gz
+*.fasta
+*.fa
+*.faa
+*.fna
+*.gz
+*.bz2
+*.xz
 *.rds
 *.RData
 *.rda
 *.biom
 *.k2d
-
-# Large reference and geospatial assets
+*.npy
+*.npz
+*.parquet
+*.sqlite*
+*.db
 *.tif
 *.tiff
 *.nc
 *.gpkg
+*.geojson
 *.shp
 *.shx
 *.dbf
+*.newick
+*.nwk
 
-# Local data, caches and generated results
-data/private/
-data/raw/
-data/derived/
-cache/
-results/*
-!results/README.md
-!results/functional_network/
-!results/functional_network/**
-!results/functional_regional/
-!results/functional_regional/**
-resultados/
-preflight.json
+# Figures, binary reports and archives
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+*.xls
+*.zip
+*.tar
 
 # Runtime products
 nohup.out
@@ -50,16 +72,4 @@ __pycache__/
 .Rhistory
 .Rproj.user/
 .DS_Store
-
-# Manuscript figures and binary reports are distributed outside the code repository.
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.webp
-*.svg
-*.pdf
-*.docx
-*.pptx
-*.zip
-
+preflight.json

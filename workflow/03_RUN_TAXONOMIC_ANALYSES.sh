@@ -22,7 +22,8 @@ while (($#)); do
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
-if [[ -n "$CONFIG" ]]; then source "$CONFIG"; fi
+source "$PACKAGE_ROOT/workflow/lib/config.sh"
+magenta_load_config "$CONFIG"
 export BIOGEOGRAPHY_BASE="${BIOGEOGRAPHY_BASE:-$PACKAGE_ROOT}"
 export BIOGEOGRAPHY_RESULTS="${BIOGEOGRAPHY_RESULTS:-$BIOGEOGRAPHY_BASE/results}"
 export MAGENTA_PHYLOSEQ="${MAGENTA_PHYLOSEQ:-$BIOGEOGRAPHY_BASE/data/phyloseq_taxonomic.rds}"
@@ -55,5 +56,5 @@ if ((WITH_CORE)); then
   )
 fi
 
-export ICAMP_SUMMARY_TSV="${ICAMP_SUMMARY_TSV:-$PACKAGE_ROOT/results/icamp/icamp_process_contributions.tsv}"
+export ICAMP_SUMMARY_TSV="${ICAMP_SUMMARY_TSV:-$MAGENTA_DATA_DIR/reference_results/icamp/icamp_process_contributions.tsv}"
 run_r scripts/03_alpha_diversity/03G_COMPOSE_TAXONOMIC_FIGURE.R

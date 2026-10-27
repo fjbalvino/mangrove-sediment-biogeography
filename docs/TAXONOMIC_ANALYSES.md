@@ -157,7 +157,9 @@ cohort and do not inherit the current reference's metadata or sample selection.
 
 Each stage writes one current directory under `results/`, with full-precision
 tables, method settings and model/session information. Figures 2 and 3 are composed
-from those current outputs. The repository holds compact current summaries;
-the companion archive holds full results and input objects. Script 06A accepts
+from those current outputs. The companion archive holds numerical summaries, full results and input objects;
+the code repository contains no result tables. Script 06A accepts
 its independent input through `ICAMP_PHYLOSEQ`; the taxonomic workflow does not
 invoke it. Functional analyses are outside this taxonomic rerun.
+
+The current manuscript places iCAMP in Figure 3. The retained plot assemblers still use their historical layout; see the [manuscript guide](MANUSCRIPT_GUIDE.md) before assembling final artwork.
