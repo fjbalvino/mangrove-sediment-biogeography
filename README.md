@@ -8,7 +8,7 @@ Code and documentation accompanying **A global metagenomic atlas reveals shared 
 
 Mangrove microorganisms contribute to carbon and nutrient transformations across contrasting coastal environments. MAGENTA (**MAngrove GENe caTAlogue**) brings together read-based taxonomic profiles, gene-centred functional profiles and environmental metadata to ask how geographically different communities retain shared functional potential.
 
-This repository accompanies the manuscript and contains its analysis scripts, configuration templates, accession manifests and documentation. **Input datasets, reference databases, numerical result tables, fitted objects and figures are distributed separately.** The companion Zenodo data and figure deposit is being prepared; no DOI is available yet. See [data availability](DATA_AVAILABILITY.md).
+This repository accompanies the manuscript and contains its analysis scripts, configuration templates, accession manifests and documentation. **Input datasets, reference databases, numerical result tables, fitted objects and figures are distributed separately.**
 
 ## Manuscript summary
 
