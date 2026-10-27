@@ -41,6 +41,10 @@ def validate(check_manifest: bool = True) -> list[str]:
             continue
         if path.stat().st_size > 20 * 1024 * 1024:
             errors.append(f'File exceeds 20 MiB: {name}')
+        if name == 'docs/assets/Graphical_abstrac.png':
+            if not path.read_bytes().startswith(bytes([137, 80, 78, 71, 13, 10, 26, 10])):
+                errors.append(f'Invalid PNG: {name}')
+            continue
         if path.suffix.lower() in FORBIDDEN_SUFFIXES:
             errors.append(f'Data, figure, archive or local configuration in code release: {name}')
         if name.split('/')[0] in OUTPUT_DIRECTORIES and name not in {'data/README.md', 'results/README.md'}:

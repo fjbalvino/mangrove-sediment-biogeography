@@ -2,6 +2,8 @@
 
 Code and documentation accompanying **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**.
 
+![Graphical abstract](docs/assets/Graphical_abstrac.png)
+
 ## Overview
 
 Mangrove microorganisms contribute to carbon and nutrient transformations across contrasting coastal environments. MAGENTA (**MAngrove GENe caTAlogue**) brings together read-based taxonomic profiles, gene-centred functional profiles and environmental metadata to ask how geographically different communities retain shared functional potential.
@@ -72,7 +74,7 @@ Paths are configurable and do not depend on an institutional server. The supplie
 | `data/` | Local inputs only; excluded from Git except its README |
 | `results/`, `figures/` | Locally generated outputs; excluded from Git except the results README |
 
-Tiny accession manifests and curated process definitions remain as configuration, not biological count databases. Figure-generation code is included; image files are not.
+Tiny accession manifests and curated process definitions remain as configuration, not biological count databases. Figure-generation code and the graphical abstract are included; result figures are distributed separately.
 
 ## Validation and code export
 
