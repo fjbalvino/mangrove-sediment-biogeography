@@ -1,0 +1,11 @@
+{
+  "C03": "El TCA oxidativo operando en reversa no se distingue de metabolismo central por esta matriz KO. Requiere contexto genómico/fisiológico.",
+  "C08": "La dirección reductiva del sistema de glicina no se identifica con KOs centrales; requiere reconstrucción contextual y curación de variantes.",
+  "C10": "Requiere anotación CAZy/dbCAN de secuencias, subfamilias y dominios; familias GH amplias no establecen celulólisis.",
+  "C11": "Requiere CAZy/dbCAN, subfamilias y contexto de utilización; no se asigna hemicelulólisis por hidrolasas genéricas.",
+  "C12": "Categoría compuesta de sustratos distintos; requiere separar rutas y anotar CAZy/dbCAN por secuencia.",
+  "P07": "Metabolismo central de nucleótidos reservado como contexto; no se define un índice de movilización de fósforo.",
+  "Fe01": "Requiere perfiles FeGenie, motivos y contexto para Cyc2/Pio/Mto; citocromos genéricos no son diagnósticos.",
+  "Fe02": "Requiere perfiles y contexto genómico de sistemas de transferencia extracelular; no inferir reducción de Fe por citocromos o Mtr metanogénico.",
+  "Fe04": "Requiere anotación especializada y contexto del conjunto mam/mms; no se evaluará con homologías genéricas."
+}
