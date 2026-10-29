@@ -1,5 +1,12 @@
 # Change log
 
+## Functional extension — 2026-10-29
+
+- Added a documented biogeochemical-cycle section with 97 operational rules across 65 categories and 32 reference modules.
+- Added a portable evaluator, independent table verifier, optional local plotting and a preview-first workflow for external matrix updates.
+- Preserved unknown KO rows, explicit protein-record units, threshold sensitivity and limits on pathway/direction/activity claims.
+- Added synthetic regression tests and reproduced the current 191-profile rule results; kept inputs, databases, numerical outputs and images outside the new source section.
+
 ## 0.2.0 — 2026-10-26
 
 - Clarified that this is the manuscript's analysis repository in the README, citation metadata and execution guide.

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "configuration_version": "2026-10-29",
+  "scope": "97 operational rules across 56 of 65 curated categories, plus 32 reference modules. Selected analysis definitions, not an annotation database or exhaustive gene inventory.",
+  "unit": "predicted_protein_records",
+  "thresholds": [
+    1,
+    2
+  ],
+  "missing_KO_row": "UNKNOWN",
+  "source_syntax": "https://www.kegg.jp/kegg/module.html",
+  "module_source": "URLs and frozen expressions are recorded in modulos_KEGG_definiciones.tsv. M00597 and M00598 are dependencies, not extra scored reference modules.",
+  "upstream_annotation_version": "Not established by this configuration. Record annotation software/database versions with each external input release.",
+  "reannotation": false
+}

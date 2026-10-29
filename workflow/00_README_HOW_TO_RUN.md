@@ -74,6 +74,27 @@ bash workflow/06_RUN_FUNCTIONAL_REGIONAL.sh --config config/project.env
 
 Use `--inputs DIR` and `--outdir DIR` to override configured locations. `--complete-panels` reuses and verifies existing balanced results before completing process/map analyses. Numerical verification runs before rendering. The [regional methods](../docs/FUNCTIONAL_REGIONAL_ANALYSES.md) describe the 3 × 6 and 3 × 4 locality designs. Historical output filenames beginning `Figure_5` refer to the current Figure 6.
 
+## 07: biogeochemical-cycle evidence
+
+This independent functional extension starts from the existing 191-profile
+accession manifest. It does not require completed network or regional analyses.
+
+```bash
+python workflow/07_RUN_BIOGEOCHEMICAL_CYCLES.py \
+  --matrix /path/to/functional_KO_counts_original.tsv.gz \
+  --metadata /path/to/metadata_functional.csv \
+  --unit predicted_protein_records \
+  --outdir results/biogeochemical_cycles_current
+# Preview by default. Add --execute; optionally add --plots for local figures.
+```
+
+The [methods and input contract](../docs/BIOGEOCHEMICAL_CYCLES.md) define rule
+logic, missing rows, interpretation and validation. Pass new external matrix and
+metadata paths with a new output directory to evaluate an updated input release.
+The default selection remains the 191 accepted functional metagenomes; use
+`--samples FILE` only for an explicitly different selection. This Python workflow
+uses its CLI arguments and does not read `project.env` automatically.
+
 ## Outputs, validation and release
 
 Generated matrices, figures, fitted objects and reports stay in local output directories. None is uploaded by these workflows.

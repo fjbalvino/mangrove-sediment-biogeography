@@ -28,6 +28,7 @@ Functional counts represent protein-cluster members assigned to KOs. They do not
 | 04 | Functional atlas, regional tests and taxonomic–functional coupling | [08_functional_atlas](scripts/08_functional_atlas) | Figure 4 |
 | 05 | KO co-abundance network and sensitivity analyses | [10_functional_network](scripts/10_functional_network) | Figure 5 |
 | 06 | Prevalence, persistence and balanced regional differentiation | [09_functional_regional_differentiation](scripts/09_functional_regional_differentiation) | Figure 6 |
+| 07 | Curated biogeochemical rules, detection sensitivity and evidence audit | [11_biogeochemical_cycles](scripts/11_biogeochemical_cycles) | Functional extension; descriptive stage |
 
 The [manuscript guide](docs/MANUSCRIPT_GUIDE.md) maps every result section, supplementary table group and analysis cohort to the code. Existing script names are retained to preserve provenance; the execution guide follows the current manuscript order. This is a read-based/gene-centred workflow, with no MAG-binning stage.
 
@@ -61,6 +62,21 @@ bash workflow/06_RUN_FUNCTIONAL_REGIONAL.sh
 Add `--execute` to a shell workflow after checking its configuration. The network driver has its own `--dry-run` option. See [00_README_HOW_TO_RUN](workflow/00_README_HOW_TO_RUN.md) for the complete commands, inputs and independent iCAMP execution.
 
 Paths are configurable and do not depend on an institutional server. The supplied recipes retain the manuscript's cohort manifests, scientific thresholds and validation checks. Adapting them to another study requires reviewing those definitions as well as replacing the inputs.
+
+## Biogeochemical-cycle analysis
+
+The [new functional section](docs/BIOGEOCHEMICAL_CYCLES.md) documents 97 operational
+KO rules across 65 curated categories, including unresolved categories and
+reference modules. It uses the current 191-profile manifest and accepts external
+matrix updates through explicit input paths. Missing KO rows remain unknown;
+community co-detection is not interpreted as activity or a complete pathway in
+one organism. The section includes an evaluator, an independent output verifier,
+optional local plotting code and regression tests.
+
+Use `workflow/07_RUN_BIOGEOCHEMICAL_CYCLES.py --help` for the entry point. The
+[execution guide](workflow/00_README_HOW_TO_RUN.md#07-biogeochemical-cycle-evidence)
+provides commands. Only code, documentation and small rule configurations are
+tracked; matrices, databases and generated images remain outside Git.
 
 ## Repository and output directories
 

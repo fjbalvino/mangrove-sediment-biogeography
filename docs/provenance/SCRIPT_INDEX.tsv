@@ -59,3 +59,6 @@ order	block	canonical_file	role
 10L	functional_network	scripts/10_functional_network/lib/network_partition.R	network partition
 10L	functional_network	scripts/10_functional_network/lib/study_sensitivity.R	study sensitivity
 10L	functional_network	scripts/10_functional_network/lib/verify_study_edges.R	verify study edges
+11A	biogeochemical_cycles	scripts/11_biogeochemical_cycles/11A_EVALUATE_BIOGEOCHEMICAL_RULES.py	Evaluate frozen community KO rules with explicit unknown values
+11B	biogeochemical_cycles	scripts/11_biogeochemical_cycles/11B_PLOT_BIOGEOCHEMICAL_EVIDENCE.py	Render local descriptive biogeochemical evidence and detection figures
+11C	biogeochemical_cycles	scripts/11_biogeochemical_cycles/11C_VERIFY_BIOGEOCHEMICAL_OUTPUTS.py	Independently reconcile rule matrices, long evidence and summaries

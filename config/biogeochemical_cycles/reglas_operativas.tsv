@@ -1,0 +1,98 @@
+rule_id	process_id	label	expression	evidence_kind	limit	source	primary
+C01_M00165	C01	Componentes del ciclo de Calvin	(K01601-K01602) K00927 (K05298,K00150,K00134) K01803 (K01623,K01624) (K03841,K02446,K11532,K01086) K00615 ((K01100,K11532,K01086),(K00616,K13810)) (K01807,K01808) K01783 (K00855,K28462)	modulo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00165	True
+C01_RuBisCO_PRK	C01	RuBisCO + PRK	K01601 (K00855,K28462)	conjunto	No distingue formas de RuBisCO ni demuestra autotrofía.	KEGG	False
+C02_M00173	C02	Componentes del TCA reductivo	(K00169+K00170+K00171+K00172,K03737,K28726+K28727+K28729+K28728) (((K01007,K01006) K01595),K01959+K01960,K01958) K00024 (K01676,K01679,K01677+K01678) (K00239+K00240-K00241-K00242,K18556+K18557+K18558+K18559+K18560) (K01902+K01903) (K00174+K00175-K00177-K00176) K00031 (K27802,K01682) (K15230+K15231,(K15232+K15233 K15234))	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00173	True
+C02_ACL	C02	ATP citrato liasa, A + B	K15230+K15231	conjunto	El marcador no sustituye la ruta ni confirma dirección.	KEGG	False
+C04_M00377	C04	Componentes de Wood–Ljungdahl bacteriano	K00198 (K05299-K15022,K22015+K25123+K25124) K01938 K01491-K01500 K00297-K25007-K25008 K15023 K14138+K00197+K00194	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00377	True
+C05_M00376	C05	Componentes del biciclo 3-HP	(K02160+K01961+K01962+K01963) K14468 K14469 K15052 K05606 (K01847,K01848+K01849) (K14471+K14472) (K00239+K00240+K00241) K01679 K08691 K14449 K14470 K09709	modulo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00376	True
+C06_M00375	C06	Componentes del ciclo 3-HP/4-HB	(K01964+K15037+K15036) K15017 K15039 K15018 K15019 K15020 K05606 (K01848+K01849) (K15038,K15017) K14465 (K14466,K18861,K25774) K14534 K15016 K00626	modulo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00375	True
+C07_M00374	C07	Componentes del ciclo DC/4-HB	(K00169+K00170+K00171+K00172) K01007 K01595 K00024 (K01677+K01678) (K00239+K00240-K00241-K18860) (K01902+K01903) (K15038,K15017) K14465 (K14467,K18861,K25774) K14534 K15016 K00626	modulo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00374	True
+C09_carboxilasas	C09	Carboxilasas anapleróticas seleccionadas	K01595,K01958,(K01959+K01960)	contexto	No equivale a autotrofía ni secuestro neto de carbono.	KEGG	True
+C13_pcaGH	C13	Protocatecuato 3,4-dioxigenasa	K00448+K00449	contexto	Catabolismo de un monómero aromático, no depolimerización de lignina.	KEGG	True
+C13_catA	C13	Catecol 1,2-dioxigenasa	K03381	contexto	No demuestra degradación de lignina.	KEGG	False
+C14_alkB	C14	Alcano monooxigenasa AlkB, candidato	K00496	ambiguo	Necesita secuencia y especificidad; cubre una familia, no todos los hidrocarburos.	KEGG;CANTHYD	True
+C15_bcrABCD	C15	Benzoil-CoA reductasa tipo Bcr	K04114+K04113+K04112+K04115	ambiguo	Dearomatización; no demuestra activación del hidrocarburo ni su degradación completa.	KEGG;CANTHYD	True
+C16_pta_ackA	C16	Interconversión acetil-CoA/acetato, Pta–AckA	K00625 K00925	contexto	No establece producción neta de acetato.	KEGG	True
+C16_pfl	C16	Piruvato formiato liasa, anotación catalítica	K00656	contexto	No incluye activación radicalaria ni demuestra fermentación activa.	KEGG	False
+C17_ptb_buk	C17	Rama terminal de butirato, Ptb–Buk	K00634 K00929	contexto	Solo rama terminal; no representa toda la fermentación ni todas las rutas a butirato.	KEGG	True
+C17_ldh	C17	Lactato deshidrogenasas NAD dependientes	K00016,K03778	contexto	Reacción reversible; no distingue producción y consumo.	KEGG	False
+C18_coxLMS	C18	CO deshidrogenasa aerobia, CoxLMS	K03520+K03519+K03518	ambiguo	Revisar familias de CoxL y especificidad por secuencia.	KEGG;METABOLIC	True
+C18_cooS	C18	CO deshidrogenasa anaerobia, CooS/AcsA	K00198	ambiguo	Compartida con Wood–Ljungdahl; no determina dirección.	KEGG	False
+M01_MCR	M01	McrABG, metabolismo de alquil-CoM	K00399+K00401+K00402	ambiguo	No separa metanogénesis, AOM ni otros alquil-CoM.	KEGG;MCycDB;AlkylCoM2016	True
+M02_M00567	M02	Componentes de metanogénesis desde CO2	(K00200+K00201+K00202+K00203-K11261+(K00205,K11260,K00204)) K00672 K01499 (K00319,K13942) K00320 (K00577+K00578+K00579+K00580+K00581-K00582-K00583+K00584) (K00399+K00401+K00402) ((K22480+K22481+K22482),(K03388+K03389+K03390),(K08264+K08265),(K03388+K03389+K03390+K14127+((K14126+K14128),(K22516+K00125))))	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00567	True
+M03_M00357	M03	Componentes de metanogénesis desde acetato	((K00925 K00625),K01895) (K00193+K00197+K00194) (K00577+K00578+K00579+K00580+K00581-K00582-K00583+K00584) (K00399+K00401+K00402) (K22480+K22481+K22482,K03388+K03389+K03390,K08264+K08265,K03388+K03389+K03390+K14127+(K14126+K14128,K22516+K00125))	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00357	True
+M04_M00356	M04	Componentes de metanogénesis desde metanol	K14080+K04480+K14081 K00399+K00401+K00402 (K22480+K22481+K22482,K03388+K03389+K03390,K08264+K08265,K03388+K03389+K03390+K14127+(K14126+K14128,K22516+K00125))	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00356	True
+M04_M00563	M04	Componentes de metanogénesis desde metilaminas	K14082 ((K16177-K16176),(K16179-K16178),(K14084-K14083)) (K00399+K00401+K00402) ((K22480+K22481+K22482),(K03388+K03389+K03390),(K08264+K08265),(K03388+K03389+K03390+K14127+((K14126+K14128),(K22516+K00125))))	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00563	False
+M05_pMMO_historico	M05	Familia histórica Amo/Pmo, tres subunidades	K10944+K10945+K10946	ambiguo	No reinterpretar K10944 histórico como pmoA específico por el nombre actual. Señal compartida con N03.	KEGG;MCycDB	True
+M05_sMMO	M05	Monooxigenasa soluble de metano, XYZBC	K16157+K16158+K16159+K16160+K16161	conjunto	MmoD se conserva como accesorio; verificar homólogos y contexto.	KEGG;MCycDB	False
+M06_mxaFI	M06	Metanol deshidrogenasa, MxaFI	K14028+K14029	conjunto	Metilotrofía no implica metanotrofía; no cubre XoxF.	KEGG;MCycDB	True
+M06_xoxF	M06	Metanol deshidrogenasa dependiente de lantánidos	K23995	ambiguo	Requiere resolución de clados y sustrato.	KEGG;MCycDB	False
+M07_M00346	M07	Componentes de asimilación C1 por serina	K00600 K00830 K00018 K11529 K01689 K01595 K00024 K08692+K14067 K08691	contexto	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00346	True
+M07_M00345	M07	Componentes de asimilación C1 por RuMP	(((K08093,K13812) K08094),K13831) (K00850,K16370,K21071) K01624	contexto	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00345	False
+M07_M00344	M07	Componentes de asimilación C1 por XuMP	K17100 K00863 K01624 K03841	contexto	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00344	False
+N01_nifHDK	N01	Nitrogenasa tipo Nif, HDK	K02588+K02586+K02591	conjunto	Homólogos y portadores requieren secuencias; no tasa de fijación.	KEGG;NCycDB	True
+N01_nifHDKENB	N01	Nitrogenasa Nif y maduración, HDKENB	K02588+K02586+K02591 K02587 K02592 K02585	conjunto	Criterio conservador adicional; no requisito universal en todos los diazótrofos.	KEGG;Nif2012;https://doi.org/10.1093/molbev/msae023	False
+N02_vnfHDKG	N02	Nitrogenasa de vanadio, HDKG	K22899+K22896+K22897+K22898	conjunto	Evalúa variante V; no resuelve todas las nitrogenasas Fe-only.	KEGG;NCycDB	True
+N03_amo_actual	N03	AmoABC con KO actual de AmoA	K28504+K10945+K10946	conjunto	No se exige Hao a arqueas; el KO actual de AmoA puede no existir en la matriz histórica.	KEGG;NCycDB	True
+N03_amo_pmo_historico	N03	Familia histórica Amo/Pmo, tres subunidades	K10944+K10945+K10946	ambiguo	No permite distinguir oxidación de amonio de metano. Misma señal que M05.	KEGG;NCycDB	False
+N03_hao	N03	Hidroxilamina deshidrogenasa, candidato	K10535	ambiguo	Homólogos relacionados; no marcador suficiente de nitrificación.	KEGG;NCycDB	False
+N04_nar_nxr	N04	Familia Nar/Nxr, subunidades alfa y beta	K00370+K00371	ambiguo	No distingue nitrato-reducción y nitrito-oxidación.	KEGG;NCycDB	True
+N05_napAB	N05	Reductasa periplásmica de nitrato, NapAB	K02567+K02568	conjunto	No define producto final del N ni todos los sistemas de respiración de nitrato.	KEGG;NCycDB	True
+N05_narGHI	N05	Complejo NarGHI, candidato	K00370+K00371+K00374	ambiguo	NarG/H comparten KO con Nxr; requiere contexto.	KEGG;NCycDB	False
+N06_nir	N06	Reducción de nitrito a NO, NirK o NirS	K00368,K15864	conjunto	Alternativas; no demuestra desnitrificación completa.	KEGG;NCycDB	True
+N07_cNOR	N07	Reducción de NO, NorBC	K04561+K02305	conjunto	Cubre cNOR, no exige NorC a qNOR; detoxificación posible.	KEGG;NCycDB	True
+N08_nosZ	N08	N2O reductasa, NosZ	K00376	conjunto	No resuelve clados ni balance neto de N2O.	KEGG;NCycDB	True
+N09_nrfA	N09	Nitrito reductasa amonificante, NrfA	K03385	conjunto	No se exige NrfH a todas las arquitecturas; no demuestra DNRA desde nitrato.	KEGG;NCycDB	True
+N09_nrfAH	N09	Arquitectura NrfAH	K03385+K15876	conjunto	Variante de transferencia electrónica, no requisito universal de DNRA.	KEGG;NCycDB	False
+N09_nirBD	N09	Nitrito reductasa citoplasmática, NirBD	K00362+K00363	ambiguo	Puede participar en asimilación o disimilación.	KEGG;NCycDB	False
+N10_hzs_hdh	N10	Hidrazina sintasa ABC y Hdh	K20932+K20933+K20934 K20935	conjunto	Sin filas no equivale a ausencia de anammox; no sustituir por Hao genérica.	KEGG;NCycDB	True
+N11_M00531	N11	Componentes de asimilación de nitrato	(K00367,K10534,(K00372-K00360)) (K00366,K17877,(K26139+K26138),K00361)	modulo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00531	True
+N12_ureABC	N12	Ureasa de tres subunidades	K01430+K01429+K01428	conjunto	Arquitectura bacteriana seleccionada; no incluye todas las fusiones ni maduración.	KEGG;NCycDB	True
+N12_cynS	N12	Cianato liasa	K01725	conjunto	No representa toda la mineralización de N orgánico.	KEGG;NCycDB	False
+S01_sat_apr_dsr	S01	Sat + AprAB + DsrAB, dirección sin resolver	K00958 K00394+K00395 K11180+K11181	ambiguo	Conjunto catalítico parcial, no ruta completa; puede apoyar oxidación o reducción.	KEGG;SCycDB;SMDB	True
+S01_M00596	S01	Definición KEGG de reducción de sulfato	K00958 (K00394+K00395) (K11180+K11181-K27196) (K27187+K27188+K27189+K27190+K27191)	ambiguo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00596	False
+S02_dsr_apr	S02	DsrAB + AprAB, dirección sin resolver	K11180+K11181 K00394+K00395	ambiguo	No diagnostica Dsr reversa. Se solapa con S01; no tratar como variable independiente.	KEGG;SCycDB;SMDB	True
+S03_M00176	S03	Componentes de reducción asimilatoria de sulfato	(K00958+K00860,K00955+K00957,K00956+K00957+K00860) K00390 (K00380+K00381,K00392)	modulo	Coincidencia de componentes comunitarios con la definición; no capacidad de un genoma ni dirección de flujo.	https://www.kegg.jp/entry/M00176	True
+S04_Sox_core	S04	SoxAXBYZ, núcleo sin exigir SoxCD	K17222+K17223+K17224+K17226+K17227	conjunto	Sistemas sin SoxCD posibles; no equivale a oxidación completa hasta sulfato.	https://www.kegg.jp/entry/M00595	True
+S04_Sox_CD	S04	SoxAXBYZ más SoxCD	K17222+K17223+K17224+K17226+K17227+K17225+K22622	conjunto	Codetección comunitaria de siete componentes, no complejo por organismo.	https://www.kegg.jp/entry/M00595	False
+S05_sqr	S05	Sulfuro:quinona oxidorreductasa	K17218	conjunto	No separa detoxificación y conservación de energía.	KEGG;SCycDB	True
+S05_fccAB	S05	Sulfuro deshidrogenasa FccAB	K17229+K17230	conjunto	Arquitectura alternativa a Sqr.	KEGG;SCycDB	False
+S06_SorAB	S06	Sulfito deshidrogenasa SorAB	K05301+K00386	conjunto	No confundir SorAB con SOR ni homónimos de sorbosa.	KEGG;SCycDB	True
+S06_SoeABC	S06	Sulfito deshidrogenasa SoeABC	K21307+K21308+K21309	conjunto	Alternativa de oxidación; no exige coexistencia con SorAB.	KEGG;SCycDB	False
+S07_AsrABC	S07	Sulfito reductasa anaerobia AsrABC	K16950+K16951+K00385	conjunto	Variante específica; no representa todos los sustratos de la categoría.	KEGG;SCycDB	True
+S07_Phs	S07	Tiosulfato/polisulfuro reductasa, variante Phs	K08352+K08353+K08354	ambiguo	PhsA/PsrA comparten KO.	KEGG;SCycDB	False
+S07_Psr	S07	Tiosulfato/polisulfuro reductasa, variante Psr	K08352+K16293+K16294	ambiguo	La coocurrencia comunitaria no resuelve sustrato.	KEGG;SCycDB	False
+S08_TtrABC	S08	Tetrationato reductasa TtrABC	K08357+K08358+K08359	conjunto	Reducción; no demuestra desproporción de azufre.	KEGG;SCycDB	True
+S08_TsdA	S08	Tiosulfato deshidrogenasa TsdA	K19713	conjunto	Oxidación, separada de TtrABC.	KEGG;SCycDB	False
+S08_TetH	S08	Tetrationato hidrolasa	K27925	conjunto	Hidrólisis; puede faltar KO en anotación histórica.	KEGG;SCycDB	False
+S09_ETHE1	S09	Persulfuro dioxigenasa ETHE1	K17725	contexto	Solo un componente del metabolismo de persulfuros.	KEGG;SCycDB	True
+S10_dmdA	S10	Desmetilación inicial de DMSP, DmdA	K17486	conjunto	Paso inicial; no demuestra ruta downstream completa.	KEGG;SCycDB	True
+S10_dddL	S10	Lisis de DMSP, variante DddL	K16953	conjunto	No cubre DddP/Q/W/Y/K/D; no inferir flujo atmosférico.	KEGG;SCycDB	False
+S10_dsyB	S10	Síntesis de DMSP, marcador DsyB	K24666	conjunto	Marcador de un paso; no demuestra toda la síntesis.	KEGG;SCycDB	False
+S11_DmsABC	S11	DMSO reductasa, DmsABC	K07306+K07307+K07308	conjunto	Variante seleccionada; otras reductasas y subtipos pendientes.	KEGG;SCycDB	True
+S11_DdhABC	S11	DMS deshidrogenasa DdhABC	K16964+K16965+K16966	conjunto	Oxidación de DMS, separada de reducción de DMSO.	KEGG;SCycDB	False
+S11_MddA	S11	Metanotiol S-metiltransferasa	K21310	conjunto	Paso de producción de DMS, no flujo neto.	KEGG;SCycDB	False
+S12_TauD	S12	Taurina dioxigenasa	K03119	conjunto	No cubre todas las rutas de taurina/sulfonatos ni sulfoquinovosa.	KEGG;SCycDB	True
+S12_SsuDE	S12	Alcanosulfonato monooxigenasa y FMN reductasa	K04091 K00299	conjunto	Variante seleccionada; no representa todos los compuestos organosulfurados.	KEGG;SCycDB	False
+S13_cysE_K	S13	Acetilación de serina y síntesis de cisteína	(K00640,K23304) K01738	contexto	Asimilación/biosíntesis; no respiración de sulfato.	KEGG;SCycDB	True
+P01_pstSCAB	P01	Transportador de fosfato PstSCAB	K02040+K02037+K02038+K02036	contexto	No demuestra limitación de P ni captación activa.	KEGG;PCycDB	True
+P02_phoAD	P02	Fosfatasas alcalinas PhoA/PhoD	K01077,K01113	conjunto	Subconjunto de fosfatasas; no incluye PhoX/PafA sin equivalencia validada.	KEGG;PCycDB	True
+P02_acid	P02	Fosfatasas ácidas PhoN/AphA	K09474,K03788	conjunto	Subconjunto; no determina localización extracelular.	KEGG;PCycDB	False
+P02_appA	P02	Fitasa/fosfatasa AppA	K01093	conjunto	No representa todas las fitasas.	KEGG;PCycDB	False
+P02_GlpQ	P02	Glicerofosfodiéster fosfodiesterasa	K01126	conjunto	Anotación catalítica; no confundir con transportadores.	KEGG;PCycDB	False
+P03_phnGHIJKLM	P03	Componentes PhnGHIJKLM de C–P liasa	K06166+K06165+K06164+K06163+K05781+K05780 K06162	conjunto	Criterio de componentes esenciales de la arquitectura canónica; no incluye toda la ruta ni prueba CH4 desde metilfosfonato.	KEGG;PCycDB;https://doi.org/10.1038/s41467-023-36604-y	True
+P03_phnJ	P03	C–P liasa, marcador PhnJ	K06163	conjunto	Marcador aislado; no sustituye PhnGHIJKLM.	KEGG;PCycDB	False
+P04_PhnWX	P04	Aminoetilfosfonato por PhnWX	K03430 K05306	conjunto	Una ruta de sustrato específico; alternativas separadas.	KEGG;PCycDB	True
+P04_PhnYZ	P04	Aminoetilfosfonato por PhnYZ	K21195 K21196	conjunto	No usar PhnY dehidrogenasa ni hidroxilasa como equivalentes.	KEGG;PCycDB	False
+P04_PhnA	P04	Fosfonoacetato hidrolasa	K19670	conjunto	Reacción diferente de PhnWX/YZ.	KEGG;PCycDB	False
+P05_PtxD	P05	Fosfito deshidrogenasa PtxD	K18916	conjunto	KEGG conserva nombre phosphonate dehydrogenase; EC 1.20.1.1 corresponde a fosfito. No prueba oxidación energética.	KEGG;PCycDB	True
+P05_ApdA	P05	Fosfito deshidrogenasa dependiente de AMP	K28719	conjunto	No describe hipofosfito ni toda la oxidación disimilatoria.	KEGG;PCycDB	False
+P06_PPK	P06	Polifosfato quinasas PPK1/PPK2	K00937,K22468,K23753	contexto	Dirección depende de enzima/condiciones; no almacenamiento neto.	KEGG;PCycDB	True
+P06_PPX	P06	Exopolifosfatasa/GppA	K01524,K01514	contexto	Actividad GppA y contexto taxonómico; no sustituir por Ppa.	KEGG;PCycDB	False
+Fe03_FeoAB	Fe03	Captación de Fe(II), FeoAB	K04758+K04759	contexto	Transporte, no oxidación/reducción respiratoria de Fe. FeoC no universal.	KEGG;FeGenie	True
+H01_FrhABG	H01	Hidrogenasa F420, FrhABG	K00440+K00441+K00443	contexto	Una familia seleccionada; no clasifica grupos HydDB ni dirección fisiológica.	KEGG;HydDB	True
+H02_Rnf	H02	Complejo RnfABCDEG	K03617+K03616+K03615+K03614+K03613+K03612	contexto	No prueba bifurcación, sintrofía ni transferencia entre organismos.	KEGG;METABOLIC	True
+O01_cbb3	O01	Citocromo c oxidasa cbb3, NOP	K00404+K00405+K00406	contexto	Subunidades principales; no demuestra oxigenación in situ.	KEGG;DiTing	True
+O01_bd	O01	Ubiquinol oxidasa bd, AB	K00425+K00426	contexto	No demuestra afinidad exacta ni concentración de oxígeno.	KEGG;DiTing	False
+O02_PSI_II	O02	Núcleos de fotosistemas I y II	K02689+K02690 K02703+K02706	contexto	No evalúa todos los componentes ni actividad fotosintética.	KEGG;DiTing	True
+O02_PufLM	O02	Centro de reacción PufLM	K08928+K08929	contexto	Fototrofía anoxigénica; no implica autotrofía.	KEGG;DiTing	False
