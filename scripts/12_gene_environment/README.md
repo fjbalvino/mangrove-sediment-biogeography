@@ -23,3 +23,9 @@ Use the command in the protocol and run `make gene-environment-tests` for the
 four synthetic input-integrity checks. `make validate` includes these checks.
 Association and atlas implementation will follow the conditions in
 `config/gene_environment/analysis_plan.json`; they are not implemented by 12A.
+
+`12B_APPLY_METADATA_RECOVERY.py` joins external literature recovery evidence by
+run and experiment ID. It appends provenance and direct observations separately
+from existing environmental proxies, and can fill only absent coordinate pairs
+documented as published sampling-site coordinates. Gazetteer representative
+points remain contextual. See [recovery protocol](../../docs/METADATA_GEOREFERENCING_RECOVERY.md).
