@@ -29,6 +29,7 @@ Functional counts represent protein-cluster members assigned to KOs. They do not
 | 05 | KO co-abundance network and sensitivity analyses | [10_functional_network](scripts/10_functional_network) | Figure 5 |
 | 06 | Prevalence, persistence and balanced regional differentiation | [09_functional_regional_differentiation](scripts/09_functional_regional_differentiation) | Figure 6 |
 | 07 | Curated biogeochemical rules, detection sensitivity and evidence audit | [11_biogeochemical_cycles](scripts/11_biogeochemical_cycles) | Functional extension; descriptive stage |
+| 08 | Gene-environment design audit and analysis protocol | [12_gene_environment](scripts/12_gene_environment) | Proposed functional biogeography; audit implemented, models pending |
 
 The [manuscript guide](docs/MANUSCRIPT_GUIDE.md) maps every result section, supplementary table group and analysis cohort to the code. Existing script names are retained to preserve provenance; the execution guide follows the current manuscript order. This is a read-based/gene-centred workflow, with no MAG-binning stage.
 
@@ -79,6 +80,15 @@ provides commands. Only code, documentation and small rule configurations are
 tracked; matrices, databases and generated images remain outside Git.
 
 ## Repository and output directories
+
+The [gene-environment biogeography protocol](docs/GENE_ENVIRONMENT_BIOGEOGRAPHY.md)
+reviews available tools and defines the next analysis for the same 191 profiles.
+It separates relative KO representation, observed detection, biochemical evidence,
+environmental association and transfer across studies. The accompanying auditor
+checks environmental support, repeated BioSamples, study confounding and candidate
+unit problems without changing inputs or fitting associations. See the
+[analysis plan](config/gene_environment/analysis_plan.json) for explicit decisions;
+model parameters remain proposed until version-specific synthetic validation.
 
 | Directory | Contents |
 | --- | --- |
