@@ -21,8 +21,25 @@ class RecoveryTests(unittest.TestCase):
                              recovery_identity_basis='explicit sample label',
                              recovery_locality='sampling station',recovery_datum='unknown')
 
-    def call(self):
-        return MODULE.merge(list(self.metadata[0]),self.metadata,list(self.evidence),[self.evidence])
+    def call(self, **kwargs):
+        return MODULE.merge(list(self.metadata[0]),self.metadata,list(self.evidence),[self.evidence], **kwargs)
+
+    def test_figure_coordinates_require_explicit_opt_in_and_evidence(self):
+        self.evidence['recovery_status']='figure_georeferenced_approximate'
+        with self.assertRaisesRegex(ValueError, 'allow-approximate'):
+            self.call()
+        with self.assertRaisesRegex(ValueError, 'external registration'):
+            self.call(allow_approximate=True)
+        self.evidence.update(recovery_uncertainty_basis='provisional operational radius, not GPS accuracy',
+                             recovery_georeferencing_evidence='registration.json; sha256=example',
+                             recovery_coordinate_uncertainty_m='1000')
+        fields,rows,changed=self.call(allow_approximate=True)
+        self.assertEqual(fields,list(self.metadata[0]))
+        self.assertEqual(changed,['run_a'])
+        self.assertEqual(rows[0]['lat'],'22.5')
+        self.evidence['recovery_coordinate_uncertainty_m']='0'
+        with self.assertRaisesRegex(ValueError, 'positive uncertainty'):
+            self.call(allow_approximate=True)
 
     def test_gazetteer_point_never_becomes_sampling_coordinate(self):
         self.evidence.update(recovery_status='locality_resolved_position_pending',

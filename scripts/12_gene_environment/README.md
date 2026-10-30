@@ -29,3 +29,15 @@ experiment ID and fills only absent coordinate pairs documented as published
 sampling-site coordinates. It preserves the original columns and their order;
 evidence and direct observations stay in the external evidence table. Gazetteer
 representative points are not imported. See [recovery protocol](../../docs/METADATA_GEOREFERENCING_RECOVERY.md).
+
+
+`12C_RECOMPUTE_FIGURE_GEOREFERENCES.py` recalculates approximate coordinates
+from externally archived, visually checked image matches and the reference
+image extent. It reports internal fit/leave-one-out diagnostics. These do not
+measure field-location accuracy. Figure-derived positions can enter 12B only
+with `--allow-approximate` and external registration/uncertainty evidence.
+
+`12D_PLOT_FIGURE_GEOREFERENCES.py --evidence-dir /path/to/evidence --output /path/to/map.png`
+recreates the location-check map from the external registration JSON and the two
+reference images. It requires NumPy, Matplotlib and Pillow. The 1 km circles are
+provisional operational radii, not measured GPS errors or confidence intervals.

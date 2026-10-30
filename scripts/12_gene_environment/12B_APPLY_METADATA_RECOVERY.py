@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Fill supported missing coordinates while preserving the original metadata schema.
 
-Only `recovery_status=published_site_coordinate` can fill a missing coordinate
-pair. Gazetteer coordinates are contextual fields and are never promoted.
+Published coordinates can fill a missing pair. Figure-derived approximations
+require --allow-approximate and external evidence with an uncertainty basis.
+Gazetteer coordinates are contextual fields and are never promoted.
 No extraction, geocoding, spatial validation or unit harmonization is performed.
 """
 import argparse
@@ -18,7 +19,8 @@ REQUIRED = {
     'recovery_lat', 'recovery_lon', 'recovery_locality',
     'recovery_coordinate_uncertainty_m', 'recovery_datum',
 }
-STATUSES = {'published_site_coordinate', 'locality_resolved_position_pending'}
+STATUSES = {'published_site_coordinate', 'locality_resolved_position_pending',
+            'figure_georeferenced_approximate'}
 
 
 def read_table(path):
@@ -45,7 +47,7 @@ def numeric(value):
     return number
 
 
-def merge(metadata_fields, metadata, evidence_fields, evidence):
+def merge(metadata_fields, metadata, evidence_fields, evidence, allow_approximate=False):
     if not REQUIRED.issubset(evidence_fields):
         raise ValueError('Recovery table lacks required provenance fields')
     if not {'run_accession', 'experiment_accession', 'lat', 'lon'}.issubset(metadata_fields):
@@ -64,9 +66,17 @@ def merge(metadata_fields, metadata, evidence_fields, evidence):
         lat, lon = numeric(row['recovery_lat']), numeric(row['recovery_lon'])
         if (lat is None) != (lon is None):
             raise ValueError('Incomplete recovered coordinate pair')
-        if status == 'published_site_coordinate':
+        if status == 'figure_georeferenced_approximate':
+            if not allow_approximate:
+                raise ValueError('Figure approximations require explicit --allow-approximate')
+            if not row.get('recovery_uncertainty_basis') or not row.get('recovery_georeferencing_evidence'):
+                raise ValueError('Figure approximations require external registration and uncertainty evidence')
+            radius = numeric(row['recovery_coordinate_uncertainty_m'])
+            if radius is None or radius <= 0:
+                raise ValueError('Figure approximations require a positive uncertainty radius')
+        if status in {'published_site_coordinate', 'figure_georeferenced_approximate'}:
             if lat is None or not (-90 <= lat <= 90 and -180 <= lon <= 180):
-                raise ValueError('Published coordinate missing or out of range')
+                raise ValueError('Recovered coordinate missing or out of range')
             if not row['recovery_datum'] or not row['recovery_locality']:
                 raise ValueError('Datum status and locality are required')
             old = lookup[key]
@@ -94,8 +104,12 @@ def main():
     parser.add_argument('--metadata', type=Path, required=True)
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--out-dir', type=Path, required=True)
+    parser.add_argument('--allow-approximate', action='store_true',
+                        help='Allow reviewed figure-derived coordinates with external uncertainty evidence')
     args = parser.parse_args()
-    fields, rows, changes = merge(*read_table(args.metadata), *read_table(args.evidence))
+    evidence_fields, evidence = read_table(args.evidence)
+    fields, rows, changes = merge(*read_table(args.metadata), evidence_fields, evidence,
+                                 allow_approximate=args.allow_approximate)
     args.out_dir.mkdir(parents=True, exist_ok=False)
     output = args.out_dir / 'metadata_functional.csv'
     with output.open('w', encoding='utf-8-sig', newline='') as handle:
@@ -112,6 +126,9 @@ def main():
         'original_site_ids_localities_regions_and_basis_preserved': True,
         'original_column_order_and_schema_preserved': True,
         'provenance_kept_in_external_evidence_table': True,
+        'approximate_coordinate_runs': [r['run_accession'] for r in evidence
+                                       if r['recovery_status'] == 'figure_georeferenced_approximate'],
+        'approximate_coordinates_explicitly_enabled': args.allow_approximate,
         'spatial_validity_uncertainty_and_raster_extraction': 'not_evaluated_by_this_script',
         'recovered_measurements_are_not_harmonized_with_spatial_proxies': True,
     }
