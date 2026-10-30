@@ -57,12 +57,13 @@ interpret their viromes qualitatively.
 ## Reproducible merge
 
 The curated evidence table and generated metadata stay outside GitHub. Required
-columns are documented in the script's `REQUIRED` constant. All newly collected
-attributes have the `recovery_` prefix; the two identity keys are unprefixed.
+evidence columns are documented in the script's `REQUIRED` constant. In that
+separate table, newly collected attributes have the `recovery_` prefix; the two
+identity keys are unprefixed. None of these columns is added to the metadata.
 Allowed status values are `published_site_coordinate` and
 `locality_resolved_position_pending`. Gazetteer context coordinates must remain
-separate `recovery_gazetteer_*` attributes. The script copies these as provenance
-but cannot promote them to sampling coordinates.
+separate `recovery_gazetteer_*` evidence attributes. The script does not import
+these into the metadata or promote them to sampling coordinates.
 
 ```bash
 python scripts/12_gene_environment/12B_APPLY_METADATA_RECOVERY.py \
@@ -71,11 +72,13 @@ python scripts/12_gene_environment/12B_APPLY_METADATA_RECOVERY.py \
   --out-dir /path/to/new_recovery_output
 ```
 
-The merge preserves row order, sample IDs, all existing environmental values,
-locality labels and site/region assignments. It fills only previously absent
-coordinate pairs with the specified published-coordinate status, appends evidence,
-and records input/output hashes. Historical site labels and basis columns remain
-historical: use `recovery_*` provenance for recovered records. Rebuild derived
+The output `metadata_functional.csv` preserves the original column names and order,
+row order, sample IDs, all existing environmental values, locality labels and
+site/region assignments. It fills only previously absent coordinate pairs with
+the specified published-coordinate status. Evidence remains in its separate input
+table; input/output hashes remain in an external audit JSON. No new variables or
+explanations are inserted into the metadata. Historical site labels and basis
+columns remain historical: consult the external evidence table for recovered records. Rebuild derived
 spatial groups/region assignments during the next explicit spatial processing
 stage, rather than silently editing them here. No environmental extraction or
 gene-environment association has been run by this recovery step.

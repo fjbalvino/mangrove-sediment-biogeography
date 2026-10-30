@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Join externally curated literature evidence without replacing measured/proxy fields.
+"""Fill supported missing coordinates while preserving the original metadata schema.
 
 Only `recovery_status=published_site_coordinate` can fill a missing coordinate
 pair. Gazetteer coordinates are contextual fields and are never promoted.
@@ -50,9 +50,8 @@ def merge(metadata_fields, metadata, evidence_fields, evidence):
         raise ValueError('Recovery table lacks required provenance fields')
     if not {'run_accession', 'experiment_accession', 'lat', 'lon'}.issubset(metadata_fields):
         raise ValueError('Metadata lacks ID or coordinate fields')
-    added = [c for c in evidence_fields if c.startswith('recovery_')]
-    if set(added) & set(metadata_fields):
-        raise ValueError('Recovery fields already exist; refusing implicit replacement')
+    if any(c.startswith('recovery_') for c in metadata_fields):
+        raise ValueError('Use the original metadata schema, without recovery columns')
     lookup = {r['run_accession']: r for r in metadata}
     changed = []
     for row in evidence:
@@ -84,11 +83,10 @@ def merge(metadata_fields, metadata, evidence_fields, evidence):
     for original in metadata:
         row = dict(original)
         recovered = by_id.get(row['run_accession'])
-        row.update({c: recovered[c] if recovered else '' for c in added})
         if row['run_accession'] in changed:
             row['lat'], row['lon'] = recovered['recovery_lat'], recovered['recovery_lon']
         output.append(row)
-    return metadata_fields + added, output, changed
+    return metadata_fields, output, changed
 
 
 def main():
@@ -99,7 +97,7 @@ def main():
     args = parser.parse_args()
     fields, rows, changes = merge(*read_table(args.metadata), *read_table(args.evidence))
     args.out_dir.mkdir(parents=True, exist_ok=False)
-    output = args.out_dir / 'metadata_191_with_literature_recovery.csv'
+    output = args.out_dir / 'metadata_functional.csv'
     with output.open('w', encoding='utf-8-sig', newline='') as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
@@ -112,7 +110,8 @@ def main():
         'output_sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
         'only_original_columns_changed': ['lat', 'lon'] if changes else [],
         'original_site_ids_localities_regions_and_basis_preserved': True,
-        'use_recovery_fields_for_new_provenance': True,
+        'original_column_order_and_schema_preserved': True,
+        'provenance_kept_in_external_evidence_table': True,
         'spatial_validity_uncertainty_and_raster_extraction': 'not_evaluated_by_this_script',
         'recovered_measurements_are_not_harmonized_with_spatial_proxies': True,
     }

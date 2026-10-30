@@ -42,11 +42,13 @@ class RecoveryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'cannot be overwritten'):
             self.call()
 
-    def test_environmental_observations_remain_distinct(self):
+    def test_original_schema_preserved_without_importing_other_measurements(self):
         self.evidence['recovery_observed_TOC_g_kg']='9.83'
-        _,rows,_=self.call()
+        fields,rows,_=self.call()
+        self.assertEqual(fields,list(self.metadata[0]))
+        self.assertEqual(list(rows[0]),list(self.metadata[0]))
         self.assertEqual(rows[0]['soc_mean'],'100')
-        self.assertEqual(rows[0]['recovery_observed_TOC_g_kg'],'9.83')
+        self.assertNotIn('recovery_observed_TOC_g_kg',rows[0])
         self.assertEqual(self.metadata[0]['lat'],'')
 
 
