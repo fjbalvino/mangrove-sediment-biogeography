@@ -163,3 +163,92 @@ or gene–environment associations were calculated in this check.
 
 Sources consulted 2026-10-30. Numerical evidence and source hashes accompany
 the external recovery deliverable, not this code repository.
+
+
+## Full master review, 2026-11-02
+
+The confirmed full-universe master is `Metadata_reinicio_401_reconciliada.csv`
+(401 unique runs, 86 existing columns). It is distinct from
+`metadata_functional.csv` (191 runs, 83 existing columns). The master name,
+schema, identifiers and row order are preserved. No environmental variables
+are added or re-extracted during coordinate recovery.
+
+Review of the 11 remaining master records recovered nine coordinate pairs at
+published site/locality precision. Eight Beihai records belong to the Golden Bay
+study PRJNA945508 (Liao et al., 2023). The article reverses the latitude/longitude
+hemisphere labels; the numerically and geographically consistent N/E assignment
+is documented in external evidence. The coordinate has only two decimal places
+and represents the shared study locality, not eight independent field GPS
+locations. This study applied copper in field plots; the archived treatment
+design must be accounted for in later inference without changing the accepted
+sample inventory.
+
+The remaining Al Kharrar record is BioSample MNK in PRJNA321092. Its published
+coordinate (Al-Amoudi et al., 2016, section 2.1) is a lagoon reference falling in
+shallow water in current imagery. It does not validate the precise mangrove
+sediment sampling patch. Datum and true positional uncertainty are unreported;
+the many digits in the published DMS notation must not be treated as GPS accuracy.
+
+The two Fujian records were linked from ENA sample aliases Attributesb1 and
+Attributesb10 to B1/B10 in Wang et al. (2025), whose supplementary Figure S1c
+identifies site B as Jiulong River estuary. This resolves their locality but
+not a defensible coordinate. The published numeric point plots inland, and a
+reliable correspondence with the channel and marked patch in Figure S1c was
+not established. Broad imagery matching produced no acceptable registration.
+Both coordinates therefore remain blank, with the existing review fields
+updated to reflect the unresolved cartographic conflict. ENA and publication
+sampling dates also differ; no dates were inferred or overwritten.
+
+Result: the master has 399 of 401 coordinate pairs; the functional metadata has
+191 of 191. All 11 newly reviewed master records are outside the 191-profile
+functional cohort. The previously stale standalone functional CSV was synchronized
+to the six approximate coordinates already present in the canonical analysis
+archive. This introduces no new recovery or sample into that cohort.
+
+The review PNG displays the two accepted locality references, the rejected
+Fujian numeric point and a credited crop of its original Figure S1c. Map placement
+uses actual EPSG:3857 export extents. No points are snapped to mangrove or soil
+pixels. Single-pixel environmental extraction remains inappropriate for
+unvalidated site references.
+
+### Reproduce a reviewed update
+
+`12E_APPLY_VERIFIED_METADATA_PATCH.py` takes an external JSON patch guarded by
+the exact input SHA-256, original cell values and run/experiment/BioSample
+identity. It only fills missing coordinate pairs and updates explicitly named
+existing geography/review columns. It refuses new columns, existing-coordinate
+replacement and mismatched identities, then verifies every other cell and the
+row order. The metadata is updated in place under its original filename; the
+audit is written externally. Do not apply a completed patch twice.
+
+`12F_PLOT_COORDINATE_REVIEW.py` renders external review JSON and map exports.
+The JSON includes panel titles, captions, image paths, export metadata, reference
+coordinates, scale bars and source attribution. Coordinates are reviewed inputs;
+the plotting script performs no geocoding or scientific acceptance decision.
+
+```bash
+python scripts/12_gene_environment/12E_APPLY_VERIFIED_METADATA_PATCH.py \
+  --metadata /path/to/Metadata_reinicio_401_reconciliada.csv \
+  --evidence /path/to/master_patch.json --audit /path/to/master_audit.json
+
+python scripts/12_gene_environment/12F_PLOT_COORDINATE_REVIEW.py \
+  --evidence /path/to/map_evidence.json --output /path/to/review.png
+```
+
+Only code and documentation are committed. Metadata, patches containing sample
+values, audit results, source images, supplements and map PNGs remain external.
+
+Additional primary sources:
+- Liao J et al. (2023). Effect of Cu addition on sedimentary bacterial community
+  structure and heavy metal resistance gene abundance in mangrove wetlands.
+  https://doi.org/10.3389/fmars.2023.1157905 (sections 2.1 and 2.2.4).
+- Wang S et al. (2025). Phylogenetically and metabolically diverse active
+  carbon-fixing microbes reside in mangrove sediments.
+  https://doi.org/10.1186/s40168-025-02177-9 (methods, Figure S1, Table S3).
+- Original ENA sample, experiment and project records; accession-specific URLs
+  and downloaded XML are retained with the external evidence.
+
+Validation: input-hash and before-value guards; unchanged dimensions, column
+order, run identity/order and all nonpatched cells; functional CSV cell-wise
+equality to the existing canonical 191-profile analysis input; visual PNG review.
+
