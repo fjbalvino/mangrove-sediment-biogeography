@@ -1,6 +1,6 @@
-.PHONY: validate python-check bash-check r-parse r-tests functional-tests portability-tests regional-tests manifest
+.PHONY: validate python-check bash-check r-parse r-tests functional-tests gene-environment-tests portability-tests regional-tests manifest
 
-validate: python-check bash-check r-parse r-tests functional-tests regional-tests portability-tests
+validate: python-check bash-check r-parse r-tests functional-tests gene-environment-tests regional-tests portability-tests
 	python tools/validate_repository.py
 
 python-check:
@@ -17,6 +17,9 @@ r-tests:
 
 functional-tests:
 	OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m unittest discover -s tests -p 'test_functional_*.py'
+
+gene-environment-tests:
+	OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m unittest discover -s tests -p 'test_gene_environment_*.py'
 
 regional-tests:
 	Rscript --vanilla tests/test_regional_functional_statistics.R

@@ -1,0 +1,146 @@
+[
+  {
+    "tool": "CNPS.cycle",
+    "repository": "yuezhengfu/CNPS.cycle",
+    "path": "README.md",
+    "file_blob_sha": "13619257767d544084b5639e68c2321af7f4db15",
+    "verified_url": "https://github.com/yuezhengfu/CNPS.cycle/blob/main/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "DiTing original",
+    "repository": "xuechunxu/DiTing",
+    "path": "README.md",
+    "file_blob_sha": "ad48587a568f46eef6c24a8be6df4cba3fc940cf",
+    "verified_url": "https://github.com/xuechunxu/DiTing/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "DiTing continuation",
+    "repository": "SilentGene/DiTing",
+    "path": "README.md",
+    "file_blob_sha": "7e79a5068e785e5b2f0c992682c6f32cd0154e60",
+    "verified_url": "https://github.com/SilentGene/DiTing/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "bigecyhmm",
+    "repository": "ArnaudBelcour/bigecyhmm",
+    "path": "README.md",
+    "file_blob_sha": "33d00f3500c5df8240a6284695a0765d0fef8f58",
+    "verified_url": "https://github.com/ArnaudBelcour/bigecyhmm/blob/main/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "Tabigecy",
+    "repository": "ArnaudBelcour/tabigecy",
+    "path": "README.md",
+    "file_blob_sha": "b666285bb51f5644bbb4e387ab8f2febae7ff73b",
+    "verified_url": "https://github.com/ArnaudBelcour/tabigecy/blob/main/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "MaAsLin3",
+    "repository": "biobakery/maaslin3",
+    "path": "README.md",
+    "file_blob_sha": "3b0e33c9a086b53175bf8ae1dd586a5702e0b90c",
+    "verified_url": "https://github.com/biobakery/maaslin3/blob/release/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "ggkegg",
+    "repository": "noriakis/ggkegg",
+    "path": "README.md",
+    "file_blob_sha": "50a3c363e63baeda95241305678d6274fe6777c2",
+    "verified_url": "https://github.com/noriakis/ggkegg/blob/main/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "vegan",
+    "repository": "vegandevs/vegan",
+    "path": "README.md",
+    "file_blob_sha": "41e9643c41b901cb5ed81c0ceed03402ecc1894c",
+    "verified_url": "https://github.com/vegandevs/vegan/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "Ecological status study",
+    "repository": "ZhenyanZhang/Ecological_status",
+    "path": "README.md",
+    "file_blob_sha": "43ac4beb26954e2401b2f89fd4f0f3b7f4699402",
+    "verified_url": "https://github.com/ZhenyanZhang/Ecological_status/blob/main/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "Escher",
+    "repository": "opencobra/escher",
+    "path": "README.md",
+    "file_blob_sha": "baf9e223b2dba7dfa33e999e34797c8c99a371db",
+    "verified_url": "https://github.com/opencobra/escher/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "METABOLIC",
+    "repository": "AnantharamanLab/METABOLIC",
+    "path": "README.md",
+    "file_blob_sha": "66c06d827e5a718b7e492449639ca3d9f8737058",
+    "verified_url": "https://github.com/AnantharamanLab/METABOLIC/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "DRAM",
+    "repository": "BortonWrightonLabs/DRAM",
+    "path": "README.md",
+    "file_blob_sha": "69fdb91d3fd0f4f77405b5f4cec4d901d5162307",
+    "verified_url": "https://github.com/BortonWrightonLabs/DRAM/blob/dev/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "blockCV",
+    "repository": "rvalavi/blockCV",
+    "path": "README.md",
+    "file_blob_sha": "0d72d4ca070d3afbdddfb86d02454aa33f90df48",
+    "verified_url": "https://github.com/rvalavi/blockCV/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "ANCOMBC",
+    "repository": "FrederickHuangLin/ANCOMBC",
+    "path": "README.md",
+    "file_blob_sha": "9329a6748ea5986b500c7edb12297af9db074851",
+    "verified_url": "https://github.com/FrederickHuangLin/ANCOMBC/blob/bugfix/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "microeco",
+    "repository": "ChiLiubio/microeco",
+    "path": "README.md",
+    "file_blob_sha": "65e14e3cebfd4ffaaaac07922d8f5b003743c7a0",
+    "verified_url": "https://github.com/ChiLiubio/microeco/blob/master/README.md",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  },
+  {
+    "tool": "CNPS N calculation",
+    "repository": "yuezhengfu/CNPS.cycle",
+    "path": "R/Ncycleabundance.R",
+    "file_blob_sha": "bc5605c939030c851d39035344198144c0a0a851",
+    "verified_url": "https://github.com/yuezhengfu/CNPS.cycle/blob/main/R/Ncycleabundance.R",
+    "review_date": "2026-10-29",
+    "review_scope": "README or source inspection; not installed or benchmarked"
+  }
+]

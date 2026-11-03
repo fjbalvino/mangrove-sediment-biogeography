@@ -1,0 +1,338 @@
+[
+  {
+    "id": "fix",
+    "label": "Fijación de nitrógeno",
+    "reaction": "N₂ → NH₃ / NH₄⁺",
+    "kos": [
+      "K02588",
+      "K02586",
+      "K02591",
+      "K02587",
+      "K02592",
+      "K02585"
+    ],
+    "genes": [
+      "nifH",
+      "nifD",
+      "nifK",
+      "nifE",
+      "nifN",
+      "nifB"
+    ],
+    "rules": [
+      "N01_nifHDK",
+      "N01_nifHDKENB"
+    ],
+    "status": "reference_direction",
+    "note": "HDK representa componentes de nitrogenasa. ENB añade evidencia de maduración; no es un requisito universal.",
+    "source": "https://www.kegg.jp/entry/M00175"
+  },
+  {
+    "id": "vfix",
+    "label": "Nitrogenasa de vanadio",
+    "reaction": "N₂ → NH₃ / NH₄⁺",
+    "kos": [
+      "K22899",
+      "K22896",
+      "K22897",
+      "K22898"
+    ],
+    "genes": [
+      "vnfH",
+      "vnfD",
+      "vnfK",
+      "vnfG"
+    ],
+    "rules": [
+      "N02_vnfHDKG"
+    ],
+    "status": "reference_direction",
+    "note": "No incluye todas las nitrogenasas alternativas.",
+    "source": "https://www.kegg.jp/entry/K22896"
+  },
+  {
+    "id": "amo",
+    "label": "Oxidación de amoníaco",
+    "reaction": "NH₃ → NH₂OH",
+    "kos": [
+      "K28504",
+      "K10944",
+      "K10945",
+      "K10946"
+    ],
+    "genes": [
+      "amoA actual",
+      "Amo/Pmo A histórica",
+      "Amo/Pmo B",
+      "Amo/Pmo C"
+    ],
+    "rules": [
+      "N03_amo_actual",
+      "N03_amo_pmo_historico"
+    ],
+    "status": "ambiguous",
+    "note": "K28504 no está en la matriz. Las asignaciones históricas Amo/Pmo no distinguen sustrato; no renombrarlas con la anotación actual.",
+    "source": "https://www.kegg.jp/entry/K28504"
+  },
+  {
+    "id": "hao",
+    "label": "Familia Hao",
+    "reaction": "Hidroxilamina: paso candidato",
+    "kos": [
+      "K10535"
+    ],
+    "genes": [
+      "hao (candidato)"
+    ],
+    "rules": [
+      "N03_hao"
+    ],
+    "status": "ambiguous",
+    "note": "Homólogos y reacción efectiva requieren secuencias. No diagnostica nitrificación ni resuelve todos sus intermediarios.",
+    "source": "https://www.kegg.jp/entry/K10535"
+  },
+  {
+    "id": "nar",
+    "label": "Familia Nar / Nxr",
+    "reaction": "NO₃⁻ / NO₂⁻: dirección no resuelta",
+    "kos": [
+      "K00370",
+      "K00371",
+      "K00374"
+    ],
+    "genes": [
+      "narG / nxrA",
+      "narH / nxrB",
+      "narI"
+    ],
+    "rules": [
+      "N04_nar_nxr",
+      "N05_narGHI"
+    ],
+    "status": "ambiguous",
+    "note": "NarG/H comparten KO con Nxr. No asignar reducción u oxidación sin filogenia y contexto.",
+    "source": "https://www.kegg.jp/entry/K00370"
+  },
+  {
+    "id": "nap",
+    "label": "Reducción periplásmica de nitrato",
+    "reaction": "NO₃⁻ → NO₂⁻",
+    "kos": [
+      "K02567",
+      "K02568"
+    ],
+    "genes": [
+      "napA",
+      "napB"
+    ],
+    "rules": [
+      "N05_napAB"
+    ],
+    "status": "reference_direction",
+    "note": "Nap no determina el destino final del nitrógeno.",
+    "source": "https://www.kegg.jp/entry/K02567"
+  },
+  {
+    "id": "nir",
+    "label": "Reducción de nitrito a NO",
+    "reaction": "NO₂⁻ → NO",
+    "kos": [
+      "K00368",
+      "K15864"
+    ],
+    "genes": [
+      "nirK",
+      "nirS"
+    ],
+    "rules": [
+      "N06_nir"
+    ],
+    "status": "reference_direction",
+    "note": "NirK y NirS son alternativas. Mostrar cada una por separado.",
+    "source": "https://www.kegg.jp/entry/K00368"
+  },
+  {
+    "id": "nor",
+    "label": "Reducción de óxido nítrico",
+    "reaction": "NO → N₂O",
+    "kos": [
+      "K04561",
+      "K02305"
+    ],
+    "genes": [
+      "norB",
+      "norC"
+    ],
+    "rules": [
+      "N07_cNOR"
+    ],
+    "status": "reference_direction",
+    "note": "Representa cNOR; NorC no es requisito de qNOR. Puede participar en detoxificación.",
+    "source": "https://www.kegg.jp/entry/K04561"
+  },
+  {
+    "id": "nos",
+    "label": "Reducción de óxido nitroso",
+    "reaction": "N₂O → N₂",
+    "kos": [
+      "K00376"
+    ],
+    "genes": [
+      "nosZ"
+    ],
+    "rules": [
+      "N08_nosZ"
+    ],
+    "status": "reference_direction",
+    "note": "No indica por sí solo balance neto de emisión o consumo de N₂O.",
+    "source": "https://www.kegg.jp/entry/K00376"
+  },
+  {
+    "id": "nrf",
+    "label": "Reducción de nitrito a amonio",
+    "reaction": "NO₂⁻ → NH₄⁺",
+    "kos": [
+      "K03385",
+      "K15876"
+    ],
+    "genes": [
+      "nrfA",
+      "nrfH"
+    ],
+    "rules": [
+      "N09_nrfA",
+      "N09_nrfAH"
+    ],
+    "status": "reference_direction",
+    "note": "NrfH corresponde a una arquitectura. NrfA no demuestra DNRA completa desde nitrato.",
+    "source": "https://www.kegg.jp/entry/K03385"
+  },
+  {
+    "id": "nirbd",
+    "label": "Reducción citoplasmática de nitrito",
+    "reaction": "NO₂⁻ → NH₄⁺",
+    "kos": [
+      "K00362",
+      "K00363"
+    ],
+    "genes": [
+      "nirB",
+      "nirD"
+    ],
+    "rules": [
+      "N09_nirBD"
+    ],
+    "status": "ambiguous_context",
+    "note": "Puede participar en asimilación o disimilación. La reacción no distingue el papel ecológico.",
+    "source": "https://www.kegg.jp/entry/K00362"
+  },
+  {
+    "id": "anammox",
+    "label": "Anammox",
+    "reaction": "NH₄⁺ + NO₂⁻ → N₂ (vía hidrazina)",
+    "kos": [
+      "K20932",
+      "K20933",
+      "K20934",
+      "K20935"
+    ],
+    "genes": [
+      "hzsA",
+      "hzsB",
+      "hzsC",
+      "hdh"
+    ],
+    "rules": [
+      "N10_hzs_hdh"
+    ],
+    "status": "reference_direction",
+    "note": "Los cuatro KOs carecen de fila. No se puede evaluar anammox con esta matriz.",
+    "source": "https://www.kegg.jp/entry/M00973"
+  },
+  {
+    "id": "ass_no3",
+    "label": "Asimilación: reducción de nitrato",
+    "reaction": "NO₃⁻ → NO₂⁻",
+    "kos": [
+      "K00367",
+      "K10534",
+      "K00372",
+      "K00360"
+    ],
+    "genes": [
+      "narB",
+      "NR",
+      "nasA / nasC",
+      "nasB (transferencia)"
+    ],
+    "rules": [
+      "N11_M00531"
+    ],
+    "status": "reference_direction",
+    "note": "Alternativas enzimáticas. La regla M00531 incluye también el paso de nitrito; no sumarlas.",
+    "source": "https://www.kegg.jp/entry/M00531"
+  },
+  {
+    "id": "ass_no2",
+    "label": "Asimilación: reducción de nitrito",
+    "reaction": "NO₂⁻ → NH₄⁺",
+    "kos": [
+      "K00366",
+      "K17877",
+      "K26139",
+      "K26138",
+      "K00361"
+    ],
+    "genes": [
+      "nirA",
+      "NIT-6",
+      "nasD / nasB",
+      "nasE",
+      "nasB (nitrito)"
+    ],
+    "rules": [
+      "N11_M00531"
+    ],
+    "status": "reference_direction",
+    "note": "Los símbolos nasB se refieren a KOs distintos. Mantener el KO como identificador funcional.",
+    "source": "https://www.kegg.jp/entry/M00531"
+  },
+  {
+    "id": "ure",
+    "label": "Hidrólisis de urea",
+    "reaction": "Urea → NH₃ / NH₄⁺ + carbono inorgánico",
+    "kos": [
+      "K01430",
+      "K01429",
+      "K01428"
+    ],
+    "genes": [
+      "ureA",
+      "ureB",
+      "ureC"
+    ],
+    "rules": [
+      "N12_ureABC"
+    ],
+    "status": "reference_direction",
+    "note": "Arquitectura de tres subunidades; no incluye todas las fusiones y proteínas de maduración.",
+    "source": "https://www.kegg.jp/entry/K01428"
+  },
+  {
+    "id": "cyn",
+    "label": "Transformación de cianato",
+    "reaction": "Cianato + bicarbonato → NH₃ + CO₂",
+    "kos": [
+      "K01725"
+    ],
+    "genes": [
+      "cynS"
+    ],
+    "rules": [
+      "N12_cynS"
+    ],
+    "status": "reference_direction",
+    "note": "No representa toda la mineralización de nitrógeno orgánico.",
+    "source": "https://www.kegg.jp/entry/K01725"
+  }
+]
