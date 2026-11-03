@@ -25,6 +25,8 @@ def main():
     p.add_argument('--matrix', required=True)
     p.add_argument('--samples', required=True)
     p.add_argument('--outdir', required=True)
+    p.add_argument('--coordinate-grouping', choices=['stored', 'current'], default='stored',
+                   help='current derives groups from present coordinates without changing metadata')
     p.add_argument('--unit', required=True, choices=['predicted_protein_records'])
     a = p.parse_args()
     out = Path(a.outdir)
@@ -53,6 +55,21 @@ def main():
     totals = matrix.sum(axis=0)
     if (totals <= 0).any():
         raise ValueError('Zero-total profiles cannot support relative representation')
+    group_changes = []
+    if a.coordinate_grouping == 'current':
+        lat = pd.to_numeric(meta.lat, errors='raise')
+        lon = pd.to_numeric(meta.lon, errors='raise')
+        if ((lat.notna() & (~np.isfinite(lat) | (lat.abs() > 90))) |
+            (lon.notna() & (~np.isfinite(lon) | (lon.abs() > 180)))).any():
+            raise ValueError('Invalid geographic coordinate')
+        derived = pd.Series([f'coord_{x:.5f}_{y:.5f}' if pd.notna(x) and pd.notna(y) else np.nan
+                             for x, y in zip(lat, lon)], index=meta.index)
+        for idx in meta.index:
+            old, new = meta.loc[idx, 'sampling_site_id'], derived.loc[idx]
+            if not ((pd.isna(old) and pd.isna(new)) or old == new):
+                group_changes.append(dict(run_accession=meta.loc[idx, 'run_accession'],
+                                          stored_group=old, current_group=new))
+        meta['sampling_site_id'] = derived
     meta['total_KO_assignments'] = meta.run_accession.map(totals)
     covariates = [f'bio{i}' for i in range(1, 20)] + [
         'soc_mean', 'phh2o_mean', 'clay_mean', 'sand_mean', 'silt_mean',
@@ -113,7 +130,8 @@ def main():
     paired = meta[['sample_accession', 'run_accession']].dropna() if 'sample_accession' in meta else pd.DataFrame()
     repeated = paired[paired.sample_accession.duplicated(keep=False)] if len(paired) else paired
     report = dict(scope='Read-only audit; no gene-environment associations estimated',
-        n_profiles=len(ids), matrix_unit=a.unit, n_KO_rows=len(matrix),
+        n_profiles=len(ids), matrix_unit=a.unit,
+        coordinate_grouping=a.coordinate_grouping, n_group_labels_changed=len(group_changes), n_KO_rows=len(matrix),
         n_KOs_detected=int((matrix.sum(axis=1)>0).sum()), n_zero_only_KOs=int((matrix.sum(axis=1)==0).sum()),
         n_studies=int(meta.study_id.nunique()), n_coordinate_groups=int(meta.sampling_site_id.nunique()),
         n_profiles_with_coordinates=int(coordinates.sum()),
@@ -133,6 +151,8 @@ def main():
         sha256={name:digest(path) for name,path in [('metadata',a.metadata),('matrix',a.matrix),('samples',a.samples),('script',__file__)]},
         versions={'python':platform.python_version(),'pandas':pd.__version__,'numpy':np.__version__})
     out.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(group_changes, columns=['run_accession', 'stored_group', 'current_group']).to_csv(
+        out/'coordinate_group_label_changes.tsv', sep='\t', index=False)
     pd.DataFrame(records).to_csv(out/'environment_variable_support.tsv', sep='\t', index=False)
     pd.DataFrame(supports).to_csv(out/'within_study_support.tsv', sep='\t', index=False)
     pd.DataFrame(conflicts,columns=['variable','coordinate_group','stored_values','reason']).to_csv(out/'coordinate_value_conflicts.tsv', sep='\t', index=False)
@@ -143,3 +163,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

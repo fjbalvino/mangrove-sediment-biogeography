@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "status": "Design protocol; input audit implemented; association models not yet implemented or executed",
+  "status": "Input audit refreshed and nitrogen descriptive pilot executed; exploratory within-study slope diagnostics implemented; primary association inference remains pending",
   "review_date": "2026-10-29",
   "cohort": {
     "manifest": "config/samples/functional_accessions.txt",
@@ -12,24 +12,71 @@
     "unit": "predicted_protein_records",
     "relative_denominator": "Sum of all KO assignments in each selected profile before cycle or prevalence filtering",
     "allowed_label": "Relative representation of recovered KO assignments",
-    "disallowed_interpretations": ["TPM", "enzyme concentration", "gene expression", "absolute cellular abundance", "metabolic flux"],
-    "information_states": ["observed_positive", "observed_zero", "KO_row_unavailable", "functional_assignment_ambiguous"]
+    "disallowed_interpretations": [
+      "TPM",
+      "enzyme concentration",
+      "gene expression",
+      "absolute cellular abundance",
+      "metabolic flux"
+    ],
+    "information_states": [
+      "observed_positive",
+      "observed_zero",
+      "KO_row_unavailable",
+      "functional_assignment_ambiguous"
+    ]
   },
   "environment": {
-    "priority_predictors_after_provenance_validation": ["bio1", "soc_mean", "phh2o_mean"],
+    "priority_predictors_after_provenance_validation": [
+      "bio1",
+      "soc_mean",
+      "phh2o_mean"
+    ],
     "automatic_unit_conversion": false,
-    "provenance_required": ["source", "version", "unit", "conversion", "spatial_resolution", "depth", "time_window", "extraction_method"],
+    "provenance_required": [
+      "source",
+      "version",
+      "unit",
+      "conversion",
+      "spatial_resolution",
+      "depth",
+      "time_window",
+      "extraction_method"
+    ],
     "interpretation": {
       "bio1": "Long-term climatic mean temperature; not sediment temperature at collection",
       "soc_mean": "Modelled soil organic carbon; not measured labile or dissolved carbon",
       "phh2o_mean": "Modelled soil pH; verify apparent x10 encoding"
     },
-    "secondary_predictors": ["precipitation", "climatic_seasonality", "verified_soil_properties", "verified_human_footprint"],
-    "additional_direct_measurements_if_recoverable": ["salinity", "DOC", "TOC", "redox", "oxygen", "sampling_date", "depth_cm", "sediment_temperature"],
-    "missingness": "Report per contrast; no blanket imputation of site-level covariates; any predictive imputation must be learned inside training folds"
+    "secondary_predictors": [
+      "precipitation",
+      "climatic_seasonality",
+      "verified_soil_properties",
+      "verified_human_footprint"
+    ],
+    "additional_direct_measurements_if_recoverable": [
+      "salinity",
+      "DOC",
+      "TOC",
+      "redox",
+      "oxygen",
+      "sampling_date",
+      "depth_cm",
+      "sediment_temperature"
+    ],
+    "missingness": "Report per contrast; no blanket imputation of site-level covariates; any predictive imputation must be learned inside training folds",
+    "provenance_reconciliation": {
+      "documentation": "docs/ENVIRONMENTAL_METADATA_RECOVERY_2026-11.md",
+      "worldclim": "2.1, 1970-2000, 30 arcsec; BIO1 stored in degrees C",
+      "soil": "SoilGrids 2.0, 0-5 cm mean, native encoding; SOC / 10 to g/kg and pH / 10 in analysis objects only",
+      "caution": "Legacy extraction-anchor discrepancies retained; not all historical values independently remeasured"
+    }
   },
   "responses": {
-    "primary": ["observed_KO_detection", "positive_relative_KO_representation"],
+    "primary": [
+      "observed_KO_detection",
+      "positive_relative_KO_representation"
+    ],
     "directed_panel": "Unique KOs in curated cycles; do not duplicate tests for KOs belonging to multiple cycles",
     "broad_exploration": "All detected KOs subject to estimability filters",
     "reaction_scores": "Keep member genes and alternatives separate; no automatic sum of required subunits as pathway abundance"
@@ -51,15 +98,32 @@
       "detection": "Evaluate log total KO assignments as imperfect recovery covariate",
       "positive_representation": "Recovery diagnostic and sensitivity; do not mechanically adjust for its own denominator"
     },
-    "provisional_positive_support_floor": {"coordinate_groups": 10, "studies": 3},
+    "provisional_positive_support_floor": {
+      "coordinate_groups": 10,
+      "studies": 3
+    },
     "support_warning": "Admission floors are not sufficient validation; check effective units, within-study predictor contrasts and model rank per KO",
-    "diagnostics": ["design_rank", "positive_and_zero_support", "convergence", "separation", "influence", "residuals", "dependence", "environmental_overlap"],
+    "diagnostics": [
+      "design_rank",
+      "positive_and_zero_support",
+      "convergence",
+      "separation",
+      "influence",
+      "residuals",
+      "dependence",
+      "environmental_overlap"
+    ],
     "multiple_testing": "BH jointly across valid primary panel KO x priority predictor x outcome tests; separate declared exploratory family for remaining KOs",
     "failure_policy": "Retain descriptive record and explicit failure reason; do not silently switch to an easier significant model",
     "validation_before_real_fits": "Pin version and calibrate synthetic nulls, confounding, clustered observations and zero patterns"
   },
   "multivariate": {
-    "methods": ["ordination", "RDA_or_dbRDA", "adjusted_variation_partitioning", "matched_taxonomic_functional_ordination"],
+    "methods": [
+      "ordination",
+      "RDA_or_dbRDA",
+      "adjusted_variation_partitioning",
+      "matched_taxonomic_functional_ordination"
+    ],
     "composition": "Prespecify common log-ratio reference and zero handling; Hellinger and presence-absence sensitivity",
     "space": "Geodesic distances; constrained spatial basis or regional sensitivity",
     "permutations": "Exchange whole independent units within study when valid; never permute only within a site to test a site-constant predictor",
@@ -68,17 +132,45 @@
   "prediction": {
     "priority": "secondary",
     "baseline_first": true,
-    "validation": ["leave_study_out", "spatial_blocks_or_joint_study_site_components"],
+    "validation": [
+      "leave_study_out",
+      "spatial_blocks_or_joint_study_site_components"
+    ],
     "preprocessing": "All feature selection, transformations and tuning inside training folds",
     "unseen_study_effect": "Study fixed effects describe association only; predictive transfer needs a model that can predict an unseen study without its fitted coefficient",
     "no_global_extrapolation": true
   },
   "atlas": {
     "fixed_reaction_geometry": true,
-    "layers": ["observed_gene_values", "adjusted_environmental_effects", "supported_environmental_predictions"],
-    "visible_uncertainty": ["annotation_state", "sample_and_study_counts", "within_site_variation", "effect_interval", "failed_or_unestimable_models"],
+    "layers": [
+      "observed_gene_values",
+      "adjusted_environmental_effects",
+      "supported_environmental_predictions"
+    ],
+    "visible_uncertainty": [
+      "annotation_state",
+      "sample_and_study_counts",
+      "within_site_variation",
+      "effect_interval",
+      "failed_or_unestimable_models"
+    ],
     "unlocated_profiles": "Retain in tables and cycle views",
     "cooccurrence_network": "Optional exploratory supplement; no inference of cooperation, metabolite exchange or flux"
   },
-  "update_contract": "Repeat on the new matrix with explicit quantification units and versions; compare common samples separately from expanded sampling; reanalysis of shared samples is not independent validation"
+  "update_contract": "Repeat on the new matrix with explicit quantification units and versions; compare common samples separately from expanded sampling; reanalysis of shared samples is not independent validation",
+  "nitrogen_pilot": {
+    "execution_date": "2026-11-02",
+    "n_profiles": 191,
+    "n_studies": 44,
+    "n_coordinate_groups": 63,
+    "n_study_coordinate_groups": 85,
+    "KO_catalogue": 46,
+    "KO_rows_available": 34,
+    "coordinate_grouping": "Recomputed from present lat/lon in analysis outputs only",
+    "join_key": "run_accession",
+    "descriptive_unit": "Equal runs within BioSample, then equal BioSamples within study-coordinate group",
+    "association_diagnostics": "Within-study OLS descriptive slopes on log2 positive group means and group detection fractions; leave-informative-study-out range; no p/q/CI",
+    "primary_inference": "Not run; descriptive slopes do not implement the proposed MaAsLin3 model",
+    "documentation": "docs/NITROGEN_PILOT.md"
+  }
 }

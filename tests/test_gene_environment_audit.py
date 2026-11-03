@@ -31,9 +31,10 @@ class AuditTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_audit(self):
+    def run_audit(self, extra=None):
         argv=[str(SCRIPT),'--metadata',str(self.meta),'--matrix',str(self.matrix),
               '--samples',str(self.ids),'--unit','predicted_protein_records','--outdir',str(self.out)]
+        argv += extra or []
         with patch('sys.argv',argv):
             MODULE.main()
 
@@ -51,6 +52,20 @@ class AuditTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.run_audit()
         self.assertFalse(self.out.exists())
 
+    def test_refresh_coordinate_groups_without_metadata_edit(self):
+        x=pd.read_csv(self.meta);x.loc[0,'sampling_site_id']=None;x.to_csv(self.meta,index=False)
+        before=self.meta.read_bytes()
+        self.run_audit(['--coordinate-grouping','current'])
+        d=json.loads((self.out/'audit_summary.json').read_text())
+        self.assertEqual(d['n_coordinate_groups'],3)
+        self.assertEqual(d['n_group_labels_changed'],4)
+        self.assertEqual(self.meta.read_bytes(),before)
+
+    def test_invalid_current_coordinate_rejected(self):
+        x=pd.read_csv(self.meta);x.loc[0,'lat']=91;x.to_csv(self.meta,index=False)
+        with self.assertRaises(ValueError):self.run_audit(['--coordinate-grouping','current'])
+        self.assertFalse(self.out.exists())
+
     def test_missing_selected_accession_rejected(self):
         self.ids.write_text('s1\nmissing\n')
         with self.assertRaises(ValueError): self.run_audit()
@@ -63,3 +78,4 @@ class AuditTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
