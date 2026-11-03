@@ -2,7 +2,27 @@
 
 Se revisó el universo de 401 muestras. Hay 399 con coordenadas; SRR31131347 y SRR31131364 se conservan en la base y se excluyen únicamente de esta extracción. El subconjunto funcional conserva sus 191 muestras. No se aplicó el manifiesto taxonómico de 341 ni se revisó la curación ecológica del usuario.
 
-Se evaluaron todas las coordenadas con algún campo ambiental faltante: 62 muestras en 31 coordenadas. La actualización rellena celdas vacías de las 34 variables ambientales que ya existían. Conserva los nombres de archivo, 401 × 86 y 191 × 83 columnas/filas, el orden, las coordenadas, los identificadores, las clasificaciones y todos los valores previos. Los diagnósticos viven fuera de los CSV canónicos y fuera de git.
+Se evaluaron todas las coordenadas con algún campo ambiental faltante: 62 muestras en 31 coordenadas. La actualización rellena celdas vacías de las 34 variables ambientales que ya existían. Conserva los nombres de archivo, 401 filas y 86 columnas, y 191 filas y 83 columnas, el orden, las coordenadas, los identificadores, las clasificaciones y todos los valores previos. Los diagnósticos viven fuera de los CSV canónicos y fuera de git.
+
+## Auditoría por identificador — 3 noviembre de 2026
+
+El cruce entre bases usa exclusivamente `run_accession`, con una relación uno a uno. La consulta espacial sirve para extraer una covariable en el punto de una muestra de la base completa; nunca identifica muestras entre las dos bases.
+
+| Base | Muestras (filas) | IDs únicos | IDs duplicados |
+|---|---:|---:|---:|
+| Metadata_reinicio_401_reconciliada.csv | 401 | 401 | 0 |
+| metadata_functional.csv | 191 | 191 | 0 |
+
+Las 191 accesiones funcionales están incluidas en la base completa. Se verificaron todas las coordenadas y variables ambientales compartidas por ID: cero conflictos. Se reconstruyeron ambos archivos desde las copias previas mediante el cruce explícito por ID: los resultados son idénticos byte por byte a los archivos ya guardados. No fue necesario eliminar, añadir ni cambiar muestras.
+
+**472 y 196 son cantidades de celdas rellenadas, no cantidades de muestras.** Una muestra contiene múltiples variables ambientales. La actualización histórica afectó 19 muestras de la base completa y 7 de su subconjunto funcional.
+
+El código rechaza IDs vacíos, duplicados o desconocidos, coordenadas contradictorias para un mismo ID y valores existentes en conflicto antes de escribir cualquiera de las bases. Comprueba los tamaños esperados (401 y 191; configurables explícitamente mediante `EXPECTED_MASTER_ROWS` y `EXPECTED_FUNCTIONAL_ROWS` para futuras cohortes), conserva el orden de cada archivo y no incorpora columnas nuevas. Las pruebas incluyen IDs distintos que comparten coordenadas y filas en distinto orden.
+
+SHA-256 de los CSV auditados:
+
+- Base completa: `b96a650ca8bdcff1ea479d60fe3d7247e4f486806fcf5e900315509c50901d84`.
+- Subconjunto funcional: `f1e0fc4430f4a2560bd9d9e55b15023d49f2c466db3c06eaf4df646e092653d7`.
 
 ## Resultado de la ejecución
 
@@ -40,7 +60,7 @@ Dependencias: Python 3, numpy, pandas, rasterio, pyproj, requests; tqdm es opcio
 export RECOVERY_WORKDIR=/ruta/privada/recuperacion_ambiental
 export METADATA_MASTER=/ruta/Metadata_reinicio_401_reconciliada.csv
 export METADATA_FUNCTIONAL=/ruta/metadata_functional.csv
-bash workflow/02_RECOVER_MISSING_ENVIRONMENTAL_FIELDS.sh
+bash workflow/02H_RECOVER_MISSING_ENVIRONMENTAL_FIELDS.sh
 ```
 
 Antes de ejecutar, colocar en `$RECOVERY_WORKDIR/cache/` `hii_no_osm_2020-01-01.tif` y los mosaicos oficiales `tile_<ID>_wc2.1_30s_bio.tif` que cubran las coordenadas. Esta corrida usa 32, 33, 34 y 41; el último aporta controles. `download_asset.py URL DESTINO` descarga con HTTPS, registra URL, cabeceras y SHA-256, y reutiliza una descarga existente. Un archivo existente debe cotejarse con el manifiesto de procedencia conservado. No reemplazarlo por otra versión con el mismo nombre.

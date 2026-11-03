@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import csv,json,hashlib,math
 import pandas as pd,numpy as np
+from id_contracts import index_by_id, transfer_by_id, equivalent
 D=Path(os.environ['RECOVERY_WORKDIR']).resolve()
 EXCLUDE={'SRR31131347','SRR31131364'}
 GROUPS={'climate':([f'bio{i}' for i in range(1,20)],'climate30_diagnostics.csv'),
@@ -18,6 +19,15 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def save(p,cols,rows):
  with p.open('w',newline='',encoding='utf-8') as f:
   w=csv.DictWriter(f,fieldnames=cols);w.writeheader();w.writerows(rows)
+NAMES=['Metadata_reinicio_401_reconciliada.csv','metadata_functional.csv']
+EXPECTED={NAMES[0]:int(os.environ.get('EXPECTED_MASTER_ROWS','401')),NAMES[1]:int(os.environ.get('EXPECTED_FUNCTIONAL_ROWS','191'))}
+original={name:read(D/'inputs'/name) for name in NAMES}
+for name,(columns,rows) in original.items():
+ index_by_id(rows,name,EXPECTED[name])
+ if len(columns)!=len(set(columns)) or any(c not in columns for c in ['run_accession','lat','lon']+ENV):
+  raise ValueError(f'{name}: invalid existing column contract')
+# Check identity, membership and existing cross-table values before any output write.
+transfer_by_id(original[NAMES[0]][1],original[NAMES[1]][1],ENV,EXCLUDE)
 lookup={};checks={}
 for group,(cols,name) in GROUPS.items():
  diag=pd.read_csv(D/'outputs'/name);assert not diag[['lat','lon','role']].duplicated().any()
@@ -39,33 +49,60 @@ for group,(cols,name) in GROUPS.items():
    assert 0<r.phh2o_mean<=140
   lookup[group][key(r)]={c:format(float(r[c]),'.12g') for c in cols}
   lookup[group][key(r)]['distance_m']=float(r.distance_m)
-summary={};audit=[]
-for name in ['Metadata_reinicio_401_reconciliada.csv','metadata_functional.csv']:
- inp=D/'inputs'/name;cols,before=read(inp);after=[r.copy() for r in before];counts={g:0 for g in GROUPS};touched=set()
- assert len({r['run_accession'] for r in before})==len(before)
- for r in after:
-  if r['run_accession'] in EXCLUDE or empty(r['lat']) or empty(r['lon']):continue
-  for g,(fields,source) in GROUPS.items():
-   donor=lookup[g].get(key(r))
-   if donor is None:continue
-   for c in fields:
-    assert c in cols
-    if empty(r[c]):
-     audit.append({'file':name,'run_accession':r['run_accession'],'field':c,'previous':r[c],'value':donor[c],'source_diagnostic':source,'anchor_distance_m':donor['distance_m']})
-     r[c]=donor[c];counts[g]+=1;touched.add(r['run_accession'])
- for a,b in zip(before,after):
-  assert a.keys()==b.keys()
+summary={};audit=[];prepared={};master_cell_audit={}
+for name in NAMES:
+ inp=D/'inputs'/name;cols,before=original[name]
+ counts={g:0 for g in GROUPS};touched=set()
+ if name==NAMES[0]:
+  after=[r.copy() for r in before]
+  # Geographic lookup belongs only to extraction at the master sample's point.
+  # It never joins the two sample databases.
+  for r in after:
+   run=r['run_accession']
+   if run in EXCLUDE or empty(r['lat']) or empty(r['lon']):continue
+   for g,(fields,source) in GROUPS.items():
+    measurement=lookup[g].get(key(r))
+    if measurement is None:continue
+    for c in fields:
+     if empty(r[c]):
+      entry={'file':name,'run_accession':run,'field':c,'previous':r[c],'value':measurement[c],'source_diagnostic':source,'anchor_distance_m':measurement['distance_m']}
+      audit.append(entry);master_cell_audit[(run,c)]=entry
+      r[c]=measurement[c];counts[g]+=1;touched.add(run)
+ else:
+  # The only transfer between metadata databases is one-to-one by run_accession.
+  after=transfer_by_id(prepared[NAMES[0]][1],before,ENV,EXCLUDE)
+  before_by_id=index_by_id(before,name)
+  for r in after:
+   run=r['run_accession'];old=before_by_id[run]
+   for c in ENV:
+    if r[c]==old[c]:continue
+    source=master_cell_audit.get((run,c),{})
+    audit.append({'file':name,'run_accession':run,'field':c,'previous':old[c],'value':r[c],'source_diagnostic':source.get('source_diagnostic','master_by_run_accession'),'anchor_distance_m':source.get('anchor_distance_m','')})
+    for g,(fields,_) in GROUPS.items():
+     if c in fields:counts[g]+=1
+    touched.add(run)
+ if [r['run_accession'] for r in after]!=[r['run_accession'] for r in before]:
+  raise ValueError(f'{name}: row membership or order changed')
+ index_by_id(after,name,EXPECTED[name])
+ for old,r in zip(before,after):
+  if old.keys()!=r.keys():raise ValueError(f'{name}: schema changed')
   for c in cols:
-   if a[c]!=b[c]:assert c in ENV and empty(a[c]) and not empty(b[c]) and a['run_accession'] not in EXCLUDE
- out=D/'outputs'/name;save(out,cols,after)
- c2,r2=read(out);assert c2==cols and r2==after
- summary[name]={'rows':len(after),'columns':len(cols),'filled_cells':sum(counts.values()),'filled_by_group':counts,'samples_changed':len(touched),'before_sha256':sha(inp),'after_sha256':sha(out),'missing_before':{c:sum(empty(r[c]) for r in before) for c in ENV},'missing_after':{c:sum(empty(r[c]) for r in after) for c in ENV}}
-master={r['run_accession']:r for r in read(D/'outputs/Metadata_reinicio_401_reconciliada.csv')[1]}
-for r in read(D/'outputs/metadata_functional.csv')[1]:
+   if old[c]!=r[c] and not (c in ENV and empty(old[c]) and not empty(r[c]) and r['run_accession'] not in EXCLUDE):
+    raise ValueError(f'{name}: unauthorized cell change for {r["run_accession"]}/{c}')
+ prepared[name]=(cols,after)
+ summary[name]={'rows':len(after),'unique_run_accession':len(index_by_id(after,name)),'duplicate_ids':0,'columns':len(cols),'filled_cells':sum(counts.values()),'filled_by_group':counts,'samples_changed':len(touched),'before_sha256':sha(inp),'missing_before':{c:sum(empty(r[c]) for r in before) for c in ENV},'missing_after':{c:sum(empty(r[c]) for r in after) for c in ENV}}
+master=index_by_id(prepared[NAMES[0]][1],'updated master')
+for r in prepared[NAMES[1]][1]:
  for c in ['lat','lon']+ENV:
-  a,b=r[c],master[r['run_accession']][c]
-  assert (empty(a) and empty(b)) or (not empty(a) and not empty(b) and math.isclose(float(a),float(b),rel_tol=1e-9,abs_tol=1e-8)),(r['run_accession'],c)
-save(D/'outputs/changed_cells.csv',list(audit[0]),audit)
+  if not equivalent(r[c],master[r['run_accession']][c]):
+   raise ValueError(f'Cross-table conflict after ID transfer: {r["run_accession"]}/{c}')
+# All identity and content checks have passed before writing either table.
+for name,(cols,after) in prepared.items():
+ out=D/'outputs'/name;save(out,cols,after)
+ c2,r2=read(out)
+ if c2!=cols or r2!=after:raise RuntimeError(f'{name}: serialization changed data')
+ summary[name]['after_sha256']=sha(out)
+save(D/'outputs/changed_cells.csv',['file','run_accession','field','previous','value','source_diagnostic','anchor_distance_m'],audit)
 pending=[]
 for r in master.values():
  for c in ENV:
@@ -76,6 +113,6 @@ for r in master.values():
   else:reason='no_valid_raster_cell_within_2000m'
   pending.append({'run_accession':r['run_accession'],'field':c,'reason':reason})
 save(D/'outputs/pending_cells.csv',['run_accession','field','reason'],pending)
-summary['controls']=checks;summary['extraction_exclusions']=sorted(EXCLUDE);summary['validation']='PASS: only blank existing environmental cells changed; schemas, rows, all other cells and both exclusion rows preserved; shared cohort matches'
+summary['primary_key']='run_accession';summary['metadata_join']='one_to_one_by_run_accession';summary['controls']=checks;summary['extraction_exclusions']=sorted(EXCLUDE);summary['validation']='PASS: only blank existing environmental cells changed; schemas, rows, all other cells and both exclusion rows preserved; shared cohort matches'
 (D/'outputs/update_summary.json').write_text(json.dumps(summary,indent=2,ensure_ascii=False))
 print(json.dumps({k:{a:v for a,v in x.items() if a not in ['missing_before','missing_after']} for k,x in summary.items() if k.endswith('.csv')},indent=2))
