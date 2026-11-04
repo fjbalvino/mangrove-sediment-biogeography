@@ -1,0 +1,776 @@
+{
+  "schema_version": 1,
+  "scope": "Targeted implementation audit; listed files were retrieved and relevant methods inspected, not an exhaustive package certification. SMDB has no application source in the inspected tree.",
+  "repositories": [
+    {
+      "repository": "taylor19891213/sulfur-metabolism-gene-database",
+      "commit": "008e49932dc3adc3fcd43866c90f6b6251a29d76",
+      "default_branch": "master",
+      "license_api": "MIT",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "666a37224f803e9e3d78ffd580a49d9769cae840",
+          "url": "https://github.com/taylor19891213/sulfur-metabolism-gene-database/blob/008e49932dc3adc3fcd43866c90f6b6251a29d76/README.md"
+        },
+        {
+          "path": "LICENSE",
+          "git_blob_sha": "f311069873c8dbac5da30b0bc4903815c1976e1b",
+          "url": "https://github.com/taylor19891213/sulfur-metabolism-gene-database/blob/008e49932dc3adc3fcd43866c90f6b6251a29d76/LICENSE"
+        }
+      ]
+    },
+    {
+      "repository": "yuezhengfu/CNPS.cycle",
+      "commit": "a1b2eb46ccc732ea39c616267f1664fff272a1ef",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "cd041c14d1c023e397ec20e591b3bdb4ce5c012b",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/DESCRIPTION"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "13619257767d544084b5639e68c2321af7f4db15",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/README.md"
+        },
+        {
+          "path": "R/DataPreprocess.R",
+          "git_blob_sha": "d50a64e2dfc0f38b96ff8ea4fc63fa88ea09b421",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/DataPreprocess.R"
+        },
+        {
+          "path": "R/Ncycleabundance.R",
+          "git_blob_sha": "bc5605c939030c851d39035344198144c0a0a851",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/Ncycleabundance.R"
+        },
+        {
+          "path": "R/Ccycleabundance.R",
+          "git_blob_sha": "db60b6da5930bad1986313a6f66c1b2d07faca1e",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/Ccycleabundance.R"
+        },
+        {
+          "path": "R/Pcycleabundance.R",
+          "git_blob_sha": "10d1260ac2af7771f419b5874c4f9dafeeef8524",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/Pcycleabundance.R"
+        },
+        {
+          "path": "R/Scycleabundance.R",
+          "git_blob_sha": "d339e8404e70c27009fd66d93433c36b16a08124",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/Scycleabundance.R"
+        },
+        {
+          "path": "R/NMDS.R",
+          "git_blob_sha": "7b5f713223f8409081baf30a5801bf15b9f20daa",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/NMDS.R"
+        },
+        {
+          "path": "R/PCoA.R",
+          "git_blob_sha": "eb7c1ede49224ccc07d4c348844c2b5aba33bf15",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/PCoA.R"
+        },
+        {
+          "path": "R/NF.N2.NH4.R",
+          "git_blob_sha": "7aee7476296a3ffbba50b7770d0cf159162bd954",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/NF.N2.NH4.R"
+        },
+        {
+          "path": "R/Fold change.R",
+          "git_blob_sha": "ddc06b96739e9c604c9d684ab0f6a39ead8352b6",
+          "url": "https://github.com/yuezhengfu/CNPS.cycle/blob/a1b2eb46ccc732ea39c616267f1664fff272a1ef/R/Fold%20change.R"
+        }
+      ]
+    },
+    {
+      "repository": "noriakis/ggkegg",
+      "commit": "da72f939e6251801d43a9668fb301acce7f5922a",
+      "default_branch": "main",
+      "license_api": "MIT",
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "97d14edd12cdf173e85623af600f0280bfd0a566",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/DESCRIPTION"
+        },
+        {
+          "path": "LICENSE",
+          "git_blob_sha": "8ff7568faf4f88f1379254b258989e28b452c57c",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/LICENSE"
+        },
+        {
+          "path": "R/module_functions.R",
+          "git_blob_sha": "ed5e27a7552e74215002655c01b6241a01a064ef",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/R/module_functions.R"
+        },
+        {
+          "path": "R/pathway_functions.R",
+          "git_blob_sha": "bcc9f0a4b3d2a33a9f3dfeaa6ca905f37f5259e2",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/R/pathway_functions.R"
+        },
+        {
+          "path": "R/overlay_functions.R",
+          "git_blob_sha": "5d3e53e8322cff90f0063efadd64f75a49c8a184",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/R/overlay_functions.R"
+        },
+        {
+          "path": "tests/testthat/test-module.R",
+          "git_blob_sha": "3ef6e21f773a1ebfddf68b584fb52dabe5532434",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/tests/testthat/test-module.R"
+        },
+        {
+          "path": "tests/testthat/test-utils.R",
+          "git_blob_sha": "2984d59bad245cd99be0d906cf5c1baf4510fe8c",
+          "url": "https://github.com/noriakis/ggkegg/blob/da72f939e6251801d43a9668fb301acce7f5922a/tests/testthat/test-utils.R"
+        }
+      ]
+    },
+    {
+      "repository": "opencobra/escher",
+      "commit": "78645d358d75f08d3f51f2acd13f963636d27d7f",
+      "default_branch": "master",
+      "license_api": "NOASSERTION",
+      "files": [
+        {
+          "path": "LICENSE",
+          "git_blob_sha": "e5f353a00926b2e94fcae5825ecf6a0f2dae4a48",
+          "url": "https://github.com/opencobra/escher/blob/78645d358d75f08d3f51f2acd13f963636d27d7f/LICENSE"
+        },
+        {
+          "path": "src/dataStyles.js",
+          "git_blob_sha": "99de6de75beb75929ff6fdd83495b57aa1046620",
+          "url": "https://github.com/opencobra/escher/blob/78645d358d75f08d3f51f2acd13f963636d27d7f/src/dataStyles.js"
+        },
+        {
+          "path": "src/CobraModel.js",
+          "git_blob_sha": "91639dfb9a6ede758e5c5e8769da9f2052419553",
+          "url": "https://github.com/opencobra/escher/blob/78645d358d75f08d3f51f2acd13f963636d27d7f/src/CobraModel.js"
+        },
+        {
+          "path": "src/tests/test_dataStyles.js",
+          "git_blob_sha": "82d69fe32fe996d21b115443f87a66276b24c849",
+          "url": "https://github.com/opencobra/escher/blob/78645d358d75f08d3f51f2acd13f963636d27d7f/src/tests/test_dataStyles.js"
+        }
+      ]
+    },
+    {
+      "repository": "biobakery/maaslin3",
+      "commit": "d5f36fbc0a6a77001f0736ae389618fba07b1e1f",
+      "default_branch": "release",
+      "license_api": "NOASSERTION",
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "dc2eac2fc45949f5808ffdae4cf26f8f7208f65c",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/DESCRIPTION"
+        },
+        {
+          "path": "LICENSE",
+          "git_blob_sha": "9c14d4debb88a5c0e9c6e241e0394238ea19dbec",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/LICENSE"
+        },
+        {
+          "path": "R/maaslin3.R",
+          "git_blob_sha": "0ba56c9207e162bec63646b30a0851e6752daabe",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/R/maaslin3.R"
+        },
+        {
+          "path": "R/fit.R",
+          "git_blob_sha": "0c0e5b12afdd91177e10ea07f66b8a12a2ca13fc",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/R/fit.R"
+        },
+        {
+          "path": "R/utility_scripts.R",
+          "git_blob_sha": "cfb9214cf277951bc6e5fa7b58c3a4b88bcfec0f",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/R/utility_scripts.R"
+        },
+        {
+          "path": "tests/testthat/test_maaslin_normalize.R",
+          "git_blob_sha": "fcc4430d3bf12aa4b73dd8bf3381468ad3b92b77",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/tests/testthat/test_maaslin_normalize.R"
+        },
+        {
+          "path": "tests/testthat/test_maaslin_filter.R",
+          "git_blob_sha": "23cbcae50b6722a041fc33ae14e05e3ddfbae38a",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/tests/testthat/test_maaslin_filter.R"
+        },
+        {
+          "path": "tests/testthat/test_maaslin_transform.R",
+          "git_blob_sha": "0ca11962b3ad1c209acbbbbb4cd08a29f6d01524",
+          "url": "https://github.com/biobakery/maaslin3/blob/d5f36fbc0a6a77001f0736ae389618fba07b1e1f/tests/testthat/test_maaslin_transform.R"
+        }
+      ]
+    },
+    {
+      "repository": "vegandevs/vegan",
+      "commit": "617e68b4a27162501063f6f206981d68dbc35ac9",
+      "default_branch": "master",
+      "license_api": "GPL-2.0",
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "fb688b6689f423b3d0d8aaa3bdbc8067f5a4b887",
+          "url": "https://github.com/vegandevs/vegan/blob/617e68b4a27162501063f6f206981d68dbc35ac9/DESCRIPTION"
+        },
+        {
+          "path": "R/adonis.R",
+          "git_blob_sha": "fcbb81cf1850fa5ff2b976862eb9d59d043891c0",
+          "url": "https://github.com/vegandevs/vegan/blob/617e68b4a27162501063f6f206981d68dbc35ac9/R/adonis.R"
+        },
+        {
+          "path": "R/betadisper.R",
+          "git_blob_sha": "5ff239ed38e2326389a684bbeca082928512704a",
+          "url": "https://github.com/vegandevs/vegan/blob/617e68b4a27162501063f6f206981d68dbc35ac9/R/betadisper.R"
+        },
+        {
+          "path": "R/decostand.R",
+          "git_blob_sha": "1b392a50ec721ae6173391b23fe55063944db286",
+          "url": "https://github.com/vegandevs/vegan/blob/617e68b4a27162501063f6f206981d68dbc35ac9/R/decostand.R"
+        },
+        {
+          "path": "R/RsquareAdj.R",
+          "git_blob_sha": "2a0f510daf8ddad96ccbb0ec1b9a6b86349ead29",
+          "url": "https://github.com/vegandevs/vegan/blob/617e68b4a27162501063f6f206981d68dbc35ac9/R/RsquareAdj.R"
+        },
+        {
+          "path": "R/anova.ccabyterm.R",
+          "git_blob_sha": "243309269d1cea652933f3a2f783290507b54e63",
+          "url": "https://github.com/vegandevs/vegan/blob/617e68b4a27162501063f6f206981d68dbc35ac9/R/anova.ccabyterm.R"
+        }
+      ]
+    },
+    {
+      "repository": "adeverse/adespatial",
+      "commit": "c845da812f26e3255b665d98f7f5a7e53b757d66",
+      "default_branch": "master",
+      "license_api": null,
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "1d8491a7dc06adcd0e6713acc84933a4f78c647c",
+          "url": "https://github.com/adeverse/adespatial/blob/c845da812f26e3255b665d98f7f5a7e53b757d66/DESCRIPTION"
+        },
+        {
+          "path": "R/dbmem.R",
+          "git_blob_sha": "649604c65aa8709d584eedc7269d2fd1f04786c6",
+          "url": "https://github.com/adeverse/adespatial/blob/c845da812f26e3255b665d98f7f5a7e53b757d66/R/dbmem.R"
+        },
+        {
+          "path": "R/forward.sel.R",
+          "git_blob_sha": "2544ecc510dad363f59a6f5c80504cbdd48109c2",
+          "url": "https://github.com/adeverse/adespatial/blob/c845da812f26e3255b665d98f7f5a7e53b757d66/R/forward.sel.R"
+        },
+        {
+          "path": "R/beta.div.R",
+          "git_blob_sha": "becf92de70134b523020ca5cc9abd7fc603d9ae1",
+          "url": "https://github.com/adeverse/adespatial/blob/c845da812f26e3255b665d98f7f5a7e53b757d66/R/beta.div.R"
+        },
+        {
+          "path": "R/moran.randtest.R",
+          "git_blob_sha": "12b3228d8a6b287abf12e9394b3d88c21b0d07c4",
+          "url": "https://github.com/adeverse/adespatial/blob/c845da812f26e3255b665d98f7f5a7e53b757d66/R/moran.randtest.R"
+        }
+      ]
+    },
+    {
+      "repository": "cran/mgcv",
+      "commit": "1b6a4c8374612da27e36420b4459e93acb183f2d",
+      "default_branch": "master",
+      "license_api": null,
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "555c46328931ab88f6d8c146c2ff08e88ba46074",
+          "url": "https://github.com/cran/mgcv/blob/1b6a4c8374612da27e36420b4459e93acb183f2d/DESCRIPTION"
+        },
+        {
+          "path": "R/mgcv.r",
+          "git_blob_sha": "ac96efd5bd5985ca62f595604682bdac146cb573",
+          "url": "https://github.com/cran/mgcv/blob/1b6a4c8374612da27e36420b4459e93acb183f2d/R/mgcv.r"
+        },
+        {
+          "path": "R/plots.r",
+          "git_blob_sha": "5e03b2d8e0eacc1822a8fdc0fca1ab903020067b",
+          "url": "https://github.com/cran/mgcv/blob/1b6a4c8374612da27e36420b4459e93acb183f2d/R/plots.r"
+        },
+        {
+          "path": "R/fast-REML.r",
+          "git_blob_sha": "c6c356afba61033fd0ca0f91a8f0b50208f11673",
+          "url": "https://github.com/cran/mgcv/blob/1b6a4c8374612da27e36420b4459e93acb183f2d/R/fast-REML.r"
+        }
+      ]
+    },
+    {
+      "repository": "rvalavi/blockCV",
+      "commit": "51e6903fe652411248aa20937c80b122e5e12e09",
+      "default_branch": "master",
+      "license_api": "GPL-3.0",
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "258d6bb2a4b6c902f12ad84a7facba4526fc61d8",
+          "url": "https://github.com/rvalavi/blockCV/blob/51e6903fe652411248aa20937c80b122e5e12e09/DESCRIPTION"
+        },
+        {
+          "path": "R/cv_group.R",
+          "git_blob_sha": "b6ceaf96c755328022538206083754a746a58caf",
+          "url": "https://github.com/rvalavi/blockCV/blob/51e6903fe652411248aa20937c80b122e5e12e09/R/cv_group.R"
+        },
+        {
+          "path": "R/cv_spatial.R",
+          "git_blob_sha": "34358934d5883dbde960bdcb1eec5e047bba5f18",
+          "url": "https://github.com/rvalavi/blockCV/blob/51e6903fe652411248aa20937c80b122e5e12e09/R/cv_spatial.R"
+        },
+        {
+          "path": "R/checks.R",
+          "git_blob_sha": "2e7d74f3e87b272aba380d32da028d8ef7a560c2",
+          "url": "https://github.com/rvalavi/blockCV/blob/51e6903fe652411248aa20937c80b122e5e12e09/R/checks.R"
+        },
+        {
+          "path": "tests/testthat/test-cv_nndm-leakage.R",
+          "git_blob_sha": "25d2bda6b2ee1cb9542ecd521e46a3f5669784a1",
+          "url": "https://github.com/rvalavi/blockCV/blob/51e6903fe652411248aa20937c80b122e5e12e09/tests/testthat/test-cv_nndm-leakage.R"
+        }
+      ]
+    },
+    {
+      "repository": "AnantharamanLab/METABOLIC",
+      "commit": "97236332519180f1d76a242dedb0aaa8191fdbb3",
+      "default_branch": "master",
+      "license_api": null,
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "66c06d827e5a718b7e492449639ca3d9f8737058",
+          "url": "https://github.com/AnantharamanLab/METABOLIC/blob/97236332519180f1d76a242dedb0aaa8191fdbb3/README.md"
+        },
+        {
+          "path": "METABOLIC-G.pl",
+          "git_blob_sha": "0ac8b9444cb84c5ce9caf1cfd3015bb27447d183",
+          "url": "https://github.com/AnantharamanLab/METABOLIC/blob/97236332519180f1d76a242dedb0aaa8191fdbb3/METABOLIC-G.pl"
+        },
+        {
+          "path": "METABOLIC-C.pl",
+          "git_blob_sha": "d2b2fe7f2c3d00eb5bb84887e8be7dfe4abe985e",
+          "url": "https://github.com/AnantharamanLab/METABOLIC/blob/97236332519180f1d76a242dedb0aaa8191fdbb3/METABOLIC-C.pl"
+        },
+        {
+          "path": "draw_biogeochemical_cycles.R",
+          "git_blob_sha": "9cd3524087de396cc43d0d8638915b692ef715e3",
+          "url": "https://github.com/AnantharamanLab/METABOLIC/blob/97236332519180f1d76a242dedb0aaa8191fdbb3/draw_biogeochemical_cycles.R"
+        }
+      ]
+    },
+    {
+      "repository": "SilentGene/DiTing",
+      "commit": "a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4",
+      "default_branch": "master",
+      "license_api": "GPL-3.0",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "7e79a5068e785e5b2f0c992682c6f32cd0154e60",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/README.md"
+        },
+        {
+          "path": "diting/workflow/scripts/pathway.py",
+          "git_blob_sha": "c4e06ca6f11137f3fe250187622b12013b0fe259",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/diting/workflow/scripts/pathway.py"
+        },
+        {
+          "path": "diting/workflow/scripts/kofamscan_filter.py",
+          "git_blob_sha": "ad92dd7b60082c40c3bcb8792b39e414d5bbc33a",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/diting/workflow/scripts/kofamscan_filter.py"
+        },
+        {
+          "path": "diting/workflow/scripts/func.py",
+          "git_blob_sha": "4e053636a3cd03e125f38b1c66813a1566169812",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/diting/workflow/scripts/func.py"
+        },
+        {
+          "path": "diting/workflow/rules/mapping.smk",
+          "git_blob_sha": "36cdd56192fbf0fcecd2af8d4aeb0680b2684148",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/diting/workflow/rules/mapping.smk"
+        },
+        {
+          "path": "diting/workflow/rules/aggregation.smk",
+          "git_blob_sha": "2253696d78fd9bb0e2812037ade2af5e37df0130",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/diting/workflow/rules/aggregation.smk"
+        },
+        {
+          "path": "diting/workflow/rules/annotation.smk",
+          "git_blob_sha": "1d65b6d3b5ac5ec46dc6268f3f375669b8567984",
+          "url": "https://github.com/SilentGene/DiTing/blob/a1542ccaeef7c2ca92c58407f9fc68ea6072e7b4/diting/workflow/rules/annotation.smk"
+        }
+      ]
+    },
+    {
+      "repository": "BortonWrightonLabs/DRAM",
+      "commit": "4111ef394907a0968f0524ee439848f9a23a30da",
+      "default_branch": "dev",
+      "license_api": "GPL-3.0",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "69fdb91d3fd0f4f77405b5f4cec4d901d5162307",
+          "url": "https://github.com/BortonWrightonLabs/DRAM/blob/4111ef394907a0968f0524ee439848f9a23a30da/README.md"
+        },
+        {
+          "path": "bin/hmm_parser.py",
+          "git_blob_sha": "09d8912c24a574bf7c67afebe6dba077c1946224",
+          "url": "https://github.com/BortonWrightonLabs/DRAM/blob/4111ef394907a0968f0524ee439848f9a23a30da/bin/hmm_parser.py"
+        },
+        {
+          "path": "bin/distill.py",
+          "git_blob_sha": "b19b6a21247a2eca919219d00c5cd6560d7fdc3c",
+          "url": "https://github.com/BortonWrightonLabs/DRAM/blob/4111ef394907a0968f0524ee439848f9a23a30da/bin/distill.py"
+        },
+        {
+          "path": "docs/rules_parser.md",
+          "git_blob_sha": "35bb09c005dcfa0dd417ae85a7223829c945270c",
+          "url": "https://github.com/BortonWrightonLabs/DRAM/blob/4111ef394907a0968f0524ee439848f9a23a30da/docs/rules_parser.md"
+        },
+        {
+          "path": ".gitmodules",
+          "git_blob_sha": "2a2d44070c418c2dd45d1cb6d33c843fecdcee99",
+          "url": "https://github.com/BortonWrightonLabs/DRAM/blob/4111ef394907a0968f0524ee439848f9a23a30da/.gitmodules"
+        }
+      ]
+    },
+    {
+      "repository": "Arkadiy-Garber/FeGenie",
+      "commit": "8efc74cabfd09680050e35b4deafc5db33e381fb",
+      "default_branch": "master",
+      "license_api": "AGPL-3.0",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "2681996823040b6007f04c44eb1083b626bbe50f",
+          "url": "https://github.com/Arkadiy-Garber/FeGenie/blob/8efc74cabfd09680050e35b4deafc5db33e381fb/README.md"
+        },
+        {
+          "path": "FeGenie.py",
+          "git_blob_sha": "04085d59f0efa31e8dfe272cb01db5fa8427d3c2",
+          "url": "https://github.com/Arkadiy-Garber/FeGenie/blob/8efc74cabfd09680050e35b4deafc5db33e381fb/FeGenie.py"
+        },
+        {
+          "path": "rscripts/DotPlot.R",
+          "git_blob_sha": "e1c323fab6cd0bb34b069ca6c4fff9fd5fcb12c8",
+          "url": "https://github.com/Arkadiy-Garber/FeGenie/blob/8efc74cabfd09680050e35b4deafc5db33e381fb/rscripts/DotPlot.R"
+        }
+      ]
+    },
+    {
+      "repository": "bcb-unl/run_dbcan",
+      "commit": "eab7fa1ee477fda0fcd8a094d5db96f2054c9093",
+      "default_branch": "master",
+      "license_api": "GPL-3.0",
+      "files": [
+        {
+          "path": "dbcan/IO/OverviewGenerator.py",
+          "git_blob_sha": "c4d8a8d9b61d4c06b063a75f39e2f444f6e04c04",
+          "url": "https://github.com/bcb-unl/run_dbcan/blob/eab7fa1ee477fda0fcd8a094d5db96f2054c9093/dbcan/IO/OverviewGenerator.py"
+        },
+        {
+          "path": "dbcan/annotation/pyhmmer_search.py",
+          "git_blob_sha": "a967d8806aab06ae2710be2ad57b1fc3b6e13ed4",
+          "url": "https://github.com/bcb-unl/run_dbcan/blob/eab7fa1ee477fda0fcd8a094d5db96f2054c9093/dbcan/annotation/pyhmmer_search.py"
+        },
+        {
+          "path": "dbcan/configs/pyhmmer_config.py",
+          "git_blob_sha": "28e8f2792145d827a43a693e53d9059e4cbc914b",
+          "url": "https://github.com/bcb-unl/run_dbcan/blob/eab7fa1ee477fda0fcd8a094d5db96f2054c9093/dbcan/configs/pyhmmer_config.py"
+        },
+        {
+          "path": "dbcan/annotation/cgc_substrate_prediction.py",
+          "git_blob_sha": "f380462569c0def8b7878a59c6f7798666d6c75b",
+          "url": "https://github.com/bcb-unl/run_dbcan/blob/eab7fa1ee477fda0fcd8a094d5db96f2054c9093/dbcan/annotation/cgc_substrate_prediction.py"
+        },
+        {
+          "path": "dbcan/constants/pyhmmer_search_constants.py",
+          "git_blob_sha": "5dd66eae3ecbcec603ba2c2ce46aa35a93b7772e",
+          "url": "https://github.com/bcb-unl/run_dbcan/blob/eab7fa1ee477fda0fcd8a094d5db96f2054c9093/dbcan/constants/pyhmmer_search_constants.py"
+        },
+        {
+          "path": "dbcan/constants/OverviewGenerator_constants.py",
+          "git_blob_sha": "f735809d424470ad1745a5cbec73dd9a525204dc",
+          "url": "https://github.com/bcb-unl/run_dbcan/blob/eab7fa1ee477fda0fcd8a094d5db96f2054c9093/dbcan/constants/OverviewGenerator_constants.py"
+        }
+      ]
+    },
+    {
+      "repository": "GreeningLab/HydDB",
+      "commit": "2f7c9fee0d97c229a4580b40d38dc234d1421db2",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "4bffa4feb7df65228736ad5f5c9d8449dd86e4ab",
+          "url": "https://github.com/GreeningLab/HydDB/blob/2f7c9fee0d97c229a4580b40d38dc234d1421db2/README.md"
+        },
+        {
+          "path": "hydclassify.sh",
+          "git_blob_sha": "50abb2a5dc9bbe2b0b06fc8f13f6caba05659137",
+          "url": "https://github.com/GreeningLab/HydDB/blob/2f7c9fee0d97c229a4580b40d38dc234d1421db2/hydclassify.sh"
+        }
+      ]
+    },
+    {
+      "repository": "GreeningLab/HydDB-webserver",
+      "commit": "d3bae49769446e24e71c27e9e36aa8d142ca0bfc",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "classifier/classifier.py",
+          "git_blob_sha": "fd42649f6be6a46cb23f40357422038e34c05f37",
+          "url": "https://github.com/GreeningLab/HydDB-webserver/blob/d3bae49769446e24e71c27e9e36aa8d142ca0bfc/classifier/classifier.py"
+        },
+        {
+          "path": "classifier/tasks.py",
+          "git_blob_sha": "c96ca04db23eb59253f94ba94a8cb267b1d5dc86",
+          "url": "https://github.com/GreeningLab/HydDB-webserver/blob/d3bae49769446e24e71c27e9e36aa8d142ca0bfc/classifier/tasks.py"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "87aa8687d372090f32ba09a2ee844f5236baa155",
+          "url": "https://github.com/GreeningLab/HydDB-webserver/blob/d3bae49769446e24e71c27e9e36aa8d142ca0bfc/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "dgittins/CANT-HYD-HydrocarbonBiodegradation",
+      "commit": "ebe13b9c29532062d9a8412ec45f00e83fd4dcb9",
+      "default_branch": "main",
+      "license_api": "GPL-3.0",
+      "files": [
+        {
+          "path": "README.md",
+          "git_blob_sha": "4f44277f3ee4ec05c9152a8115791c93bd7864ed",
+          "url": "https://github.com/dgittins/CANT-HYD-HydrocarbonBiodegradation/blob/ebe13b9c29532062d9a8412ec45f00e83fd4dcb9/README.md"
+        },
+        {
+          "path": "manuscript/data analysis/filter_hmm_scores_aboveTC.py",
+          "git_blob_sha": "36d6d3c92abf56404ff0d2bc27c2c51e2eb409d6",
+          "url": "https://github.com/dgittins/CANT-HYD-HydrocarbonBiodegradation/blob/ebe13b9c29532062d9a8412ec45f00e83fd4dcb9/manuscript/data%20analysis/filter_hmm_scores_aboveTC.py"
+        }
+      ]
+    },
+    {
+      "repository": "qichao1984/NCyc",
+      "commit": "4ee9aad986264d79e0763933b4d05b05c31125fe",
+      "default_branch": "master",
+      "license_api": null,
+      "files": [
+        {
+          "path": "NCycProfiler.PL",
+          "git_blob_sha": "ea5a96be8b5557b9498202b08a9979c8858f1b22",
+          "url": "https://github.com/qichao1984/NCyc/blob/4ee9aad986264d79e0763933b4d05b05c31125fe/NCycProfiler.PL"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "d692f031bc013200934d7ced7ba0f3430eb21e33",
+          "url": "https://github.com/qichao1984/NCyc/blob/4ee9aad986264d79e0763933b4d05b05c31125fe/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "qichao1984/SCycDB",
+      "commit": "f107be1aec71dd87cafb5e0eb9fdbb0c7f3ffad6",
+      "default_branch": "master",
+      "license_api": null,
+      "files": [
+        {
+          "path": "SCycDB_FunctionProfiler.PL",
+          "git_blob_sha": "dff5c29bbc801ee7d038c9a2b9b217747173f68b",
+          "url": "https://github.com/qichao1984/SCycDB/blob/f107be1aec71dd87cafb5e0eb9fdbb0c7f3ffad6/SCycDB_FunctionProfiler.PL"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "49ecade85db4cd8c96b3818f93e7f4850ea35bd9",
+          "url": "https://github.com/qichao1984/SCycDB/blob/f107be1aec71dd87cafb5e0eb9fdbb0c7f3ffad6/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "qichao1984/MCycDB",
+      "commit": "ceba218716fa07f016ab91c7575dae68a0e08c6e",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "MCycDB_FunctionProfiler.PL",
+          "git_blob_sha": "2cb3fca426fb4db6ab75230439431b062f4062ff",
+          "url": "https://github.com/qichao1984/MCycDB/blob/ceba218716fa07f016ab91c7575dae68a0e08c6e/MCycDB_FunctionProfiler.PL"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "2b3591d54d401b02d41ee4402d2a8c562620a2c2",
+          "url": "https://github.com/qichao1984/MCycDB/blob/ceba218716fa07f016ab91c7575dae68a0e08c6e/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "ZengJiaxiong/Phosphorus-cycling-database",
+      "commit": "7ffc00dd06458eba7e700c7e8b314558105c95d4",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "filter_Generate_ORF2gene.py",
+          "git_blob_sha": "8fe161601d9c8daf68c5b2144c3e2cb6b0f101f1",
+          "url": "https://github.com/ZengJiaxiong/Phosphorus-cycling-database/blob/7ffc00dd06458eba7e700c7e8b314558105c95d4/filter_Generate_ORF2gene.py"
+        },
+        {
+          "path": "Coverage_get.py",
+          "git_blob_sha": "cf99e399b055a619a67979c6798c841f3afb1220",
+          "url": "https://github.com/ZengJiaxiong/Phosphorus-cycling-database/blob/7ffc00dd06458eba7e700c7e8b314558105c95d4/Coverage_get.py"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "c8b3c1b4f63ad3fbe43eab752e82c69ee5910fe9",
+          "url": "https://github.com/ZengJiaxiong/Phosphorus-cycling-database/blob/7ffc00dd06458eba7e700c7e8b314558105c95d4/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "ccycdb/ccycdb.github.io",
+      "commit": "10de9d4638678c740d2b3fe4e5fea3596021f039",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "CCycdb.pl",
+          "git_blob_sha": "e0f10f0f6aa90f8ccbc66eb0933cb3be459aa390",
+          "url": "https://github.com/ccycdb/ccycdb.github.io/blob/10de9d4638678c740d2b3fe4e5fea3596021f039/CCycdb.pl"
+        },
+        {
+          "path": "README.md",
+          "git_blob_sha": "7dfaf3173a2c95d80d5cd0f51d774d000fac899e",
+          "url": "https://github.com/ccycdb/ccycdb.github.io/blob/10de9d4638678c740d2b3fe4e5fea3596021f039/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "mirnavazquez/RbiMs",
+      "commit": "92e083179967a280985f3933334c2bf8aef72107",
+      "default_branch": "main",
+      "license_api": "NOASSERTION",
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "7b1642d06fdafae879fded0d9ac0fb8a83903414",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/DESCRIPTION"
+        },
+        {
+          "path": "R/CALC-calc_abundance.R",
+          "git_blob_sha": "7a6b338395b8ae12c013b25a71f071b1c7248dba",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/CALC-calc_abundance.R"
+        },
+        {
+          "path": "R/CALC-calc_binary.R",
+          "git_blob_sha": "315b05ab53003058520d415fe865113ed292eb2c",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/CALC-calc_binary.R"
+        },
+        {
+          "path": "R/CALC-calc_percentage.R",
+          "git_blob_sha": "02036bcf84325f559bc2aa4529398ad31c743e22",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/CALC-calc_percentage.R"
+        },
+        {
+          "path": "R/CALC-pathway_directional_bias.R",
+          "git_blob_sha": "ea89629309e095f5e578f2bc5e0bc498d58863d4",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/CALC-pathway_directional_bias.R"
+        },
+        {
+          "path": "R/HELPERS_normalization.R",
+          "git_blob_sha": "7803e4ba0e6a5544a799d9b4ea773bc83ae815fe",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/HELPERS_normalization.R"
+        },
+        {
+          "path": "R/HELPERS_differential.R",
+          "git_blob_sha": "fb720a9df2af5440569cb873e8a6454ddbeeefc1",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/HELPERS_differential.R"
+        },
+        {
+          "path": "R/HELPERS_randomforest.R",
+          "git_blob_sha": "7bd8dacac10ad1ab05a0d4bccd897c3780042d19",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/HELPERS_randomforest.R"
+        },
+        {
+          "path": "R/GET_discriminant_features.R",
+          "git_blob_sha": "0fb1451e1841082e18882f1ee988510393f07432",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/GET_discriminant_features.R"
+        },
+        {
+          "path": "R/MAPPING-mapping_ko.R",
+          "git_blob_sha": "2d073a8d64a8a3fc3b3adc9d0778ff37bc255a81",
+          "url": "https://github.com/mirnavazquez/RbiMs/blob/92e083179967a280985f3933334c2bf8aef72107/R/MAPPING-mapping_ko.R"
+        }
+      ]
+    },
+    {
+      "repository": "jepusto/clubSandwich",
+      "commit": "a3c79948c4adb918ea047a711ad9a6233a8d6b3a",
+      "default_branch": "main",
+      "license_api": null,
+      "files": [
+        {
+          "path": "DESCRIPTION",
+          "git_blob_sha": "05ba0b97a771e3a2c685555e65c3d5db651dbc53",
+          "url": "https://github.com/jepusto/clubSandwich/blob/a3c79948c4adb918ea047a711ad9a6233a8d6b3a/DESCRIPTION"
+        },
+        {
+          "path": "R/CR-adjustments.R",
+          "git_blob_sha": "691b4abfbf7f43b75e2b4525c9fc936f1ed2ac4c",
+          "url": "https://github.com/jepusto/clubSandwich/blob/a3c79948c4adb918ea047a711ad9a6233a8d6b3a/R/CR-adjustments.R"
+        },
+        {
+          "path": "R/coef_test.R",
+          "git_blob_sha": "0b7e92a8c743db2d93620073f56ada0f11819ee5",
+          "url": "https://github.com/jepusto/clubSandwich/blob/a3c79948c4adb918ea047a711ad9a6233a8d6b3a/R/coef_test.R"
+        },
+        {
+          "path": "R/glm.R",
+          "git_blob_sha": "f5a1006e5554ee34ded1ae765feae8c692b6338e",
+          "url": "https://github.com/jepusto/clubSandwich/blob/a3c79948c4adb918ea047a711ad9a6233a8d6b3a/R/glm.R"
+        },
+        {
+          "path": "R/lm.R",
+          "git_blob_sha": "7185364b920052a80ff67f94141b9ced2d3ba72a",
+          "url": "https://github.com/jepusto/clubSandwich/blob/a3c79948c4adb918ea047a711ad9a6233a8d6b3a/R/lm.R"
+        }
+      ]
+    },
+    {
+      "repository": "BortonWrightonLabs/dram-rules",
+      "commit": "194e4dec3691edf0d63108d1bf0b9f20d3534847",
+      "default_branch": null,
+      "license_api": null,
+      "files": [
+        {
+          "path": "src/dram_rules/rule_parser/rules.py",
+          "git_blob_sha": "a926ee9a2c63129ef2d04537e1da332987ec7e99",
+          "url": "https://github.com/BortonWrightonLabs/dram-rules/blob/194e4dec3691edf0d63108d1bf0b9f20d3534847/src/dram_rules/rule_parser/rules.py"
+        },
+        {
+          "path": "src/dram_rules/data/rules_bgc.tsv",
+          "git_blob_sha": "250a646706cb42010d2c5d9f09a765fb987db3c5",
+          "url": "https://github.com/BortonWrightonLabs/dram-rules/blob/194e4dec3691edf0d63108d1bf0b9f20d3534847/src/dram_rules/data/rules_bgc.tsv"
+        },
+        {
+          "path": "src/dram_rules/data/rules_common.tsv",
+          "git_blob_sha": "c633f6920cc069ae9385e7f93c491ef93ef693c6",
+          "url": "https://github.com/BortonWrightonLabs/dram-rules/blob/194e4dec3691edf0d63108d1bf0b9f20d3534847/src/dram_rules/data/rules_common.tsv"
+        },
+        {
+          "path": "tests/test_parsing.py",
+          "git_blob_sha": "c757497fd54c41d1781dae9bf6e7285e982de7b5",
+          "url": "https://github.com/BortonWrightonLabs/dram-rules/blob/194e4dec3691edf0d63108d1bf0b9f20d3534847/tests/test_parsing.py"
+        }
+      ]
+    }
+  ]
+}

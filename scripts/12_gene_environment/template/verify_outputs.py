@@ -31,11 +31,24 @@ def verify(root, viewers=False):
     spec=importlib.util.spec_from_file_location('rules',root/'evaluate.py');ev=importlib.util.module_from_spec(spec);spec.loader.exec_module(ev)
     ev.self_tests()
     states=[]
+    blocks=pd.read_csv(root/'outputs/rule_block_evidence.tsv.gz',sep='\t')
+    assert not blocks.duplicated(['run_accession','rule_id','threshold']).any()
+    assert len(blocks)==len(ids)*len(rules)*2
+    assert set(blocks.run_accession)==set(ids) and set(blocks.rule_id)==set(rules.rule_id)
+    assert set(blocks.threshold)=={1,2}
+    assert (blocks.n_blocks>0).all()
+    assert (blocks[['n_detected','n_not_met','n_unknown']]>=0).all().all()
+    np.testing.assert_array_equal(blocks.n_detected+blocks.n_not_met+blocks.n_unknown,blocks.n_blocks)
+    np.testing.assert_allclose(blocks.coverage_lower,blocks.n_detected/blocks.n_blocks)
+    np.testing.assert_allclose(blocks.coverage_upper,(blocks.n_detected+blocks.n_unknown)/blocks.n_blocks)
     for threshold in [1,2]:
         state=pd.read_csv(src/f'rule_status_ge{threshold}.tsv',sep='\t',index_col=0).loc[ids]
         values={k:(mat.loc[k].to_numpy()>=threshold).astype('uint8') for k in raw.index if k in mat.index}
         for row in rules.itertuples():
             np.testing.assert_array_equal(state[row.rule_id],ev.evaluate(ev.parse(row.expression),values,len(ids)))
+            b=blocks[(blocks.threshold==threshold)&(blocks.rule_id==row.rule_id)].set_index('run_accession').loc[ids]
+            implied=np.where(b.n_not_met>0,0,np.where(b.n_unknown>0,2,1))
+            np.testing.assert_array_equal(state[row.rule_id],implied)
         states.append(state.to_numpy())
     assert (states[0][states[1]==1]==1).all()
     diagnostics=pd.read_csv(src/'environment_association_diagnostics.tsv',sep='\t')

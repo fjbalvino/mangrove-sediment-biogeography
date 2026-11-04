@@ -15,6 +15,13 @@ The source derives from version 7 of the reviewed 191-profile package. That refe
 
 ## Inputs and dependencies
 
+The [implementation audit](FUNCTIONAL_TOOL_AUDIT.md) records all candidate-tool
+decisions, pinned source files and scoped upstream tests. Preparation additionally
+exports per-rule logical block coverage with unknown-value bounds, and conditional
+predictor-information diagnostics. These additions do not relax whole-rule
+criteria or turn exploratory coefficients into inferential results. Use a fresh
+run directory after updating the code.
+
 Use Python 3.12 and the pinned versions in `config/gene_biogeography/requirements.txt`:
 
 ```bash

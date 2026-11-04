@@ -18,6 +18,11 @@ Functional counts represent protein-cluster members assigned to KOs. They do not
 
 ## Pipeline workflow
 
+The [functional-tool audit](docs/FUNCTIONAL_TOOL_AUDIT.md) documents the exact
+upstream implementations reviewed, reproducible reference probes and adopted
+improvements. It distinguishes executed software from curation references and
+methods deferred until compatible sequence or sampling information is available.
+
 | Stage | Purpose | Source scripts | Manuscript context |
 | --- | --- | --- | --- |
 | 01 | Acquire metadata and reads; QC, classify and select profiles | [01_taxonomic_preprocessing](scripts/01_taxonomic_preprocessing) | Atlas construction; Figure 1 |

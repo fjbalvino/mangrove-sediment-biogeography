@@ -77,6 +77,24 @@ def evaluate(tree,values,n):
     if op=='or':return np.where((v==1).any(axis=0),1,np.where((v==2).any(axis=0),2,0))
     raise ValueError(op)
 
+def block_evidence(expression, values, n):
+    """Coverage of top-level AND blocks, preserving unresolvable blocks.
+
+    Following the step/subunit distinction reviewed in METABOLIC and DRAM,
+    a plus-linked complex is one block, not several independent steps.
+    Bounds describe annotation uncertainty, NOT confidence intervals or flux.
+    This is an independent implementation; no upstream source is vendored.
+    """
+    blocks = split_top(unwrap(expression.strip()), 'space')
+    states = np.stack([evaluate(parse(block), values, n) for block in blocks])
+    detected = (states == 1).sum(axis=0)
+    unknown = (states == 2).sum(axis=0)
+    return dict(blocks=blocks, states=states, n_blocks=len(blocks),
+                n_detected=detected, n_not_met=(states == 0).sum(axis=0),
+                n_unknown=unknown, coverage_lower=detected / len(blocks),
+                coverage_upper=(detected + unknown) / len(blocks))
+
+
 def self_tests():
     tests=[
         ('K00001+K00002-K00003',{'K00001':1,'K00002':1},1),

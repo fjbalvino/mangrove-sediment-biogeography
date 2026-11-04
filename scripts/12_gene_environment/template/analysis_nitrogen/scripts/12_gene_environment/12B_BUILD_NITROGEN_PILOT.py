@@ -91,11 +91,26 @@ def within_fit(x, y, study):
     b = np.linalg.lstsq(xc, yc, rcond=None)[0]
     info = np.sum(xc * xc, axis=0)
     contrib = np.array([np.sum(xc[study == s] ** 2, axis=0) for s in np.unique(study)])
+    # Frisch-Waugh-Lovell geometry: information for a partial coefficient is
+    # the predictor residual after adjusting for every other predictor.
+    # Marginal X^2 alone can conceal study dominance under collinearity.
+    partial = np.empty_like(xc)
+    for j in range(xc.shape[1]):
+        other = np.delete(xc, j, axis=1)
+        partial[:, j] = xc[:, j] - other @ np.linalg.lstsq(other, xc[:, j], rcond=None)[0]
+    partial_info = np.sum(partial ** 2, axis=0)
+    partial_contrib = np.array([np.sum(partial[study == s] ** 2, axis=0) for s in np.unique(study)])
+    shares = partial_contrib / partial_info
     residual = yc - xc @ b
     df = len(y) - len(np.unique(study)) - x.shape[1]
     return dict(beta=b, df=df, residual=residual, xc=xc, yc=yc,
                 n_informative=(contrib > 1e-12).sum(axis=0),
                 max_study_information_share=contrib.max(axis=0) / info,
+                partial_predictors=partial,
+                conditional_variation_fraction=partial_info / info,
+                n_studies_with_conditional_information=(shares > 1e-10).sum(axis=0),
+                max_conditional_study_information_share=shares.max(axis=0),
+                effective_information_studies=1 / np.sum(shares ** 2, axis=0),
                 condition_number=float(np.linalg.cond(xc)))
 
 
@@ -152,6 +167,10 @@ def association_diagnostics(group_rel, group_detection, groups, labels, out):
                     n_groups=len(dat), n_studies=len(np.unique(studies)),
                     n_studies_with_predictor_variation=int(fit['n_informative'][i]),
                     max_study_information_share=float(fit['max_study_information_share'][i]),
+                    conditional_variation_fraction=float(fit['conditional_variation_fraction'][i]),
+                    n_studies_with_conditional_information=int(fit['n_studies_with_conditional_information'][i]),
+                    max_conditional_study_information_share=float(fit['max_conditional_study_information_share'][i]),
+                    effective_information_studies=float(fit['effective_information_studies'][i]),
                     nominal_residual_df=fit['df'], condition_number=fit['condition_number'],
                     loo_min=float(loo[:, i].min()) if len(loo) else np.nan,
                     loo_max=float(loo[:, i].max()) if len(loo) else np.nan,
@@ -159,7 +178,7 @@ def association_diagnostics(group_rel, group_detection, groups, labels, out):
                     loo_valid_fits=len(loo),
                     beta_with_annotation_yield_sensitivity=float(adjusted['beta'][i]) if adjusted else np.nan,
                     inference='Exploratory slopes only; LOO range is not a confidence interval; no p or q'))
-    pd.DataFrame(records, columns=['KO','gene','outcome','predictor','beta_per_sd','predictor_sd','n_groups','n_studies','n_studies_with_predictor_variation','max_study_information_share','nominal_residual_df','condition_number','loo_min','loo_max','loo_sign_agreement','loo_valid_fits','beta_with_annotation_yield_sensitivity','inference']).to_csv(out/'environment_association_diagnostics.tsv', sep='\t', index=False)
+    pd.DataFrame(records, columns=['KO','gene','outcome','predictor','beta_per_sd','predictor_sd','n_groups','n_studies','n_studies_with_predictor_variation','max_study_information_share','conditional_variation_fraction','n_studies_with_conditional_information','max_conditional_study_information_share','effective_information_studies','nominal_residual_df','condition_number','loo_min','loo_max','loo_sign_agreement','loo_valid_fits','beta_with_annotation_yield_sensitivity','inference']).to_csv(out/'environment_association_diagnostics.tsv', sep='\t', index=False)
     pd.DataFrame(support).to_csv(out/'per_KO_model_support.tsv', sep='\t', index=False)
     return dict(n_complete_groups=len(complete), n_complete_studies=complete.study_id.nunique(),
                 n_diagnostic_coefficients=len(records), inference='No confirmatory tests performed',

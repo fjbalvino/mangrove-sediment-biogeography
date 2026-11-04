@@ -1,5 +1,18 @@
 # Change log
 
+## Functional implementation audit
+
+- Audit 25 upstream repositories with pinned source-file provenance and eight
+  synthetic reference probes; distinguish inspected, tested and executed methods.
+- Add logical block-evidence bounds for all cycles while retaining strict whole-rule
+  states, mandatory complexes and unknown-row semantics.
+- Add conditional predictor-information diagnostics without changing existing
+  coefficients, study-omission ranges or inferential restrictions.
+- Verify these additions on all 191 approved functional profiles; preserve original
+  inputs and keep generated results outside Git.
+- Clarify atlas software attribution and document sequence/annotation requirements
+  for future specialist workflows.
+
 ## 2026-11-03 — Reproducible gene-biogeography extension
 
 - Add the reviewed nitrogen and remaining-cycle analysis/calibration sources and

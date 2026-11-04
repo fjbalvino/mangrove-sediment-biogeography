@@ -132,7 +132,7 @@ def commands(stage, run, args):
     rs = run/'analysis_remaining/scripts'
     if stage == 'prepare':
         return [[py,str(ns/'12B_BUILD_NITROGEN_PILOT.py'),'--metadata',str(run/'inputs/metadata_functional.csv'),'--matrix',str(run/'inputs/functional_KO_counts_original.tsv.gz'),'--samples',str(run/'inputs/functional_accessions.txt'),'--rules',str(run/'inputs/operational_rules.tsv'),'--reactions',str(run/'analysis_nitrogen/config/gene_environment/nitrogen_reactions.json'),'--outdir',str(run/'analysis_nitrogen/results')],
-                [py,str(ns/'12D_DESIGN_SUPPORT.py')],[py,str(rs/'01_prepare.py')],[py,str(rs/'06_curate.py')],[py,str(run/'atlas/scripts/00_integrate_analyses.py')],[py,str(run/'verify_outputs.py')]]
+                [py,str(ns/'12D_DESIGN_SUPPORT.py')],[py,str(rs/'01_prepare.py')],[py,str(rs/'06_curate.py')],[py,str(run/'block_evidence.py')],[py,str(run/'atlas/scripts/00_integrate_analyses.py')],[py,str(run/'verify_outputs.py')]]
     if stage == 'atlas':
         return [[py,str(run/'atlas/scripts/08_build_atlas.py')],[py,str(run/'plot_supplementary_panels.py')],[py,str(run/'verify_outputs.py'),'--viewers']]
     if stage == 'calibration-plan':
