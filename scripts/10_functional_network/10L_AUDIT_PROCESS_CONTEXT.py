@@ -92,6 +92,13 @@ def plot_pilot(out):
                          'axes.spines.top':False,'axes.spines.right':False})
     figdir = out / 'figures'
     figdir.mkdir(exist_ok=True)
+    def save_figure(fig, stem):
+        # Publish complete files so synchronisation never observes partial PNGs.
+        for suffix in ('png', 'pdf'):
+            destination = figdir / f'{stem}.{suffix}'
+            temporary = destination.with_name(destination.name + '.tmp')
+            fig.savefig(temporary, format=suffix, dpi=240, bbox_inches='tight')
+            temporary.replace(destination)
     a = pd.read_csv(out / 'process_context/cycle_selection_coverage.tsv', sep='\t')
     names = {'C':'Carbon','CH4_C1':'Methane / C1','N':'Nitrogen','S':'Sulfur',
              'P':'Phosphorus','Fe':'Iron acquisition','H2_electrons':'Hydrogen / electron transfer',
@@ -112,7 +119,7 @@ def plot_pilot(out):
     ax.set_title('Biochemical coverage is lost during network selection',loc='left',fontweight='bold',pad=16)
     fig.text(.015,.02,'191 profiles | 19 of 236 major-module KOs map to the targeted catalogue. KOs shared between cycles are counted in each panel.',fontsize=9,color='#505564')
     fig.tight_layout(rect=(0,.055,1,1))
-    for suffix in ('png','pdf'): fig.savefig(figdir/f'01_cycle_selection_coverage.{suffix}',dpi=240,bbox_inches='tight')
+    save_figure(fig, '01_cycle_selection_coverage')
     plt.close(fig)
     evidence = pd.read_csv(out / 'process_context/reference_chain_evidence.tsv', sep='\t')
     d=evidence[(evidence.chain=='N_denitrification_Nap')&(evidence.threshold==1)&(evidence.role=='chain_step')]
@@ -131,7 +138,7 @@ def plot_pilot(out):
     ax.text(.03,1.86,f'All four selected steps co-detected in {joint}/{total} profiles; no nitrogen-catalogue KO is connected in the historical network.',fontsize=10)
     ax.text(.03,.34,'Arrows: biochemical reference only. Colour: fraction of profiles meeting each component rule (≥1 record).',fontsize=10)
     ax.text(.03,.12,'Community co-detection does not establish the same organism, enzyme activity, net nitrogen loss or a complete pathway.',fontsize=10,color='#505564')
-    for suffix in ('png','pdf'):fig.savefig(figdir/f'02_nitrogen_chain_context.{suffix}',dpi=240,bbox_inches='tight')
+    save_figure(fig, '02_nitrogen_chain_context')
     plt.close(fig)
     e=pd.read_csv(out / 'historical_edge_diagnostics.tsv.gz',sep='\t')
     fig,ax=plt.subplots(figsize=(7,6))
@@ -141,7 +148,7 @@ def plot_pilot(out):
     ax.set_title('Historical edges: global versus within-study association',fontsize=11)
     fig.text(.02,.015,'1,062 preselected edges; 51 coordinate-study groups in 10 study labels. Descriptive comparison, not edge significance.',fontsize=8)
     fig.tight_layout(rect=(0,.035,1,1))
-    for suffix in ('png','pdf'):fig.savefig(figdir/f'03_association_design_sensitivity.{suffix}',dpi=240,bbox_inches='tight')
+    save_figure(fig, '03_association_design_sensitivity')
     plt.close(fig)
 
 
