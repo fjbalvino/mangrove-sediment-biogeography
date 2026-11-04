@@ -188,3 +188,11 @@ Commit scripts, tests, documentation and small curated rule definitions only.
 outputs, plots, reports or archives.** Existing repository validation enforces
 this boundary. Keep the broad literature catalogue and manuscript annex material
 separate until explicitly incorporated into the manuscript workflow.
+
+## Integrated geographic and environmental extension
+
+The later eight-panel atlas, environmental design support and conditional model
+calibration are documented in [GENE_BIOGEOGRAPHY](GENE_BIOGEOGRAPHY.md). Use workflow
+08 for these stages with the complete matrix. Workflow 07 remains the standalone
+rule-evidence evaluator; neither workflow infers activity or pathway completeness
+within individual organisms.

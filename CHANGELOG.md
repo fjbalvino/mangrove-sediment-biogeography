@@ -1,5 +1,18 @@
 # Change log
 
+## 2026-11-03 — Reproducible gene-biogeography extension
+
+- Add the reviewed nitrogen and remaining-cycle analysis/calibration sources and
+  the integrated eight-panel atlas generator, including map-layer regression checks.
+- Introduce explicit external inputs, ID-safe cohort selection, dynamic dimensions,
+  immutable run snapshots, fresh calibration plans and stage logs.
+- Preserve the full-matrix denominator, unavailable-row semantics, descriptive
+  hierarchical weighting and exploratory status of observed associations.
+- Add a local static-site exporter and inactive Pages workflow example; no generated
+  data, matrices, images or atlas pages are included in this update.
+- Keep existing network analysis as provenance while its scientific redesign is pending.
+
+
 ## Functional extension — 2026-10-29
 
 - Added a documented biogeochemical-cycle section with 97 operational rules across 65 categories and 32 reference modules.

@@ -55,3 +55,14 @@ The Figure 1 final atlas layout is not supplied as a dedicated validated plottin
 No scientific analysis was rerun as part of the repository reorganization. Numerical results in this guide come from the supplied manuscript and supplements.
 
 When the separate data/figure deposit is published, update the manuscript's code/data availability paragraph: code, manifests and checksums belong in GitHub; numerical tables, matrices, fitted objects and figures belong in the data companion.
+
+## Biogeochemical gene–environment extension
+
+The current eight-panel atlas and exploratory gene–environment methods are in
+[GENE_BIOGEOGRAPHY](GENE_BIOGEOGRAPHY.md), with entry point
+`workflow/08_RUN_GENE_BIOGEOGRAPHY.py`. The historical nitrogen calibration and
+design support correspond to Supplementary information 6 (Tables S34–S39, Figures
+S8–S9); the remaining-panel calibration corresponds to Supplementary information
+7 (Tables S40–S41, Figure S10). Future cohorts require new design diagnostics and
+calibration; numbering is reassigned when the manuscript is updated. The main
+network section is pending scientific redesign, and this driver does not refit it.

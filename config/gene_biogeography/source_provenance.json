@@ -1,0 +1,31 @@
+{
+  "source_package": "Biogeochemical_cycles_191.zip",
+  "source_version": 7,
+  "source_sha256": "dc895550ca4eaf9a70b4d1cc7be7b91063a4da799e6440bd2ea377522e3e18e5",
+  "source_files_sha256": {
+    "evaluate.py": "71b5e3600d56ab73d19dfab2411c440d3f23c72a453b286049af7ade7a36fdb1",
+    "analysis_nitrogen/scripts/12_gene_environment/12B_BUILD_NITROGEN_PILOT.py": "eef13b3c1a8f3ddfac814fb9b85224eb862c1c5405c00133485380b692a53cfb",
+    "analysis_nitrogen/scripts/12_gene_environment/12G_PREPARE_FINAL_CALIBRATION.py": "87bd261b1109de543ce114e20770b2b23dacc1e2ef8353b84addc624020829f1",
+    "analysis_nitrogen/scripts/12_gene_environment/12G_RUN_FINAL_CALIBRATION.R": "4e85f28738511c841b9c8788c93845f5bada24bdce46bb0b2cb16d71b8d04b91",
+    "analysis_nitrogen/scripts/12_gene_environment/12H_SUMMARIZE_FINAL_CALIBRATION.py": "0f3adea79440ada91a894669d4fc8c60d9578df2c222839563eeea0dd3249998",
+    "analysis_nitrogen/scripts/12_gene_environment/run_final_calibration.py": "30992a5242e8ba076885a0ca6ba7b89caf81d6b042481b7ee035521929688bc7",
+    "analysis_remaining/scripts/01_prepare.py": "4b60514cc7220bdf197840355633310846692bc6d34231f5fa3cb11f0844ce04",
+    "analysis_remaining/scripts/02_models.py": "3f0f937c3ae3474a2766b3a38c98240b3471fdc6267f7d7cc7fd2055add73d2d",
+    "analysis_remaining/scripts/03_prepare_calibration.py": "d73300b7efee2ea46cfab57339004eee92c4b239424d4a47d159ccb3748a33b4",
+    "analysis_remaining/scripts/04_verify_models.py": "2f68ceb12ee122269980938f4329e91b0c27c7665640539c92ffcbe3c694e1e8",
+    "analysis_remaining/scripts/04_verify_models.R": "2efb8aa5410d23fb06d6c80c8ae933bd1adc139bf191f0741f847b9682acbd8b",
+    "analysis_remaining/scripts/05_calibrate.py": "431233950e4baaf36b30428cba00c4db538c76f4f9fe0db3e53f8754affe4a2a",
+    "analysis_remaining/scripts/06_curate.py": "884a7d2342f737ea65f370ce65c27ddd79cdb8273d02c609338eacc9335df795",
+    "analysis_remaining/scripts/09_summarize.py": "2f39fc75dafa63ace11ad36b200dace753e7dc9719e56c104e64f32eba4a06e4",
+    "atlas/scripts/00_integrate_analyses.py": "d7c6b0b03695292ce83102e331069c2e76c980be7a1f47ce830ec78f1c9db965",
+    "atlas/scripts/07_graphs.py": "8477b9ebc48b6d1d9d0eae8c16ecf1581e16d51d5ea533eafe269e566213fae1",
+    "atlas/scripts/08_build_atlas.py": "47efa1065c0541f2f82872d350e3cd62a65e723adceeb3c09b74655d23bb5ff1",
+    "atlas/scripts/atlas_interaction.js": "2591003f88466f6f7c1b3855b2d211dd8eb7405036479a922d8e3e8d9017ac56",
+    "atlas/scripts/viewer.css": "e38b37ce224061523f159f5de41e2180439703185d2db093f05f10b6331865c5",
+    "atlas/assets/vendor/leaflet.js": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a",
+    "atlas/assets/vendor/leaflet.css": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6",
+    "atlas/assets/vendor/leaflet-LICENSE.txt": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb",
+    "atlas/assets/vendor/README.txt": "29370c3ead7e4105eda6e2800b6809cef032ce575a4158f18d0c4e88b74e7d7e"
+  },
+  "changes": "Portable input staging and dynamic cohort sizes; fresh plans and checkpoints required. See docs/GENE_BIOGEOGRAPHY.md."
+}

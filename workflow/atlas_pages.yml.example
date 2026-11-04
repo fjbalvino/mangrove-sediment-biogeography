@@ -1,0 +1,67 @@
+# INACTIVE EXAMPLE. Copy to .github/workflows/atlas-pages.yml only when publication
+# of the generated website and its embedded derived data/images is authorized.
+# Upload atlas-site.zip locally as a Release asset first; do not commit it.
+name: Publish reviewed atlas
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release containing the reviewed atlas-site.zip asset
+        type: string
+        required: true
+      sha256:
+        description: SHA-256 of that exact ZIP, printed by the local exporter
+        type: string
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: atlas-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@v5
+      - name: Download reviewed website asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          EXPECTED_SHA256: ${{ inputs.sha256 }}
+        run: |
+          [[ "$EXPECTED_SHA256" =~ ^[a-fA-F0-9]{64}$ ]]
+          gh release download "$RELEASE_TAG" --pattern atlas-site.zip --dir "$RUNNER_TEMP/atlas-download"
+          printf '%s  %s\n' "$EXPECTED_SHA256" "$RUNNER_TEMP/atlas-download/atlas-site.zip" | sha256sum --check
+          python - <<'PY'
+          from pathlib import Path
+          import os, zipfile
+          root=Path(os.environ['RUNNER_TEMP'])/'atlas-site'
+          with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'atlas-download/atlas-site.zip') as archive:
+              names=archive.namelist()
+              if len(names)!=len(set(names)):raise ValueError('Duplicate ZIP paths')
+              if sum(i.file_size for i in archive.infolist())>=1_000_000_000:raise ValueError('Website too large')
+              for i in archive.infolist():
+                  p=root/i.filename
+                  if root.resolve() not in p.resolve().parents:raise ValueError('Unsafe ZIP path')
+                  if (i.external_attr >> 16) & 0o170000 == 0o120000:raise ValueError('Symlink in ZIP')
+              archive.extractall(root)
+          PY
+          python workflow/09_EXPORT_ATLAS_SITE.py --validate-site "$RUNNER_TEMP/atlas-site"
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/atlas-site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

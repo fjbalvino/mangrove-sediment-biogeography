@@ -95,6 +95,23 @@ The default selection remains the 191 accepted functional metagenomes; use
 `--samples FILE` only for an explicitly different selection. This Python workflow
 uses its CLI arguments and does not read `project.env` automatically.
 
+## 08. Gene biogeography, environmental diagnostics and integrated atlas
+
+See [GENE_BIOGEOGRAPHY](../docs/GENE_BIOGEOGRAPHY.md) for the complete input
+contract and stage commands. This driver integrates nitrogen with the remaining
+seven panels and accepts an explicitly selected expanded cohort. Preparation,
+atlas generation, calibration-plan preparation, numerical model checks and full
+simulation are separate stages. Each input release uses a new run directory.
+
+```bash
+python workflow/08_RUN_GENE_BIOGEOGRAPHY.py --help
+python workflow/09_EXPORT_ATLAS_SITE.py --help
+```
+
+The source-only update does not publish the generated atlas or call the network
+workflow. [ATLAS_PUBLICATION](../docs/ATLAS_PUBLICATION.md) documents local review
+and a later artifact-based Pages deployment without committing data/images.
+
 ## Outputs, validation and release
 
 Generated matrices, figures, fitted objects and reports stay in local output directories. None is uploaded by these workflows.

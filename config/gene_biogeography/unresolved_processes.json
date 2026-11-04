@@ -1,0 +1,11 @@
+{
+  "C03": "Unresolved: the ordinary TCA enzyme inventory cannot identify reverse operation. Physiological and genomic evidence is needed.",
+  "C08": "Unresolved: glycine-cleavage and C1 enzymes also operate in other directions. Context is required.",
+  "C10": "Unresolved substrate-specific scope: sequence-based CAZyme subfamilies, domains and gene-cluster context are required.",
+  "C11": "Unresolved: distinguish individual substrates with CAZyme subfamily/domain and cluster evidence.",
+  "C12": "Unresolved: these are different substrates, not one pathway. Broad KO assignments cannot replace substrate-level CAZyme annotation.",
+  "P07": "Context only: general nucleotide enzymes are not a specific index of environmental P mobilization.",
+  "Fe01": "Unresolved: requires FeGenie-style sequence models, diagnostic motifs and genomic neighborhoods; generic cytochromes are insufficient.",
+  "Fe02": "Unresolved: extracellular electron-transfer systems require sequence and context. Methanogenesis Mtr proteins are not evidence for metal-reduction Mtr systems.",
+  "Fe04": "Unresolved: requires mam/mms sequence and genomic-context evidence."
+}

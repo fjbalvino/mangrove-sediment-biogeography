@@ -29,6 +29,7 @@ Functional counts represent protein-cluster members assigned to KOs. They do not
 | 05 | KO co-abundance network and sensitivity analyses | [10_functional_network](scripts/10_functional_network) | Figure 5 |
 | 06 | Prevalence, persistence and balanced regional differentiation | [09_functional_regional_differentiation](scripts/09_functional_regional_differentiation) | Figure 6 |
 | 07 | Curated biogeochemical rules, detection sensitivity and evidence audit | [11_biogeochemical_cycles](scripts/11_biogeochemical_cycles) | Functional extension; descriptive stage |
+| 08 | Eight-cycle atlas, gene–environment diagnostics and conditional calibration | [12_gene_environment](scripts/12_gene_environment) | Biogeochemical extension; Supplementary information 6–7 |
 
 The [manuscript guide](docs/MANUSCRIPT_GUIDE.md) maps every result section, supplementary table group and analysis cohort to the code. Existing script names are retained to preserve provenance; the execution guide follows the current manuscript order. This is a read-based/gene-centred workflow, with no MAG-binning stage.
 
@@ -77,6 +78,23 @@ Use `workflow/07_RUN_BIOGEOCHEMICAL_CYCLES.py --help` for the entry point. The
 [execution guide](workflow/00_README_HOW_TO_RUN.md#07-biogeochemical-cycle-evidence)
 provides commands. Only code, documentation and small rule configurations are
 tracked; matrices, databases and generated images remain outside Git.
+
+## Re-running the complete gene-biogeography extension
+
+The [gene-biogeography guide](docs/GENE_BIOGEOGRAPHY.md) documents the updated
+nitrogen + seven-panel workflow. Its entry point is
+`workflow/08_RUN_GENE_BIOGEOGRAPHY.py`: external KO matrix and metadata, explicit
+sample selection, ID validation, full-matrix normalization, three-state rules,
+within-study environmental diagnostics, fresh calibration plans and all eight
+interactive viewers. Sample counts and available-KO families follow the supplied
+inputs; the old 191-profile cohort is not imposed on the complete matrix.
+
+The accepted map-layer fixes, zoom/overlap controls, English labels and east-to-west
+heatmaps are retained. Matrices, metadata, figures, generated HTML containing data,
+and simulation checkpoints remain local. The [atlas publication guide](docs/ATLAS_PUBLICATION.md)
+provides a local export and an inactive GitHub Pages workflow example; no public
+atlas deployment is activated by this source update. Existing network code remains
+available for provenance; its scientific redesign is pending.
 
 ## Repository and output directories
 

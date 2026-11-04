@@ -75,3 +75,12 @@ __pycache__/
 preflight.json
 
 !/docs/assets/Graphical_abstrac.png
+
+# Generated atlas pages embed data and figures; never commit them as source.
+*.html
+*.csv
+*.tsv
+!config/**/*.tsv
+!docs/provenance/SCRIPT_INDEX.tsv
+atlas-site/
+_site/

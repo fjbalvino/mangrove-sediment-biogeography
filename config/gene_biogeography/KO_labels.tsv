@@ -1,0 +1,419 @@
+KO	name	url	rules	optional_only
+K00016	LDH, ldh; L-lactate dehydrogenase [EC:1.1.1.27]	https://www.kegg.jp/entry/K00016	C17_ldh	False
+K00018	hprA; glycerate dehydrogenase [EC:1.1.1.29]	https://www.kegg.jp/entry/K00018	M07_M00346;M00346	False
+K00024	mdh; malate dehydrogenase [EC:1.1.1.37]	https://www.kegg.jp/entry/K00024	C02_M00173;C07_M00374;M07_M00346;M00173;M00374;M00346;M00614	False
+K00031	IDH1, IDH2, icd, IDP; isocitrate dehydrogenase [EC:1.1.1.42]	https://www.kegg.jp/entry/K00031	C02_M00173;M00173;M00614	False
+K00033	PGD, gnd, gntZ; 6-phosphogluconate dehydrogenase [EC:1.1.1.44 1.1.1.343]	https://www.kegg.jp/entry/K00033	M00004	False
+K00036	G6PD, zwf; glucose-6-phosphate 1-dehydrogenase [EC:1.1.1.49 1.1.1.363]	https://www.kegg.jp/entry/K00036	M00004	False
+K00125	fdhB; formate dehydrogenase (coenzyme F420) beta subunit [EC:1.17.98.3 1.8.98.6]	https://www.kegg.jp/entry/K00125	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K00134	GAPDH, gapA; glyceraldehyde 3-phosphate dehydrogenase (phosphorylating) [EC:1.2.1.12]	https://www.kegg.jp/entry/K00134	C01_M00165;M00001;M00003;M00165	False
+K00150	gap2, gapB; glyceraldehyde-3-phosphate dehydrogenase (NAD(P)+) (phosphorylating) [EC:1.2.1.59]	https://www.kegg.jp/entry/K00150	C01_M00165;M00001;M00003;M00165	False
+K00169	porA; pyruvate ferredoxin oxidoreductase alpha subunit [EC:1.2.7.1]	https://www.kegg.jp/entry/K00169	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K00170	porB; pyruvate ferredoxin oxidoreductase beta subunit [EC:1.2.7.1]	https://www.kegg.jp/entry/K00170	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K00171	porD; pyruvate ferredoxin oxidoreductase delta subunit [EC:1.2.7.1]	https://www.kegg.jp/entry/K00171	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K00172	porC, porG; pyruvate ferredoxin oxidoreductase gamma subunit [EC:1.2.7.1]	https://www.kegg.jp/entry/K00172	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K00174	korA, oorA, oforA; 2-oxoglutarate/2-oxoacid ferredoxin oxidoreductase subunit alpha [EC:1.2.7.3 1.2.7.11]	https://www.kegg.jp/entry/K00174	C02_M00173;M00173;M00614	False
+K00175	korB, oorB, oforB; 2-oxoglutarate/2-oxoacid ferredoxin oxidoreductase subunit beta [EC:1.2.7.3 1.2.7.11]	https://www.kegg.jp/entry/K00175	C02_M00173;M00173;M00614	False
+K00176	korD, oorD; 2-oxoglutarate ferredoxin oxidoreductase subunit delta [EC:1.2.7.3]	https://www.kegg.jp/entry/K00176	C02_M00173;M00173;M00614	True
+K00177	korC, oorC; 2-oxoglutarate ferredoxin oxidoreductase subunit gamma [EC:1.2.7.3]	https://www.kegg.jp/entry/K00177	C02_M00173;M00173;M00614	True
+K00193	cdhC; acetyl-CoA decarbonylase/synthase, CODH/ACS complex subunit beta [EC:2.3.1.169]	https://www.kegg.jp/entry/K00193	M03_M00357;M00357	False
+K00194	cdhD, acsD; acetyl-CoA decarbonylase/synthase, CODH/ACS complex subunit delta [EC:2.1.1.245]	https://www.kegg.jp/entry/K00194	C04_M00377;M03_M00357;M00377;M00357	False
+K00197	cdhE, acsC; acetyl-CoA decarbonylase/synthase, CODH/ACS complex subunit gamma [EC:2.1.1.245]	https://www.kegg.jp/entry/K00197	C04_M00377;M03_M00357;M00377;M00357	False
+K00198	cooS, acsA; anaerobic carbon-monoxide dehydrogenase catalytic subunit [EC:1.2.7.4]	https://www.kegg.jp/entry/K00198	C04_M00377;C18_cooS;M00377	False
+K00200	fwdA, fmdA; formylmethanofuran dehydrogenase subunit A [EC:1.2.7.12]	https://www.kegg.jp/entry/K00200	M02_M00567;M00567	False
+K00201	fwdB, fmdB; formylmethanofuran dehydrogenase subunit B [EC:1.2.7.12]	https://www.kegg.jp/entry/K00201	M02_M00567;M00567	False
+K00202	fwdC, fmdC; formylmethanofuran dehydrogenase subunit C [EC:1.2.7.12]	https://www.kegg.jp/entry/K00202	M02_M00567;M00567	False
+K00203	fwdD, fmdD; formylmethanofuran dehydrogenase subunit D [EC:1.2.7.12]	https://www.kegg.jp/entry/K00203	M02_M00567;M00567	False
+K00204	fwdH; 4Fe-4S ferredoxin	https://www.kegg.jp/entry/K00204	M02_M00567;M00567	False
+K00205	fwdF, fmdF; 4Fe-4S ferredoxin	https://www.kegg.jp/entry/K00205	M02_M00567;M00567	False
+K00239	sdhA, frdA; succinate dehydrogenase flavoprotein subunit [EC:1.3.5.1]	https://www.kegg.jp/entry/K00239	C02_M00173;C05_M00376;C07_M00374;M00173;M00376;M00374;M00613;M00614	False
+K00240	sdhB, frdB; succinate dehydrogenase iron-sulfur subunit [EC:1.3.5.1]	https://www.kegg.jp/entry/K00240	C02_M00173;C05_M00376;C07_M00374;M00173;M00376;M00374;M00613;M00614	False
+K00241	sdhC, frdC; succinate dehydrogenase cytochrome b subunit	https://www.kegg.jp/entry/K00241	C02_M00173;C05_M00376;C07_M00374;M00173;M00376;M00374;M00613;M00614	False
+K00242	sdhD, frdD; succinate dehydrogenase membrane anchor subunit	https://www.kegg.jp/entry/K00242	C02_M00173;M00173;M00614	True
+K00297	metF, MTHFR; methylenetetrahydrofolate reductase (NADH) [EC:1.5.1.54]	https://www.kegg.jp/entry/K00297	C04_M00377;M00377	False
+K00299	ssuE, msuE; FMN reductase [EC:1.5.1.38]	https://www.kegg.jp/entry/K00299	S12_SsuDE	False
+K00319	mtd; methylenetetrahydromethanopterin dehydrogenase [EC:1.5.98.1]	https://www.kegg.jp/entry/K00319	M02_M00567;M00567	False
+K00320	mer; 5,10-methylenetetrahydromethanopterin reductase [EC:1.5.98.2]	https://www.kegg.jp/entry/K00320	M02_M00567;M00567	False
+K00360	nasB; assimilatory nitrate reductase electron transfer subunit [EC:1.7.99.-]	https://www.kegg.jp/entry/K00360	N11_M00531;M00531	True
+K00361	nasB; nitrite reductase [NAD(P)H] [EC:1.7.1.4]	https://www.kegg.jp/entry/K00361	N11_M00531;M00531	False
+K00362	nirB; nitrite reductase (NADH) large subunit [EC:1.7.1.15]	https://www.kegg.jp/entry/K00362	N09_nirBD;M00530	False
+K00363	nirD; nitrite reductase (NADH) small subunit [EC:1.7.1.15]	https://www.kegg.jp/entry/K00363	N09_nirBD;M00530	False
+K00366	nirA; ferredoxin-nitrite reductase [EC:1.7.7.1]	https://www.kegg.jp/entry/K00366	N11_M00531;M00531	False
+K00367	narB; ferredoxin-nitrate reductase [EC:1.7.7.2]	https://www.kegg.jp/entry/K00367	N11_M00531;M00531	False
+K00368	nirK; nitrite reductase (NO-forming) [EC:1.7.2.1]	https://www.kegg.jp/entry/K00368	N06_nir;M00529;M00973	False
+K00370	narG, narZ, nxrA; nitrate reductase / nitrite oxidoreductase, alpha subunit [EC:1.7.5.1 1.7.99.-]	https://www.kegg.jp/entry/K00370	N04_nar_nxr;N05_narGHI;M00529;M00530;M00804	False
+K00371	narH, narY, nxrB; nitrate reductase / nitrite oxidoreductase, beta subunit [EC:1.7.5.1 1.7.99.-]	https://www.kegg.jp/entry/K00371	N04_nar_nxr;N05_narGHI;M00529;M00530;M00804	False
+K00372	nasC, nasA; assimilatory nitrate reductase catalytic subunit [EC:1.7.99.-]	https://www.kegg.jp/entry/K00372	N11_M00531;M00531	False
+K00374	narI, narV; nitrate reductase gamma subunit [EC:1.7.5.1 1.7.99.-]	https://www.kegg.jp/entry/K00374	N05_narGHI;M00529;M00530	False
+K00376	nosZ; nitrous-oxide reductase [EC:1.7.2.4]	https://www.kegg.jp/entry/K00376	N08_nosZ;M00529	False
+K00380	cysJ; sulfite reductase (NADPH) flavoprotein alpha-component [EC:1.8.1.2]	https://www.kegg.jp/entry/K00380	S03_M00176;M00176	False
+K00381	cysI; sulfite reductase (NADPH) hemoprotein beta-component [EC:1.8.1.2]	https://www.kegg.jp/entry/K00381	S03_M00176;M00176	False
+K00385	asrC; anaerobic sulfite reductase subunit C	https://www.kegg.jp/entry/K00385	S07_AsrABC	False
+K00386	sorB; sulfite dehydrogenase (cytochrome) subunit B [EC:1.8.2.1]	https://www.kegg.jp/entry/K00386	S06_SorAB	False
+K00390	cysH; phosphoadenosine phosphosulfate reductase [EC:1.8.4.8 1.8.4.10]	https://www.kegg.jp/entry/K00390	S03_M00176;M00176	False
+K00392	sir; sulfite reductase (ferredoxin) [EC:1.8.7.1]	https://www.kegg.jp/entry/K00392	S03_M00176;M00176	False
+K00394	aprA; adenylylsulfate reductase, subunit A [EC:1.8.99.2]	https://www.kegg.jp/entry/K00394	S01_sat_apr_dsr;S01_M00596;S02_dsr_apr;M00596	False
+K00395	aprB; adenylylsulfate reductase, subunit B [EC:1.8.99.2]	https://www.kegg.jp/entry/K00395	S01_sat_apr_dsr;S01_M00596;S02_dsr_apr;M00596	False
+K00399	mcrA; methyl-coenzyme M reductase alpha subunit [EC:2.8.4.1]	https://www.kegg.jp/entry/K00399	M01_MCR;M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K00401	mcrB; methyl-coenzyme M reductase beta subunit [EC:2.8.4.1]	https://www.kegg.jp/entry/K00401	M01_MCR;M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K00402	mcrG; methyl-coenzyme M reductase gamma subunit [EC:2.8.4.1]	https://www.kegg.jp/entry/K00402	M01_MCR;M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K00404	ccoN; cytochrome c oxidase cbb3-type subunit I [EC:7.1.1.9]	https://www.kegg.jp/entry/K00404	O01_cbb3	False
+K00405	ccoO; cytochrome c oxidase cbb3-type subunit II	https://www.kegg.jp/entry/K00405	O01_cbb3	False
+K00406	ccoP; cytochrome c oxidase cbb3-type subunit III	https://www.kegg.jp/entry/K00406	O01_cbb3	False
+K00425	cydA; cytochrome bd ubiquinol oxidase subunit I [EC:7.1.1.7]	https://www.kegg.jp/entry/K00425	O01_bd	False
+K00426	cydB; cytochrome bd ubiquinol oxidase subunit II [EC:7.1.1.7]	https://www.kegg.jp/entry/K00426	O01_bd	False
+K00440	frhA; coenzyme F420 hydrogenase subunit alpha [EC:1.12.98.1]	https://www.kegg.jp/entry/K00440	H01_FrhABG	False
+K00441	frhB; coenzyme F420 hydrogenase subunit beta [EC:1.12.98.1]	https://www.kegg.jp/entry/K00441	H01_FrhABG	False
+K00443	frhG; coenzyme F420 hydrogenase subunit gamma [EC:1.12.98.1]	https://www.kegg.jp/entry/K00443	H01_FrhABG	False
+K00448	pcaG; protocatechuate 3,4-dioxygenase, alpha subunit [EC:1.13.11.3]	https://www.kegg.jp/entry/K00448	C13_pcaGH	False
+K00449	pcaH; protocatechuate 3,4-dioxygenase, beta subunit [EC:1.13.11.3]	https://www.kegg.jp/entry/K00449	C13_pcaGH	False
+K00496	alkB1_2, alkM; alkane 1-monooxygenase [EC:1.14.15.3]	https://www.kegg.jp/entry/K00496	C14_alkB	False
+K00531	anfG; nitrogenase delta subunit [EC:1.18.6.1]	https://www.kegg.jp/entry/K00531	M00175	True
+K00577	mtrA; tetrahydromethanopterin S-methyltransferase subunit A [EC:7.2.1.4]	https://www.kegg.jp/entry/K00577	M02_M00567;M03_M00357;M00357;M00567	False
+K00578	mtrB; tetrahydromethanopterin S-methyltransferase subunit B [EC:7.2.1.4]	https://www.kegg.jp/entry/K00578	M02_M00567;M03_M00357;M00357;M00567	False
+K00579	mtrC; tetrahydromethanopterin S-methyltransferase subunit C [EC:7.2.1.4]	https://www.kegg.jp/entry/K00579	M02_M00567;M03_M00357;M00357;M00567	False
+K00580	mtrD; tetrahydromethanopterin S-methyltransferase subunit D [EC:7.2.1.4]	https://www.kegg.jp/entry/K00580	M02_M00567;M03_M00357;M00357;M00567	False
+K00581	mtrE; tetrahydromethanopterin S-methyltransferase subunit E [EC:7.2.1.4]	https://www.kegg.jp/entry/K00581	M02_M00567;M03_M00357;M00357;M00567	False
+K00582	mtrF; tetrahydromethanopterin S-methyltransferase subunit F [EC:7.2.1.4]	https://www.kegg.jp/entry/K00582	M02_M00567;M03_M00357;M00357;M00567	True
+K00583	mtrG; tetrahydromethanopterin S-methyltransferase subunit G [EC:7.2.1.4]	https://www.kegg.jp/entry/K00583	M02_M00567;M03_M00357;M00357;M00567	True
+K00584	mtrH; tetrahydromethanopterin S-methyltransferase subunit H [EC:7.2.1.4]	https://www.kegg.jp/entry/K00584	M02_M00567;M03_M00357;M00357;M00567	False
+K00600	glyA, SHMT; glycine hydroxymethyltransferase [EC:2.1.2.1]	https://www.kegg.jp/entry/K00600	M07_M00346;M00346	False
+K00615	E2.2.1.1, tktA, tktB; transketolase [EC:2.2.1.1]	https://www.kegg.jp/entry/K00615	C01_M00165;M00004;M00165	False
+K00616	TALDO1, talB, talA; transaldolase [EC:2.2.1.2]	https://www.kegg.jp/entry/K00616	C01_M00165;M00004;M00165	False
+K00625	pta; phosphate acetyltransferase [EC:2.3.1.8]	https://www.kegg.jp/entry/K00625	C16_pta_ackA;M03_M00357;M00357	False
+K00626	ACAT, atoB; acetyl-CoA C-acetyltransferase [EC:2.3.1.9]	https://www.kegg.jp/entry/K00626	C06_M00375;C07_M00374;M00375;M00374	False
+K00634	ptb; phosphate butyryltransferase [EC:2.3.1.19]	https://www.kegg.jp/entry/K00634	C17_ptb_buk	False
+K00640	cysE; serine O-acetyltransferase [EC:2.3.1.30]	https://www.kegg.jp/entry/K00640	S13_cysE_K	False
+K00656	E2.3.1.54, pflD; formate C-acetyltransferase [EC:2.3.1.54]	https://www.kegg.jp/entry/K00656	C16_pfl	False
+K00672	ftr; formylmethanofuran--tetrahydromethanopterin N-formyltransferase [EC:2.3.1.101]	https://www.kegg.jp/entry/K00672	M02_M00567;M00567	False
+K00830	AGXT; alanine-glyoxylate transaminase / serine-glyoxylate transaminase / serine-pyruvate transaminase [EC:2.6.1.44 2.6.1.45 2.6.1.51]	https://www.kegg.jp/entry/K00830	M07_M00346;M00346	False
+K00844	HK; hexokinase [EC:2.7.1.1]	https://www.kegg.jp/entry/K00844	M00001	False
+K00845	glk; glucokinase [EC:2.7.1.2]	https://www.kegg.jp/entry/K00845	M00001	False
+K00850	pfkA, PFK; 6-phosphofructokinase 1 [EC:2.7.1.11]	https://www.kegg.jp/entry/K00850	M07_M00345;M00001;M00345	False
+K00855	PRK, prk; phosphoribulokinase [EC:2.7.1.19]	https://www.kegg.jp/entry/K00855	C01_M00165;C01_RuBisCO_PRK;M00165	False
+K00860	cysC; adenylylsulfate kinase [EC:2.7.1.25]	https://www.kegg.jp/entry/K00860	S03_M00176;M00176	False
+K00863	DAK, TKFC; triose/dihydroxyacetone kinase / FAD-AMP lyase (cyclizing) [EC:2.7.1.28 2.7.1.29 4.6.1.15]	https://www.kegg.jp/entry/K00863	M07_M00344;M00344	False
+K00873	PK, pyk; pyruvate kinase [EC:2.7.1.40]	https://www.kegg.jp/entry/K00873	M00001	False
+K00886	ppgK; polyphosphate glucokinase [EC:2.7.1.63]	https://www.kegg.jp/entry/K00886	M00001	False
+K00918	pfkC; ADP-dependent phosphofructokinase/glucokinase [EC:2.7.1.146 2.7.1.147]	https://www.kegg.jp/entry/K00918	M00001	False
+K00925	ackA; acetate kinase [EC:2.7.2.1]	https://www.kegg.jp/entry/K00925	C16_pta_ackA;M03_M00357;M00357	False
+K00927	PGK, pgk; phosphoglycerate kinase [EC:2.7.2.3]	https://www.kegg.jp/entry/K00927	C01_M00165;M00001;M00003;M00165	False
+K00929	buk; butyrate kinase [EC:2.7.2.7]	https://www.kegg.jp/entry/K00929	C17_ptb_buk	False
+K00937	ppk1; polyphosphate kinase [EC:2.7.4.1]	https://www.kegg.jp/entry/K00937	P06_PPK	False
+K00955	cysNC; bifunctional enzyme CysN/CysC [EC:2.7.7.4 2.7.1.25]	https://www.kegg.jp/entry/K00955	S03_M00176;M00176	False
+K00956	cysN; sulfate adenylyltransferase subunit 1 [EC:2.7.7.4]	https://www.kegg.jp/entry/K00956	S03_M00176;M00176	False
+K00957	cysD; sulfate adenylyltransferase subunit 2 [EC:2.7.7.4]	https://www.kegg.jp/entry/K00957	S03_M00176;M00176	False
+K00958	sat, met3; sulfate adenylyltransferase [EC:2.7.7.4]	https://www.kegg.jp/entry/K00958	S01_sat_apr_dsr;S01_M00596;S03_M00176;M00176;M00596	False
+K01006	ppdK; pyruvate, orthophosphate dikinase [EC:2.7.9.1]	https://www.kegg.jp/entry/K01006	C02_M00173;M00173;M00614	False
+K01007	pps, ppsA; pyruvate, water dikinase [EC:2.7.9.2]	https://www.kegg.jp/entry/K01007	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K01057	PGLS, pgl, devB; 6-phosphogluconolactonase [EC:3.1.1.31]	https://www.kegg.jp/entry/K01057	M00004	False
+K01077	ALP, phoA, phoB; alkaline phosphatase [EC:3.1.3.1]	https://www.kegg.jp/entry/K01077	P02_phoAD	False
+K01086	fbp-SEBP; fructose-1,6-bisphosphatase I / sedoheptulose-1,7-bisphosphatase [EC:3.1.3.11 3.1.3.37]	https://www.kegg.jp/entry/K01086	C01_M00165;M00003;M00165	False
+K01093	appA; 4-phytase / acid phosphatase [EC:3.1.3.26 3.1.3.2]	https://www.kegg.jp/entry/K01093	P02_appA	False
+K01100	E3.1.3.37; sedoheptulose-bisphosphatase [EC:3.1.3.37]	https://www.kegg.jp/entry/K01100	C01_M00165;M00165	False
+K01113	phoD; alkaline phosphatase D [EC:3.1.3.1]	https://www.kegg.jp/entry/K01113	P02_phoAD	False
+K01126	E3.1.4.46, glpQ, ugpQ; glycerophosphoryl diester phosphodiesterase [EC:3.1.4.46]	https://www.kegg.jp/entry/K01126	P02_GlpQ	False
+K01428	ureC; urease subunit alpha [EC:3.5.1.5]	https://www.kegg.jp/entry/K01428	N12_ureABC	False
+K01429	ureB; urease subunit beta [EC:3.5.1.5]	https://www.kegg.jp/entry/K01429	N12_ureABC	False
+K01430	ureA; urease subunit gamma [EC:3.5.1.5]	https://www.kegg.jp/entry/K01430	N12_ureABC	False
+K01491	folD; methylenetetrahydrofolate dehydrogenase (NADP+) / methenyltetrahydrofolate cyclohydrolase [EC:1.5.1.5 3.5.4.9]	https://www.kegg.jp/entry/K01491	C04_M00377;M00377	False
+K01499	mch; methenyltetrahydromethanopterin cyclohydrolase [EC:3.5.4.27]	https://www.kegg.jp/entry/K01499	M02_M00567;M00567	False
+K01500	fchA; methenyltetrahydrofolate cyclohydrolase [EC:3.5.4.9]	https://www.kegg.jp/entry/K01500	C04_M00377;M00377	True
+K01514	PRUNE, PPX1; exopolyphosphatase [EC:3.6.1.11]	https://www.kegg.jp/entry/K01514	P06_PPX	False
+K01524	ppx-gppA; exopolyphosphatase / guanosine-5'-triphosphate,3'-diphosphate pyrophosphatase [EC:3.6.1.11 3.6.1.40]	https://www.kegg.jp/entry/K01524	P06_PPX	False
+K01595	ppc; phosphoenolpyruvate carboxylase [EC:4.1.1.31]	https://www.kegg.jp/entry/K01595	C02_M00173;C07_M00374;C09_carboxilasas;M07_M00346;M00173;M00374;M00346;M00614	False
+K01596	E4.1.1.32, pckA, PCK; phosphoenolpyruvate carboxykinase (GTP) [EC:4.1.1.32]	https://www.kegg.jp/entry/K01596	M00003	False
+K01601	rbcL, cbbL; ribulose-bisphosphate carboxylase large chain [EC:4.1.1.39]	https://www.kegg.jp/entry/K01601	C01_M00165;C01_RuBisCO_PRK;M00165	False
+K01602	rbcS, cbbS; ribulose-bisphosphate carboxylase small chain [EC:4.1.1.39]	https://www.kegg.jp/entry/K01602	C01_M00165;M00165	True
+K01610	pckA; phosphoenolpyruvate carboxykinase (ATP) [EC:4.1.1.49]	https://www.kegg.jp/entry/K01610	M00003	False
+K01622	fbp; fructose 1,6-bisphosphate aldolase/phosphatase [EC:4.1.2.13 3.1.3.11]	https://www.kegg.jp/entry/K01622	M00003	False
+K01623	ALDO; fructose-bisphosphate aldolase, class I [EC:4.1.2.13]	https://www.kegg.jp/entry/K01623	C01_M00165;M00001;M00003;M00165	False
+K01624	FBA, fbaA; fructose-bisphosphate aldolase, class II [EC:4.1.2.13]	https://www.kegg.jp/entry/K01624	C01_M00165;M07_M00345;M07_M00344;M00001;M00003;M00165;M00344;M00345	False
+K01676	E4.2.1.2A, fumA, fumB; fumarate hydratase, class I [EC:4.2.1.2]	https://www.kegg.jp/entry/K01676	C02_M00173;M00173;M00614	False
+K01677	E4.2.1.2AA, fumA; fumarate hydratase subunit alpha [EC:4.2.1.2]	https://www.kegg.jp/entry/K01677	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K01678	E4.2.1.2AB, fumB; fumarate hydratase subunit beta [EC:4.2.1.2]	https://www.kegg.jp/entry/K01678	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K01679	E4.2.1.2B, fumC, FH; fumarate hydratase, class II [EC:4.2.1.2]	https://www.kegg.jp/entry/K01679	C02_M00173;C05_M00376;M00173;M00376;M00613;M00614	False
+K01682	acnB; aconitate hydratase 2 / 2-methylisocitrate dehydratase [EC:4.2.1.3 4.2.1.99]	https://www.kegg.jp/entry/K01682	C02_M00173;M00173;M00614	False
+K01689	ENO1_2_3, eno; enolase 1/2/3 [EC:4.2.1.11]	https://www.kegg.jp/entry/K01689	M07_M00346;M00001;M00003;M00346	False
+K01725	cynS; cyanate lyase [EC:4.2.1.104]	https://www.kegg.jp/entry/K01725	N12_cynS	False
+K01738	cysK; cysteine synthase [EC:2.5.1.47]	https://www.kegg.jp/entry/K01738	S13_cysE_K	False
+K01783	rpe, RPE; ribulose-phosphate 3-epimerase [EC:5.1.3.1]	https://www.kegg.jp/entry/K01783	C01_M00165;M00004;M00165	False
+K01803	TPI, tpiA; triosephosphate isomerase (TIM) [EC:5.3.1.1]	https://www.kegg.jp/entry/K01803	C01_M00165;M00001;M00003;M00165	False
+K01807	rpiA; ribose 5-phosphate isomerase A [EC:5.3.1.6]	https://www.kegg.jp/entry/K01807	C01_M00165;M00004;M00165	False
+K01808	rpiB; ribose 5-phosphate isomerase B [EC:5.3.1.6]	https://www.kegg.jp/entry/K01808	C01_M00165;M00004;M00165	False
+K01810	GPI, pgi; glucose-6-phosphate isomerase [EC:5.3.1.9]	https://www.kegg.jp/entry/K01810	M00001;M00004	False
+K01834	PGAM, gpmA; 2,3-bisphosphoglycerate-dependent phosphoglycerate mutase [EC:5.4.2.11]	https://www.kegg.jp/entry/K01834	M00001;M00003	False
+K01847	MUT; methylmalonyl-CoA mutase [EC:5.4.99.2]	https://www.kegg.jp/entry/K01847	C05_M00376;M00376;M00613	False
+K01848	E5.4.99.2A, mcmA1; methylmalonyl-CoA mutase, N-terminal domain [EC:5.4.99.2]	https://www.kegg.jp/entry/K01848	C05_M00376;C06_M00375;M00376;M00375;M00613	False
+K01849	E5.4.99.2B, mcmA2; methylmalonyl-CoA mutase, C-terminal domain [EC:5.4.99.2]	https://www.kegg.jp/entry/K01849	C05_M00376;C06_M00375;M00376;M00375;M00613	False
+K01895	ACSS1_2, acs; acetyl-CoA synthetase [EC:6.2.1.1]	https://www.kegg.jp/entry/K01895	M03_M00357;M00357	False
+K01902	sucD; succinyl-CoA synthetase alpha subunit [EC:6.2.1.5]	https://www.kegg.jp/entry/K01902	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K01903	sucC; succinyl-CoA synthetase beta subunit [EC:6.2.1.5]	https://www.kegg.jp/entry/K01903	C02_M00173;C07_M00374;M00173;M00374;M00614	False
+K01938	fhs; formate--tetrahydrofolate ligase [EC:6.3.4.3]	https://www.kegg.jp/entry/K01938	C04_M00377;M00377	False
+K01958	PC, pyc; pyruvate carboxylase [EC:6.4.1.1]	https://www.kegg.jp/entry/K01958	C02_M00173;C09_carboxilasas;M00173;M00614	False
+K01959	pycA; pyruvate carboxylase subunit A [EC:6.4.1.1]	https://www.kegg.jp/entry/K01959	C02_M00173;C09_carboxilasas;M00173;M00614	False
+K01960	pycB; pyruvate carboxylase subunit B [EC:6.4.1.1]	https://www.kegg.jp/entry/K01960	C02_M00173;C09_carboxilasas;M00173;M00614	False
+K01961	accC; acetyl-CoA carboxylase, biotin carboxylase subunit [EC:6.4.1.2 6.3.4.14]	https://www.kegg.jp/entry/K01961	C05_M00376;M00376;M00613	False
+K01962	accA; acetyl-CoA carboxylase carboxyl transferase subunit alpha [EC:6.4.1.2 2.1.3.15]	https://www.kegg.jp/entry/K01962	C05_M00376;M00376;M00613	False
+K01963	accD; acetyl-CoA carboxylase carboxyl transferase subunit beta [EC:6.4.1.2 2.1.3.15]	https://www.kegg.jp/entry/K01963	C05_M00376;M00376;M00613	False
+K01964	K01964; acetyl-CoA/propionyl-CoA carboxylase [EC:6.4.1.2 6.4.1.3]	https://www.kegg.jp/entry/K01964	C06_M00375;M00375	False
+K02036	pstB; phosphate transport system ATP-binding protein [EC:7.3.2.1]	https://www.kegg.jp/entry/K02036	P01_pstSCAB	False
+K02037	pstC; phosphate transport system permease protein	https://www.kegg.jp/entry/K02037	P01_pstSCAB	False
+K02038	pstA; phosphate transport system permease protein	https://www.kegg.jp/entry/K02038	P01_pstSCAB	False
+K02040	pstS; phosphate transport system substrate-binding protein	https://www.kegg.jp/entry/K02040	P01_pstSCAB	False
+K02160	accB, bccP; acetyl-CoA carboxylase biotin carboxyl carrier protein	https://www.kegg.jp/entry/K02160	C05_M00376;M00376;M00613	False
+K02305	norC; nitric oxide reductase subunit C	https://www.kegg.jp/entry/K02305	N07_cNOR;M00529	False
+K02446	glpX; fructose-1,6-bisphosphatase II [EC:3.1.3.11]	https://www.kegg.jp/entry/K02446	C01_M00165;M00003;M00165	False
+K02567	napA; nitrate reductase (cytochrome) [EC:1.9.6.1]	https://www.kegg.jp/entry/K02567	N05_napAB;M00529;M00530	False
+K02568	napB; nitrate reductase (cytochrome), electron transfer subunit	https://www.kegg.jp/entry/K02568	N05_napAB;M00529;M00530	False
+K02585	nifB; nitrogen fixation protein NifB	https://www.kegg.jp/entry/K02585	N01_nifHDKENB	False
+K02586	nifD; nitrogenase molybdenum-iron protein alpha chain [EC:1.18.6.1]	https://www.kegg.jp/entry/K02586	N01_nifHDK;N01_nifHDKENB;M00175	False
+K02587	nifE; nitrogenase molybdenum-cofactor synthesis protein NifE	https://www.kegg.jp/entry/K02587	N01_nifHDKENB	False
+K02588	nifH; nitrogenase iron protein NifH	https://www.kegg.jp/entry/K02588	N01_nifHDK;N01_nifHDKENB;M00175	False
+K02591	nifK; nitrogenase molybdenum-iron protein beta chain [EC:1.18.6.1]	https://www.kegg.jp/entry/K02591	N01_nifHDK;N01_nifHDKENB;M00175	False
+K02592	nifN; nitrogenase molybdenum-iron protein NifN	https://www.kegg.jp/entry/K02592	N01_nifHDKENB	False
+K02689	psaA; photosystem I P700 chlorophyll a apoprotein A1 [EC:1.97.1.12]	https://www.kegg.jp/entry/K02689	O02_PSI_II	False
+K02690	psaB; photosystem I P700 chlorophyll a apoprotein A2 [EC:1.97.1.12]	https://www.kegg.jp/entry/K02690	O02_PSI_II	False
+K02703	psbA; photosystem II P680 reaction center D1 protein [EC:1.10.3.9]	https://www.kegg.jp/entry/K02703	O02_PSI_II	False
+K02706	psbD; photosystem II P680 reaction center D2 protein [EC:1.10.3.9]	https://www.kegg.jp/entry/K02706	O02_PSI_II	False
+K03119	tauD; taurine dioxygenase [EC:1.14.11.17]	https://www.kegg.jp/entry/K03119	S12_TauD	False
+K03381	catA; catechol 1,2-dioxygenase [EC:1.13.11.1]	https://www.kegg.jp/entry/K03381	C13_catA	False
+K03385	nrfA; nitrite reductase (cytochrome c-552) [EC:1.7.2.2]	https://www.kegg.jp/entry/K03385	N09_nrfA;N09_nrfAH;M00530	False
+K03388	hdrA2; heterodisulfide reductase subunit A2 [EC:1.8.7.3 1.8.98.4 1.8.98.5 1.8.98.6]	https://www.kegg.jp/entry/K03388	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K03389	hdrB2; heterodisulfide reductase subunit B2 [EC:1.8.7.3 1.8.98.4 1.8.98.5 1.8.98.6]	https://www.kegg.jp/entry/K03389	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K03390	hdrC2; heterodisulfide reductase subunit C2 [EC:1.8.7.3 1.8.98.4 1.8.98.5 1.8.98.6]	https://www.kegg.jp/entry/K03390	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K03430	phnW; 2-aminoethylphosphonate-pyruvate transaminase [EC:2.6.1.37]	https://www.kegg.jp/entry/K03430	P04_PhnWX	False
+K03518	coxS; aerobic carbon-monoxide dehydrogenase small subunit [EC:1.2.5.3]	https://www.kegg.jp/entry/K03518	C18_coxLMS	False
+K03519	coxM, cutM; aerobic carbon-monoxide dehydrogenase medium subunit [EC:1.2.5.3]	https://www.kegg.jp/entry/K03519	C18_coxLMS	False
+K03520	coxL, cutL; aerobic carbon-monoxide dehydrogenase large subunit [EC:1.2.5.3]	https://www.kegg.jp/entry/K03520	C18_coxLMS	False
+K03612	rnfG; H+/Na+-translocating ferredoxin:NAD+ oxidoreductase subunit G	https://www.kegg.jp/entry/K03612	H02_Rnf	False
+K03613	rnfE; H+/Na+-translocating ferredoxin:NAD+ oxidoreductase subunit E	https://www.kegg.jp/entry/K03613	H02_Rnf	False
+K03614	rnfD; H+/Na+-translocating ferredoxin:NAD+ oxidoreductase subunit D [EC:7.1.1.11 7.2.1.2]	https://www.kegg.jp/entry/K03614	H02_Rnf	False
+K03615	rnfC; H+/Na+-translocating ferredoxin:NAD+ oxidoreductase subunit C [EC:7.1.1.11 7.2.1.2]	https://www.kegg.jp/entry/K03615	H02_Rnf	False
+K03616	rnfB; H+/Na+-translocating ferredoxin:NAD+ oxidoreductase subunit B [EC:7.1.1.11 7.2.1.2]	https://www.kegg.jp/entry/K03616	H02_Rnf	False
+K03617	rnfA; H+/Na+-translocating ferredoxin:NAD+ oxidoreductase subunit A	https://www.kegg.jp/entry/K03617	H02_Rnf	False
+K03737	por, nifJ; pyruvate-ferredoxin/flavodoxin oxidoreductase [EC:1.2.7.1 1.2.8.1]	https://www.kegg.jp/entry/K03737	C02_M00173;M00173;M00614	False
+K03778	ldhA; D-lactate dehydrogenase [EC:1.1.1.28]	https://www.kegg.jp/entry/K03778	C17_ldh	False
+K03788	aphA; acid phosphatase (class B) [EC:3.1.3.2]	https://www.kegg.jp/entry/K03788	P02_acid	False
+K03841	FBP, fbp; fructose-1,6-bisphosphatase I [EC:3.1.3.11]	https://www.kegg.jp/entry/K03841	C01_M00165;M07_M00344;M00003;M00165;M00344	False
+K04041	fbp3; fructose-1,6-bisphosphatase III [EC:3.1.3.11]	https://www.kegg.jp/entry/K04041	M00003	False
+K04091	ssuD, msuD; alkanesulfonate monooxygenase [EC:1.14.14.5 1.14.14.34]	https://www.kegg.jp/entry/K04091	S12_SsuDE	False
+K04112	bcrC, badD; benzoyl-CoA reductase subunit C [EC:1.3.7.8]	https://www.kegg.jp/entry/K04112	C15_bcrABCD	False
+K04113	bcrB, badE; benzoyl-CoA reductase subunit B [EC:1.3.7.8]	https://www.kegg.jp/entry/K04113	C15_bcrABCD	False
+K04114	bcrA, badF; benzoyl-CoA reductase subunit A [EC:1.3.7.8]	https://www.kegg.jp/entry/K04114	C15_bcrABCD	False
+K04115	bcrD, badG; benzoyl-CoA reductase subunit D [EC:1.3.7.8]	https://www.kegg.jp/entry/K04115	C15_bcrABCD	False
+K04480	mtaB; methanol---5-hydroxybenzimidazolylcobamide Co-methyltransferase [EC:2.1.1.90]	https://www.kegg.jp/entry/K04480	M04_M00356;M00356	False
+K04561	norB; nitric oxide reductase subunit B [EC:1.7.2.5]	https://www.kegg.jp/entry/K04561	N07_cNOR;M00529	False
+K04758	feoA; ferrous iron transport protein A	https://www.kegg.jp/entry/K04758	Fe03_FeoAB	False
+K04759	feoB; ferrous iron transport protein B	https://www.kegg.jp/entry/K04759	Fe03_FeoAB	False
+K05298	GAPA; glyceraldehyde-3-phosphate dehydrogenase (NADP+) (phosphorylating) [EC:1.2.1.13]	https://www.kegg.jp/entry/K05298	C01_M00165;M00165	False
+K05299	fdhA; formate dehydrogenase (NADP+) alpha subunit [EC:1.17.1.10]	https://www.kegg.jp/entry/K05299	C04_M00377;M00377	False
+K05301	sorA; sulfite dehydrogenase (cytochrome) subunit A [EC:1.8.2.1]	https://www.kegg.jp/entry/K05301	S06_SorAB	False
+K05306	phnX; phosphonoacetaldehyde hydrolase [EC:3.11.1.1]	https://www.kegg.jp/entry/K05306	P04_PhnWX	False
+K05606	MCEE, epi; methylmalonyl-CoA/ethylmalonyl-CoA epimerase [EC:5.1.99.1]	https://www.kegg.jp/entry/K05606	C05_M00376;C06_M00375;M00376;M00375;M00613	False
+K05780	phnL; alpha-D-ribose 1-methylphosphonate 5-triphosphate synthase subunit PhnL [EC:2.7.8.37]	https://www.kegg.jp/entry/K05780	P03_phnGHIJKLM	False
+K05781	phnK; putative phosphonate transport system ATP-binding protein	https://www.kegg.jp/entry/K05781	P03_phnGHIJKLM	False
+K05908	doxDA; thiosulfate dehydrogenase (quinone) [EC:1.8.5.2]	https://www.kegg.jp/entry/K05908	M00984	False
+K06162	phnM; alpha-D-ribose 1-methylphosphonate 5-triphosphate diphosphatase [EC:3.6.1.63]	https://www.kegg.jp/entry/K06162	P03_phnGHIJKLM	False
+K06163	phnJ; alpha-D-ribose 1-methylphosphonate 5-phosphate C-P lyase [EC:4.7.1.1]	https://www.kegg.jp/entry/K06163	P03_phnGHIJKLM;P03_phnJ	False
+K06164	phnI; alpha-D-ribose 1-methylphosphonate 5-triphosphate synthase subunit PhnI [EC:2.7.8.37]	https://www.kegg.jp/entry/K06164	P03_phnGHIJKLM	False
+K06165	phnH; alpha-D-ribose 1-methylphosphonate 5-triphosphate synthase subunit PhnH [EC:2.7.8.37]	https://www.kegg.jp/entry/K06165	P03_phnGHIJKLM	False
+K06166	phnG; alpha-D-ribose 1-methylphosphonate 5-triphosphate synthase subunit PhnG [EC:2.7.8.37]	https://www.kegg.jp/entry/K06166	P03_phnGHIJKLM	False
+K06859	pgi1; glucose-6-phosphate isomerase, archaeal [EC:5.3.1.9]	https://www.kegg.jp/entry/K06859	M00001;M00004	False
+K07306	dmsA; anaerobic dimethyl sulfoxide reductase subunit A [EC:1.8.5.3]	https://www.kegg.jp/entry/K07306	S11_DmsABC	False
+K07307	dmsB; anaerobic dimethyl sulfoxide reductase subunit B	https://www.kegg.jp/entry/K07307	S11_DmsABC	False
+K07308	dmsC; anaerobic dimethyl sulfoxide reductase subunit C	https://www.kegg.jp/entry/K07308	S11_DmsABC	False
+K07404	pgl; 6-phosphogluconolactonase [EC:3.1.1.31]	https://www.kegg.jp/entry/K07404	M00004	False
+K08074	ADPGK; ADP-dependent glucokinase [EC:2.7.1.147]	https://www.kegg.jp/entry/K08074	M00001	False
+K08093	hxlA; 3-hexulose-6-phosphate synthase [EC:4.1.2.43]	https://www.kegg.jp/entry/K08093	M07_M00345;M00345	False
+K08094	hxlB; 6-phospho-3-hexuloisomerase [EC:5.3.1.27]	https://www.kegg.jp/entry/K08094	M07_M00345;M00345	False
+K08264	hdrD; heterodisulfide reductase subunit D [EC:1.8.98.1]	https://www.kegg.jp/entry/K08264	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K08265	hdrE; heterodisulfide reductase subunit E [EC:1.8.98.1]	https://www.kegg.jp/entry/K08265	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K08352	phsA, psrA; thiosulfate reductase / polysulfide reductase chain A [EC:1.8.5.5]	https://www.kegg.jp/entry/K08352	S07_Phs;S07_Psr	False
+K08353	phsB; thiosulfate reductase electron transport protein	https://www.kegg.jp/entry/K08353	S07_Phs	False
+K08354	phsC; thiosulfate reductase cytochrome b subunit	https://www.kegg.jp/entry/K08354	S07_Phs	False
+K08357	ttrA; tetrathionate reductase subunit A	https://www.kegg.jp/entry/K08357	S08_TtrABC	False
+K08358	ttrB; tetrathionate reductase subunit B	https://www.kegg.jp/entry/K08358	S08_TtrABC	False
+K08359	ttrC; tetrathionate reductase subunit C	https://www.kegg.jp/entry/K08359	S08_TtrABC	False
+K08691	mcl; malyl-CoA/(S)-citramalyl-CoA lyase [EC:4.1.3.24 4.1.3.25]	https://www.kegg.jp/entry/K08691	C05_M00376;M07_M00346;M00376;M00346;M00613	False
+K08692	mtkB; malate-CoA ligase subunit alpha [EC:6.2.1.9]	https://www.kegg.jp/entry/K08692	M07_M00346;M00346	False
+K08928	pufL; photosynthetic reaction center L subunit	https://www.kegg.jp/entry/K08928	O02_PufLM;M00613	False
+K08929	pufM; photosynthetic reaction center M subunit	https://www.kegg.jp/entry/K08929	O02_PufLM;M00613	False
+K08940	pscA; photosystem P840 reaction center large subunit	https://www.kegg.jp/entry/K08940	M00614	False
+K08941	pscB; photosystem P840 reaction center iron-sulfur protein	https://www.kegg.jp/entry/K08941	M00614	False
+K08942	pscC; photosystem P840 reaction center cytochrome c551	https://www.kegg.jp/entry/K08942	M00614	False
+K08943	pscD; photosystem P840 reaction center protein PscD	https://www.kegg.jp/entry/K08943	M00614	False
+K09474	phoN; acid phosphatase (class A) [EC:3.1.3.2]	https://www.kegg.jp/entry/K09474	P02_acid	False
+K09709	meh; 3-methylfumaryl-CoA hydratase [EC:4.2.1.153]	https://www.kegg.jp/entry/K09709	C05_M00376;M00376;M00613	False
+K10534	NR; nitrate reductase (NAD(P)H) [EC:1.7.1.1 1.7.1.2 1.7.1.3]	https://www.kegg.jp/entry/K10534	N11_M00531;M00531	False
+K10535	hao; hydroxylamine dehydrogenase [EC:1.7.2.6]	https://www.kegg.jp/entry/K10535	N03_hao;M00528;M00804	False
+K10944	pmoA; methane monooxygenase subunit A [EC:1.14.18.3]	https://www.kegg.jp/entry/K10944	M05_pMMO_historico;N03_amo_pmo_historico	False
+K10945	pmoB-amoB; methane/ammonia monooxygenase subunit B	https://www.kegg.jp/entry/K10945	M05_pMMO_historico;N03_amo_actual;N03_amo_pmo_historico;M00528;M00804	False
+K10946	pmoC-amoC; methane/ammonia monooxygenase subunit C	https://www.kegg.jp/entry/K10946	M05_pMMO_historico;N03_amo_actual;N03_amo_pmo_historico;M00528;M00804	False
+K11180	dsrA; dissimilatory sulfite reductase alpha subunit [EC:1.8.1.22]	https://www.kegg.jp/entry/K11180	S01_sat_apr_dsr;S01_M00596;S02_dsr_apr;M00596	False
+K11181	dsrB; dissimilatory sulfite reductase beta subunit [EC:1.8.1.22]	https://www.kegg.jp/entry/K11181	S01_sat_apr_dsr;S01_M00596;S02_dsr_apr;M00596	False
+K11212	cofD; LPPG:FO 2-phospho-L-lactate transferase [EC:2.7.8.28]	https://www.kegg.jp/entry/K11212	M00378	False
+K11260	fwdG; 4Fe-4S ferredoxin	https://www.kegg.jp/entry/K11260	M02_M00567;M00567	False
+K11261	fwdE, fmdE; formylmethanofuran dehydrogenase subunit E [EC:1.2.7.12]	https://www.kegg.jp/entry/K11261	M02_M00567;M00567	True
+K11389	gapor; glyceraldehyde-3-phosphate dehydrogenase (ferredoxin) [EC:1.2.7.6]	https://www.kegg.jp/entry/K11389	M00001	False
+K11529	gck, gckA, GLYCTK; glycerate 2-kinase [EC:2.7.1.165]	https://www.kegg.jp/entry/K11529	M07_M00346;M00346	False
+K11532	glpX-SEBP; fructose-1,6-bisphosphatase II / sedoheptulose-1,7-bisphosphatase [EC:3.1.3.11 3.1.3.37]	https://www.kegg.jp/entry/K11532	C01_M00165;M00003;M00165	False
+K11645	fbaB; fructose-bisphosphate aldolase, class I [EC:4.1.2.13]	https://www.kegg.jp/entry/K11645	M00001;M00003	False
+K11780	cofG; 7,8-didemethyl-8-hydroxy-5-deazariboflavin synthase [EC:4.3.1.32]	https://www.kegg.jp/entry/K11780	M00378	False
+K11781	cofH; 5-amino-6-(D-ribitylamino)uracil---L-tyrosine 4-hydroxyphenyl transferase [EC:2.5.1.147]	https://www.kegg.jp/entry/K11781	M00378	False
+K12234	cofE; coenzyme F420-0:L-glutamate ligase / coenzyme F420-1:gamma-L-glutamate ligase [EC:6.3.2.31 6.3.2.34]	https://www.kegg.jp/entry/K12234	M00378	False
+K12406	PKLR; pyruvate kinase isozymes R/L [EC:2.7.1.40]	https://www.kegg.jp/entry/K12406	M00001	False
+K12407	GCK; glucokinase [EC:2.7.1.2]	https://www.kegg.jp/entry/K12407	M00001	False
+K13810	tal-pgi; transaldolase / glucose-6-phosphate isomerase [EC:2.2.1.2 5.3.1.9]	https://www.kegg.jp/entry/K13810	C01_M00165;M00001;M00004;M00165	False
+K13812	fae-hps; bifunctional enzyme Fae/Hps [EC:4.2.1.147 4.1.2.43]	https://www.kegg.jp/entry/K13812	M07_M00345;M00345	False
+K13831	hps-phi; 3-hexulose-6-phosphate synthase / 6-phospho-3-hexuloisomerase [EC:4.1.2.43 5.3.1.27]	https://www.kegg.jp/entry/K13831	M07_M00345;M00345	False
+K13937	H6PD; hexose-6-phosphate dehydrogenase [EC:1.1.1.47 3.1.1.31]	https://www.kegg.jp/entry/K13937	M00004	False
+K13942	hmd; 5,10-methenyltetrahydromethanopterin hydrogenase [EC:1.12.98.2]	https://www.kegg.jp/entry/K13942	M02_M00567;M00567	False
+K14028	mdh1, mxaF; methanol dehydrogenase (cytochrome c) subunit 1 [EC:1.1.2.7]	https://www.kegg.jp/entry/K14028	M06_mxaFI	False
+K14029	mdh2, mxaI; methanol dehydrogenase (cytochrome c) subunit 2 [EC:1.1.2.7]	https://www.kegg.jp/entry/K14029	M06_mxaFI	False
+K14067	mtkA; malate-CoA ligase subunit beta [EC:6.2.1.9]	https://www.kegg.jp/entry/K14067	M07_M00346;M00346	False
+K14080	mtaA; [methyl-Co(III) methanol/glycine betaine-specific corrinoid protein]:coenzyme M methyltransferase [EC:2.1.1.246 2.1.1.377]	https://www.kegg.jp/entry/K14080	M04_M00356;M00356	False
+K14081	mtaC; methanol corrinoid protein	https://www.kegg.jp/entry/K14081	M04_M00356;M00356	False
+K14082	mtbA; [methyl-Co(III) methylamine-specific corrinoid protein]:coenzyme M methyltransferase [EC:2.1.1.247]	https://www.kegg.jp/entry/K14082	M04_M00563;M00563	False
+K14083	mttB; trimethylamine---corrinoid protein Co-methyltransferase [EC:2.1.1.250]	https://www.kegg.jp/entry/K14083	M04_M00563;M00563	True
+K14084	mttC; trimethylamine corrinoid protein	https://www.kegg.jp/entry/K14084	M04_M00563;M00563	False
+K14126	mvhA, vhuA, vhcA; F420-non-reducing hydrogenase large subunit [EC:1.12.99.- 1.8.98.5]	https://www.kegg.jp/entry/K14126	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K14127	mvhD, vhuD, vhcD; F420-non-reducing hydrogenase iron-sulfur subunit [EC:1.12.99.- 1.8.98.5 1.8.98.6]	https://www.kegg.jp/entry/K14127	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K14128	mvhG, vhuG, vhcG; F420-non-reducing hydrogenase small subunit [EC:1.12.99.- 1.8.98.5]	https://www.kegg.jp/entry/K14128	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K14138	acsB; acetyl-CoA synthase [EC:2.3.1.169]	https://www.kegg.jp/entry/K14138	C04_M00377;M00377	False
+K14449	mch, mcd; 2-methylfumaryl-CoA hydratase [EC:4.2.1.148]	https://www.kegg.jp/entry/K14449	C05_M00376;M00376;M00613	False
+K14465	K14465; succinate semialdehyde reductase (NADPH) [EC:1.1.1.-]	https://www.kegg.jp/entry/K14465	C06_M00375;C07_M00374;M00375;M00374	False
+K14466	K14466; 4-hydroxybutyrate---CoA ligase (AMP-forming) [EC:6.2.1.40]	https://www.kegg.jp/entry/K14466	C06_M00375;M00375	False
+K14467	4hbl; 4-hydroxybutyrate---CoA ligase (AMP-forming) [EC:6.2.1.40]	https://www.kegg.jp/entry/K14467	C07_M00374;M00374	False
+K14468	mcr; malonyl-CoA reductase / 3-hydroxypropionate dehydrogenase (NADP+) [EC:1.2.1.75 1.1.1.298]	https://www.kegg.jp/entry/K14468	C05_M00376;M00376;M00613	False
+K14469	K14469; acrylyl-CoA reductase (NADPH) / 3-hydroxypropionyl-CoA dehydratase / 3-hydroxypropionyl-CoA synthetase [EC:1.3.1.84 4.2.1.116 6.2.1.36]	https://www.kegg.jp/entry/K14469	C05_M00376;M00376;M00613	False
+K14470	mct; 2-methylfumaryl-CoA isomerase [EC:5.4.1.3]	https://www.kegg.jp/entry/K14470	C05_M00376;M00376;M00613	False
+K14471	smtA1; succinyl-CoA:(S)-malate CoA-transferase subunit A [EC:2.8.3.22]	https://www.kegg.jp/entry/K14471	C05_M00376;M00376;M00613	False
+K14472	smtB; succinyl-CoA:(S)-malate CoA-transferase subunit B [EC:2.8.3.22]	https://www.kegg.jp/entry/K14472	C05_M00376;M00376;M00613	False
+K14534	abfD; 4-hydroxybutyryl-CoA dehydratase / vinylacetyl-CoA-Delta-isomerase [EC:4.2.1.120 5.3.3.3]	https://www.kegg.jp/entry/K14534	C06_M00375;C07_M00374;M00375;M00374	False
+K14941	cofC, fbiD; 2-phospho-L-lactate/phosphoenolpyruvate guanylyltransferase [EC:2.7.7.68 2.7.7.105]	https://www.kegg.jp/entry/K14941	M00378	False
+K15016	K15016; enoyl-CoA hydratase / 3-hydroxyacyl-CoA dehydrogenase [EC:4.2.1.17 1.1.1.35]	https://www.kegg.jp/entry/K15016	C06_M00375;C07_M00374;M00375;M00374	False
+K15017	K15017; malonyl-CoA/succinyl-CoA reductase (NADPH) [EC:1.2.1.75 1.2.1.76]	https://www.kegg.jp/entry/K15017	C06_M00375;C07_M00374;M00375;M00374	False
+K15018	K15018; 3-hydroxypropionyl-coenzyme A synthetase [EC:6.2.1.36]	https://www.kegg.jp/entry/K15018	C06_M00375;M00375	False
+K15019	K15019; 3-hydroxypropionyl-coenzyme A dehydratase [EC:4.2.1.116]	https://www.kegg.jp/entry/K15019	C06_M00375;M00375	False
+K15020	K15020; acryloyl-coenzyme A reductase [EC:1.3.1.84]	https://www.kegg.jp/entry/K15020	C06_M00375;M00375	False
+K15022	fdhB; formate dehydrogenase (NADP+) beta subunit [EC:1.17.1.10]	https://www.kegg.jp/entry/K15022	C04_M00377;M00377	True
+K15023	acsE; 5-methyltetrahydrofolate corrinoid/iron sulfur protein methyltransferase [EC:2.1.1.258]	https://www.kegg.jp/entry/K15023	C04_M00377;M00377	False
+K15036	K15036; acetyl-CoA/propionyl-CoA carboxylase [EC:6.4.1.2 6.4.1.3 2.1.3.15]	https://www.kegg.jp/entry/K15036	C06_M00375;M00375	False
+K15037	K15037; biotin carboxyl carrier protein	https://www.kegg.jp/entry/K15037	C06_M00375;M00375	False
+K15038	K15038; succinyl-CoA reductase [EC:1.2.1.76]	https://www.kegg.jp/entry/K15038	C06_M00375;C07_M00374;M00375;M00374	False
+K15039	K15039; 3-hydroxypropionate dehydrogenase (NADP+) [EC:1.1.1.298]	https://www.kegg.jp/entry/K15039	C06_M00375;M00375	False
+K15052	K15052; propionyl-CoA carboxylase [EC:6.4.1.3 2.1.3.15]	https://www.kegg.jp/entry/K15052	C05_M00376;M00376;M00613	False
+K15230	aclA; ATP-citrate lyase alpha-subunit [EC:2.3.3.8]	https://www.kegg.jp/entry/K15230	C02_M00173;C02_ACL;M00173;M00614	False
+K15231	aclB; ATP-citrate lyase beta-subunit [EC:2.3.3.8]	https://www.kegg.jp/entry/K15231	C02_M00173;C02_ACL;M00173;M00614	False
+K15232	ccsA; citryl-CoA synthetase large subunit [EC:6.2.1.18]	https://www.kegg.jp/entry/K15232	C02_M00173;M00173;M00614	False
+K15233	ccsB; citryl-CoA synthetase small subunit	https://www.kegg.jp/entry/K15233	C02_M00173;M00173;M00614	False
+K15234	ccl; citryl-CoA lyase [EC:4.1.3.34]	https://www.kegg.jp/entry/K15234	C02_M00173;M00173;M00614	False
+K15633	gpmI; 2,3-bisphosphoglycerate-independent phosphoglycerate mutase [EC:5.4.2.12]	https://www.kegg.jp/entry/K15633	M00001;M00003	False
+K15634	gpmB; 2,3-bisphosphoglycerate-dependent phosphoglycerate mutase [EC:5.4.2.11]	https://www.kegg.jp/entry/K15634	M00001;M00003	False
+K15635	apgM; 2,3-bisphosphoglycerate-independent phosphoglycerate mutase [EC:5.4.2.12]	https://www.kegg.jp/entry/K15635	M00001;M00003	False
+K15864	nirS; nitrite reductase (NO-forming) / hydroxylamine reductase [EC:1.7.2.1 1.7.99.1]	https://www.kegg.jp/entry/K15864	N06_nir;M00529;M00973	False
+K15876	nrfH; cytochrome c nitrite reductase small subunit	https://www.kegg.jp/entry/K15876	N09_nrfAH;M00530	False
+K15916	pgi-pmi; glucose/mannose-6-phosphate isomerase [EC:5.3.1.9 5.3.1.8]	https://www.kegg.jp/entry/K15916	M00001;M00004	False
+K16157	mmoX; methane monooxygenase component A alpha chain [EC:1.14.13.25]	https://www.kegg.jp/entry/K16157	M05_sMMO	False
+K16158	mmoY; methane monooxygenase component A beta chain [EC:1.14.13.25]	https://www.kegg.jp/entry/K16158	M05_sMMO	False
+K16159	mmoZ; methane monooxygenase component A gamma chain [EC:1.14.13.25]	https://www.kegg.jp/entry/K16159	M05_sMMO	False
+K16160	mmoB; methane monooxygenase regulatory protein B	https://www.kegg.jp/entry/K16160	M05_sMMO	False
+K16161	mmoC; methane monooxygenase component C [EC:1.14.13.25]	https://www.kegg.jp/entry/K16161	M05_sMMO	False
+K16176	mtmB; methylamine---corrinoid protein Co-methyltransferase [EC:2.1.1.248]	https://www.kegg.jp/entry/K16176	M04_M00563;M00563	True
+K16177	mtmC; monomethylamine corrinoid protein	https://www.kegg.jp/entry/K16177	M04_M00563;M00563	False
+K16178	mtbB; dimethylamine---corrinoid protein Co-methyltransferase [EC:2.1.1.249]	https://www.kegg.jp/entry/K16178	M04_M00563;M00563	True
+K16179	mtbC; dimethylamine corrinoid protein	https://www.kegg.jp/entry/K16179	M04_M00563;M00563	False
+K16293	psrB; polysulfide reductase chain B	https://www.kegg.jp/entry/K16293	S07_Psr	False
+K16294	psrC; polysulfide reductase chain C	https://www.kegg.jp/entry/K16294	S07_Psr	False
+K16305	K16305; fructose-bisphosphate aldolase / 6-deoxy-5-ketofructose 1-phosphate synthase [EC:4.1.2.13 2.2.1.11]	https://www.kegg.jp/entry/K16305	M00001	False
+K16306	K16306; fructose-bisphosphate aldolase / 2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase [EC:4.1.2.13 2.2.1.10]	https://www.kegg.jp/entry/K16306	M00001	False
+K16370	pfkB; 6-phosphofructokinase 2 [EC:2.7.1.11]	https://www.kegg.jp/entry/K16370	M07_M00345;M00001;M00345	False
+K16936	doxA; thiosulfate dehydrogenase (quinone) small subunit [EC:1.8.5.2]	https://www.kegg.jp/entry/K16936	M00984	False
+K16937	doxD; thiosulfate dehydrogenase (quinone) large subunit [EC:1.8.5.2]	https://www.kegg.jp/entry/K16937	M00984	False
+K16950	asrA; anaerobic sulfite reductase subunit A	https://www.kegg.jp/entry/K16950	S07_AsrABC	False
+K16951	asrB; anaerobic sulfite reductase subunit B	https://www.kegg.jp/entry/K16951	S07_AsrABC	False
+K16953	dddL; dimethylpropiothetin dethiomethylase [EC:4.4.1.3]	https://www.kegg.jp/entry/K16953	S10_dddL	False
+K16964	ddhA; dimethylsulfide dehydrogenase subunit alpha [EC:1.8.2.4]	https://www.kegg.jp/entry/K16964	S11_DdhABC	False
+K16965	ddhB; dimethylsulfide dehydrogenase subunit beta	https://www.kegg.jp/entry/K16965	S11_DdhABC	False
+K16966	ddhC; dimethylsulfide dehydrogenase subunit gamma	https://www.kegg.jp/entry/K16966	S11_DdhABC	False
+K17100	DAS; dihydroxyacetone synthase [EC:2.2.1.3]	https://www.kegg.jp/entry/K17100	M07_M00344;M00344	False
+K17218	sqr; sulfide:quinone oxidoreductase [EC:1.8.5.4]	https://www.kegg.jp/entry/K17218	S05_sqr	False
+K17219	sreA; sulfur reductase molybdopterin subunit	https://www.kegg.jp/entry/K17219	M00986	False
+K17220	sreB; sulfur reductase FeS subunit	https://www.kegg.jp/entry/K17220	M00986	False
+K17221	sreC; sulfur reductase membrane anchor	https://www.kegg.jp/entry/K17221	M00986	False
+K17222	soxA; L-cysteine S-thiosulfotransferase [EC:2.8.5.2]	https://www.kegg.jp/entry/K17222	S04_Sox_core;S04_Sox_CD;M00595	False
+K17223	soxX; L-cysteine S-thiosulfotransferase [EC:2.8.5.2]	https://www.kegg.jp/entry/K17223	S04_Sox_core;S04_Sox_CD;M00595	False
+K17224	soxB; S-sulfosulfanyl-L-cysteine sulfohydrolase [EC:3.1.6.20]	https://www.kegg.jp/entry/K17224	S04_Sox_core;S04_Sox_CD;M00595	False
+K17225	soxC; sulfane dehydrogenase subunit SoxC	https://www.kegg.jp/entry/K17225	S04_Sox_CD;M00595	False
+K17226	soxY; sulfur-oxidizing protein SoxY	https://www.kegg.jp/entry/K17226	S04_Sox_core;S04_Sox_CD;M00595	False
+K17227	soxZ; sulfur-oxidizing protein SoxZ	https://www.kegg.jp/entry/K17227	S04_Sox_core;S04_Sox_CD;M00595	False
+K17229	fccB; sulfide dehydrogenase [flavocytochrome c] flavoprotein chain [EC:1.8.2.3]	https://www.kegg.jp/entry/K17229	S05_fccAB;M00985	False
+K17230	fccA; cytochrome subunit of sulfide dehydrogenase	https://www.kegg.jp/entry/K17230	S05_fccAB;M00985	False
+K17486	dmdA; dimethylsulfoniopropionate demethylase [EC:2.1.1.269]	https://www.kegg.jp/entry/K17486	S10_dmdA	False
+K17725	ETHE1; sulfur dioxygenase [EC:1.13.11.18]	https://www.kegg.jp/entry/K17725	S09_ETHE1	False
+K17877	NIT-6; nitrite reductase (NAD(P)H) [EC:1.7.1.4]	https://www.kegg.jp/entry/K17877	N11_M00531;M00531	False
+K18367	CoADR; CoA-dependent NAD(P)H sulfur oxidoreductase [EC:1.8.1.18]	https://www.kegg.jp/entry/K18367	M00986	False
+K18556	frdA; NADH-dependent fumarate reductase subunit A [EC:1.3.1.6]	https://www.kegg.jp/entry/K18556	C02_M00173;M00173;M00614	False
+K18557	frdB; NADH-dependent fumarate reductase subunit B [EC:1.3.1.6]	https://www.kegg.jp/entry/K18557	C02_M00173;M00173;M00614	False
+K18558	frdC; NADH-dependent fumarate reductase subunit C	https://www.kegg.jp/entry/K18558	C02_M00173;M00173;M00614	False
+K18559	frdD; NADH-dependent fumarate reductase subunit D	https://www.kegg.jp/entry/K18559	C02_M00173;M00173;M00614	False
+K18560	frdE; NADH-dependent fumarate reductase subunit E	https://www.kegg.jp/entry/K18560	C02_M00173;M00173;M00614	False
+K18860	sdhD, frdD; succinate dehydrogenase subunit D	https://www.kegg.jp/entry/K18860	C07_M00374;M00374	True
+K18861	K18861; 4-hydroxybutyrate---CoA ligase (AMP-forming) [EC:6.2.1.40]	https://www.kegg.jp/entry/K18861	C06_M00375;C07_M00374;M00375;M00374	False
+K18916	ptxD; phosphonate dehydrogenase [EC:1.20.1.1]	https://www.kegg.jp/entry/K18916	P05_PtxD	False
+K19243	azf; NAD+ dependent glucose-6-phosphate dehydrogenase [EC:1.1.1.388]	https://www.kegg.jp/entry/K19243	M00004	False
+K19670	phnA; phosphonoacetate hydrolase [EC:3.11.1.2]	https://www.kegg.jp/entry/K19670	P04_PhnA	False
+K19713	tsdA; thiosulfate dehydrogenase [EC:1.8.2.2]	https://www.kegg.jp/entry/K19713	S08_TsdA;M00984	False
+K20932	K20932; hydrazine synthase subunit [EC:1.7.2.7]	https://www.kegg.jp/entry/K20932	N10_hzs_hdh;M00973	False
+K20933	K20933; hydrazine synthase subunit [EC:1.7.2.7]	https://www.kegg.jp/entry/K20933	N10_hzs_hdh;M00973	False
+K20934	K20934; hydrazine synthase subunit [EC:1.7.2.7]	https://www.kegg.jp/entry/K20934	N10_hzs_hdh;M00973	False
+K20935	hdh; hydrazine dehydrogenase [EC:1.7.2.8]	https://www.kegg.jp/entry/K20935	N10_hzs_hdh;M00973	False
+K21071	pfk, pfp; ATP-dependent phosphofructokinase / diphosphate-dependent phosphofructokinase [EC:2.7.1.11 2.7.1.90]	https://www.kegg.jp/entry/K21071	M07_M00345;M00001;M00345	False
+K21195	phnY; 2-aminoethylphosphonate dioxygenase [EC:1.14.11.46]	https://www.kegg.jp/entry/K21195	P04_PhnYZ	False
+K21196	phnZ; 2-amino-1-hydroxyethylphosphonate dioxygenase (glycine-forming) [EC:1.13.11.78]	https://www.kegg.jp/entry/K21196	P04_PhnYZ	False
+K21307	soeA; sulfite dehydrogenase (quinone) subunit SoeA [EC:1.8.5.6]	https://www.kegg.jp/entry/K21307	S06_SoeABC	False
+K21308	soeB; sulfite dehydrogenase (quinone) subunit SoeB	https://www.kegg.jp/entry/K21308	S06_SoeABC	False
+K21309	soeC; sulfite dehydrogenase (quinone) subunit SoeC	https://www.kegg.jp/entry/K21309	S06_SoeABC	False
+K21310	mddA; methanethiol S-methyltransferase [EC:2.1.1.334]	https://www.kegg.jp/entry/K21310	S11_MddA	False
+K22015	fdhF; formate dehydrogenase (hydrogenase) / hydrogen-dependent carbon dioxide reductase [EC:1.17.98.4 1.17.98.5]	https://www.kegg.jp/entry/K22015	C04_M00377;M00377	False
+K22468	ppk2; polyphosphate kinase [EC:2.7.4.34]	https://www.kegg.jp/entry/K22468	P06_PPK	False
+K22480	hdrA1; heterodisulfide reductase subunit A1 [EC:1.8.7.3]	https://www.kegg.jp/entry/K22480	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K22481	hdrB1; heterodisulfide reductase subunit B1 [EC:1.8.7.3]	https://www.kegg.jp/entry/K22481	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K22482	hdrC1; heterodisulfide reductase subunit C1 [EC:1.8.7.3]	https://www.kegg.jp/entry/K22482	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K22516	fdhA; formate dehydrogenase (coenzyme F420) alpha subunit [EC:1.17.98.3 1.8.98.6]	https://www.kegg.jp/entry/K22516	M02_M00567;M03_M00357;M04_M00356;M04_M00563;M00356;M00357;M00563;M00567	False
+K22622	soxD; S-disulfanyl-L-cysteine oxidoreductase SoxD [EC:1.8.2.6]	https://www.kegg.jp/entry/K22622	S04_Sox_CD;M00595	False
+K22896	vnfD; vanadium-dependent nitrogenase alpha chain [EC:1.18.6.2]	https://www.kegg.jp/entry/K22896	N02_vnfHDKG;M00175	False
+K22897	vnfK; vanadium-dependent nitrogenase beta chain [EC:1.18.6.2]	https://www.kegg.jp/entry/K22897	N02_vnfHDKG;M00175	False
+K22898	vnfG; vanadium nitrogenase delta subunit [EC:1.18.6.2]	https://www.kegg.jp/entry/K22898	N02_vnfHDKG;M00175	False
+K22899	vnfH; vanadium nitrogenase iron protein	https://www.kegg.jp/entry/K22899	N02_vnfHDKG;M00175	False
+K23304	cysE; serine O-acetyltransferase [EC:2.3.1.30]	https://www.kegg.jp/entry/K23304	S13_cysE_K	False
+K23753	ppk2, pap; AMP-polyphosphate phosphotransferase [EC:2.7.4.33]	https://www.kegg.jp/entry/K23753	P06_PPK	False
+K23995	xoxF; lanthanide-dependent methanol dehydrogenase [EC:1.1.2.10]	https://www.kegg.jp/entry/K23995	M06_xoxF	False
+K24182	PFK9; 6-phosphofructokinase [EC:2.7.1.11]	https://www.kegg.jp/entry/K24182	M00001	False
+K24666	dsyB; 2-hydroxy-4-(methylsulfanyl)butanoate S-methyltransferase [EC:2.1.1.373]	https://www.kegg.jp/entry/K24666	S10_dsyB	False
+K25007	metV; methylenetetrahydrofolate reductase (NADH) small subunit	https://www.kegg.jp/entry/K25007	C04_M00377;M00377	True
+K25008	rnfC2; ion-translocating oxidoreductase complex subunit C [EC:7.-.-.-]	https://www.kegg.jp/entry/K25008	C04_M00377;M00377	True
+K25026	glk; glucokinase [EC:2.7.1.2]	https://www.kegg.jp/entry/K25026	M00001	False
+K25123	hydA2; iron hydrogenase HydA2 [EC:1.12.7.-]	https://www.kegg.jp/entry/K25123	C04_M00377;M00377	False
+K25124	hycB; FeS-containing electron transfer protein	https://www.kegg.jp/entry/K25124	C04_M00377;M00377	False
+K25774	K25774; 4-hydroxybutyrate---CoA ligase (AMP-forming) [EC:6.2.1.40]	https://www.kegg.jp/entry/K25774	C06_M00375;C07_M00374;M00375;M00374	False
+K26138	nasE; nitrite reductase [NAD(P)H] small subunit [EC:1.7.1.4]	https://www.kegg.jp/entry/K26138	N11_M00531;M00531	False
+K26139	nasD, nasB; nitrite reductase [NAD(P)H] large subunit [EC:1.7.1.4]	https://www.kegg.jp/entry/K26139	N11_M00531;M00531	False
+K27187	dsrM; [DsrC]-trisulfide reductase subunit M [EC:1.8.5.10]	https://www.kegg.jp/entry/K27187	S01_M00596;M00596	False
+K27188	dsrK; [DsrC]-trisulfide reductase subunit K [EC:1.8.5.10]	https://www.kegg.jp/entry/K27188	S01_M00596;M00596	False
+K27189	dsrJ; [DsrC]-trisulfide reductase subunit J	https://www.kegg.jp/entry/K27189	S01_M00596;M00596	False
+K27190	dsrO; [DsrC]-trisulfide reductase subunit O	https://www.kegg.jp/entry/K27190	S01_M00596;M00596	False
+K27191	dsrP; [DsrC]-trisulfide reductase subunit P	https://www.kegg.jp/entry/K27191	S01_M00596;M00596	False
+K27196	dsrL; dissimilatory sulfite reductase flavoprotein subunit	https://www.kegg.jp/entry/K27196	S01_M00596;M00596	True
+K27394	ENO4; enolase 4 [EC:4.2.1.11]	https://www.kegg.jp/entry/K27394	M00001;M00003	False
+K27802	acnA; aconitate hydratase A / 2-methylisocitrate dehydratase [EC:4.2.1.3 4.2.1.99]	https://www.kegg.jp/entry/K27802	C02_M00173;M00173;M00614	False
+K27925	tetH; tetrathionate hydrolase [EC:3.12.1.2]	https://www.kegg.jp/entry/K27925	S08_TetH;M00984	False
+K28462	prkA_B; phosphoribulokinase [EC:2.7.1.19]	https://www.kegg.jp/entry/K28462	C01_M00165;C01_RuBisCO_PRK;M00165	False
+K28504	amoA; ammonia monooxygenase subunit A [EC:1.14.99.39]	https://www.kegg.jp/entry/K28504	N03_amo_actual;M00528;M00804	False
+K28719	apdA; AMP-dependent phosphite dehydrogenase [EC:1.20.1.2]	https://www.kegg.jp/entry/K28719	P05_ApdA	False
+K28726	porA; pyruvate synthase (flavodoxin) subunit A [EC:1.2.8.1]	https://www.kegg.jp/entry/K28726	C02_M00173;M00173;M00614	False
+K28727	porB; pyruvate synthase (flavodoxin) subunit B [EC:1.2.8.1]	https://www.kegg.jp/entry/K28727	C02_M00173;M00173;M00614	False
+K28728	porC; pyruvate synthase (flavodoxin) subunit C [EC:1.2.8.1]	https://www.kegg.jp/entry/K28728	C02_M00173;M00173;M00614	False
+K28729	porD; pyruvate synthase (flavodoxin) subunit D [EC:1.2.8.1]	https://www.kegg.jp/entry/K28729	C02_M00173;M00173;M00614	False
+K28849	gpm2; fructose-bisphosphatase [EC:3.1.3.11]	https://www.kegg.jp/entry/K28849	M00003	False
