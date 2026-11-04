@@ -1,0 +1,10 @@
+{
+  "seed": 20261104,
+  "replicates_per_condition": 10,
+  "conditions": ["counts_equal_recovery", "counts_observed_recovery"],
+  "scope": "End-to-end stress test through consensus-edge selection. Re-estimate CLR reference and candidate selection in each simulated dataset, then reuse all 500 archived data-independent locality-capped subsets and the existing 10J inference engine. Community clustering is not part of this control.",
+  "generator": "Reuse the declared independent lognormal-intensity/Poisson-recovery generator from the process calibration, but give every provenance label the same equal-study global baseline gene profile. There are no cross-gene latent links and no latent study shifts. Coordinate/BioSample hierarchy and per-run recovery yields remain explicit.",
+  "interpretation": "These are measurement stress controls, not a marginal-relative-data null and not a graph-wide FDR estimate. A consensus graph in these controls demonstrates susceptibility to the measurement model; it does not identify false edges in the observed graph.",
+  "baseline_guard": "Before controls, reproduce every one of the 1,000,000 archived edge selections and the observed consensus weights within 1e-12.",
+  "gene_candidate_cap": 1500
+}

@@ -1,0 +1,42 @@
+{
+  "scope": "Process-coherence calibration after the descriptive network pilot; not a rerun or validation of the complete historical graph-selection pipeline.",
+  "seed": 20261104,
+  "simulation_replicates": 1000,
+  "alpha": 0.05,
+  "simulation_acceptance_upper_95_limit": 0.075,
+  "acceptance_limit_meaning": "Declared diagnostic tolerance for Monte Carlo uncertainty, not a universal scientific standard or a replacement for alpha.",
+  "family": "All eight reference chains frozen before this calibration. Holm correction across the full family, including unavailable chains with p=1.",
+  "estimand": "Mean proportionality of measured KO pairs connecting adjacent reference steps, with equal weight per step transition and equal total covariance weight per provenance label.",
+  "null": "Independent, jointly symmetric provenance-block contributions to positive chain coherence; implemented by enumerating all block sign flips. This is stronger than zero mean alone.",
+  "reference": "The original association-filtered CLR reference; pseudocount 1 in predicted-protein annotation-record units.",
+  "sensitivities": ["pseudocount_0.5", "pseudocount_2", "all_detected_reference", "each_multicoordinate_provenance_omitted", "at_least_three_coordinates"],
+  "scenarios": [
+    {"id":"gaussian_independent", "kind":"statistical_null", "description":"Independent gene innovations with observed study means and gene-specific within-study scale."},
+    {"id":"gaussian_spatial", "kind":"statistical_null", "description":"Independent gene fields with within-study spatial covariance; no cross-gene coupling."},
+    {"id":"t3_unequal_precision", "kind":"statistical_null", "description":"Independent symmetric heavy-tailed gene fields with unequal coordinate-group precision."},
+    {"id":"counts_equal_recovery", "kind":"measurement_stress", "description":"Independent latent gene intensities, observed study profiles, common expected annotation yield, Poisson observation and CLR transformation."},
+    {"id":"counts_observed_recovery", "kind":"measurement_stress", "description":"Independent latent gene intensities with the observed per-run annotation yields, BioSample/coordinate grouping and CLR transformation."},
+    {"id":"counts_extra_dropout", "kind":"measurement_stress", "description":"Observed annotation yields plus independent 20% feature dropout at coordinate level; additional missing recovery, not inferred structural absence."},
+    {"id":"gaussian_positive_control", "kind":"positive_control", "description":"Shared Gaussian factor among the Nap-branch nitrogen markers, with latent correlation 0.6."},
+    {"id":"counts_positive_control", "kind":"positive_control", "description":"Shared coordinate factor among Nap-branch nitrogen markers before Poisson annotation recovery, with latent correlation 0.6."}
+  ],
+  "generative_parameters": {
+    "study_profile_weight": 0.9,
+    "global_profile_weight": 0.1,
+    "coordinate_log_sd": 0.75,
+    "biosample_log_sd": 0.35,
+    "dropout_probability": 0.2,
+    "positive_control_correlation": 0.6,
+    "spatial_kernel_fraction": 0.8
+  },
+  "interpretation": "Statistical-null rejection rates evaluate test calibration. Measurement-stress rejection rates assess susceptibility to recovery/composition without latent gene coupling; they are not automatically type-I errors for a relative-data null. Positive controls are simulated sensitivity, not power inferred from observed effects.",
+  "discovery_network": "Report exact sign-flip resolution relative to the 1,500-candidate pair family. Fixed historical-edge cutoff diagnostics are conditional screens, not network-wide FDR or topology calibration.",
+  "decision_rule": "Do not promote observed process p-values to manuscript evidence if statistical-null calibration fails or measurement stress reveals unresolved coupling artifacts. Do not tune parameters to obtain observed significance.",
+  "sources": [
+    "https://doi.org/10.1371/journal.pcbi.1004075",
+    "https://doi.org/10.1007/s12064-015-0220-8",
+    "https://doi.org/10.1016/j.neuroimage.2014.01.060",
+    "https://doi.org/10.1038/ismej.2015.235",
+    "https://docs.scipy.org/doc/scipy-1.17.0/reference/generated/scipy.stats.binomtest.html"
+  ]
+}

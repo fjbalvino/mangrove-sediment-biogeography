@@ -1,7 +1,10 @@
 # Functional co-abundance network
 
-This workflow updates the Figure 5 network using the same 191-profile functional
-cohort as the current functional atlas. It is separate from the Figure 6
+This directory preserves the Figure 5 network workflow and its subsequent
+process-context and calibration audits, using the same 191-profile functional
+cohort as the current functional atlas. The calibrated chain-coherence procedure
+has not been released for manuscript inference; see the decision below.
+The network is separate from the Figure 6
 Prevalent/Shell/Cloud regional-differentiation analysis. Historical network
 counts from 194 profiles are retained only as comparisons, never as targets for
 the new inference.
@@ -247,3 +250,177 @@ it must use its own declared hypothesis family and must not add edges merely
 because a biochemical reference connects two steps. Module interpretation will
 then report which steps are represented together, split between modules,
 outside the selected network, or unavailable in the matrix.
+
+## Calibration of process coherence
+
+`10M_CALIBRATE_PROCESS_COHERENCE.py` evaluates the eight reference chains fixed
+by the preceding pilot. It is a separate analysis of measured markers and does
+not add biochemical edges to the discovery network. It does not calibrate the
+complete historical candidate-selection, top-edge-budget and clustering pipeline.
+
+For each adjacent pair of reference steps, calculate proportionality for every
+pair of available KOs spanning those steps. Average pairs equally within a
+transition and transitions equally within a chain. Alternative enzymes remain
+in the same step; their mutual association is not required. Shared KOs across
+steps cause an explicit stop rather than a self-edge. A missing step is not
+replaced with zero evidence. Two invariant measured markers contribute zero
+coherence, not perfect association. This score describes coordinated relative
+representation of measured markers, not enzyme abundance, flux or completeness.
+
+Use the original association-filtered CLR reference with one annotation record
+as pseudocount. Average runs within BioSample labels, then labels within each
+study-coordinate group. Centre coordinates within each provenance label.
+For each KO pair, its proportionality is twice the mean within-label covariance
+divided by the sum of the mean within-label variances. Labels receive equal
+covariance weight; labels with fewer than two coordinates provide no contrast.
+The chain score decomposes into one contribution per informative provenance label.
+
+Enumerate all sign flips of these block contributions for a one-sided test of
+positive coherence. The exact test assumes independent blocks and joint sign
+symmetry under the null, a stronger condition than zero average covariance.
+For a chain, reversing the signs of alternating steps reverses all adjacent-step
+covariances while preserving variances. This explains the transformation under
+the stated symmetry assumptions; the reference arrows do not supply statistical
+replicates. Within-block spatial correlation is retained by a whole-block flip.
+BioProject labels are provenance labels, not verified independent publications.
+Apply Holm correction to all eight chains, retaining unmeasurable chains with
+P=1. Scores, block contributions and assumption-conditional P values are saved
+regardless of the subsequent release decision.
+
+The fixed plan in `config/network_calibration.json` specifies 1,000 independently
+seeded replicates in each of eight scenarios. Three statistical nulls use
+independent Gaussian genes, independent spatial Gaussian gene fields, or symmetric
+heavy-tailed genes with unequal group precision. Three measurement stress tests
+start with independent latent gene intensities and simulate Poisson annotation
+recovery at equal yields, the observed per-run yields, or observed yields plus
+20% independent coordinate-level dropout. Two positive controls introduce a
+shared factor with latent correlation 0.6 among the Nap-branch nitrogen markers.
+Shared membership can transmit that signal to another chain; power is reported
+for the prespecified target rather than declaring every other chain null.
+
+The count generator retains the observed run/BioSample/study-coordinate hierarchy
+and all matrix rows. Study mean relative profiles are mixed with the equal-study
+global mean at weights 0.9/0.1. Independent lognormal effects have log SD 0.75 at
+coordinate level and 0.35 at BioSample level, with mean correction before Poisson
+sampling. These are declared scenarios, not fitted explanations of real gene
+recovery or a reconstruction of assembly. Recovery totals are annotation records,
+not read counts. The Gaussian generator uses observed study means and pooled
+within-study marker scales, with a 0.05 scale floor; the heavy-tailed scenario
+divides t3 innovations by sqrt(3) and by sqrt(number of BioSample labels per group).
+The spatial kernel is 0.8 times an exponential chord-distance kernel plus 0.2
+identity, with range equal to each study's median positive distance.
+
+Statistical-null rejection rates measure type-I error under those models.
+Rejection rates in the independent-intensity count scenarios instead diagnose
+apparent biological coupling caused by recovery and compositional representation;
+they are not automatically type-I errors for a relative-data null. Report Wilson
+95% intervals for simulation rates. The declared diagnostic gate requires the
+upper bound of each family rejection rate to be at most 0.075; this tolerance
+addresses simulation uncertainty and does not change the testing alpha of 0.05.
+Failure of either statistical calibration or the recovery stress check prevents
+promotion of observed P values to manuscript evidence. Passing is conditional,
+not proof that the real independence and recovery assumptions hold.
+
+Sensitivity retains the same eight-chain family and changes pseudocounts to
+0.5 or 2, uses all detected KOs as reference, omits each informative provenance
+label, and requires at least three coordinates per label. These are diagnostics,
+not additional opportunities to choose a significant result. The same 1,062
+historical edges are also screened at rho >=0.95 in simulations; those fixed-edge
+counts are not a graph-wide FDR or a new network.
+
+```bash
+python scripts/10_functional_network/10M_CALIBRATE_PROCESS_COHERENCE.py \
+  --matrix /path/to/atlas/inputs/functional_KO_counts_original.tsv.gz \
+  --metadata /path/to/atlas/inputs/metadata_functional.csv \
+  --samples config/samples/functional_accessions.txt \
+  --reference-edges /path/to/network/final_results/171/tables/171_consensus_edges.tsv.gz \
+  --reference-candidates /path/to/network/final_results/171/tables/171_candidate_KO_selection.tsv \
+  --outdir /path/to/network-calibration --workers 4
+
+python scripts/10_functional_network/lib/plot_calibration.py \
+  --run /path/to/network-calibration
+```
+
+`--resume` checks input, source, curation and plan hashes before continuing.
+Independent seeds are indexed by scenario and replicate; changing worker count
+does not change results. `--replicates` permits a smoke test but a campaign below
+the configured count cannot pass the release gate. Exact enumeration is supported
+for up to 20 informative labels; a larger new cohort requires an explicit update
+to the computational strategy, not silent approximation.
+
+Method sources: [Lovell et al. (2015)](https://doi.org/10.1371/journal.pcbi.1004075),
+[Erb and Notredame (2016)](https://doi.org/10.1007/s12064-015-0220-8),
+[Winkler et al. (2014)](https://doi.org/10.1016/j.neuroimage.2014.01.060),
+[Holm (1979)](https://www.jstor.org/stable/4615733), and
+[Weiss et al. (2016)](https://doi.org/10.1038/ismej.2015.235).
+The custom score and exact sign enumeration are tested against the independent
+proportionality identity and SciPy's exact paired-sample permutation calculation.
+SciPy provides the binomial Wilson intervals. The implementation uses NumPy,
+pandas and SciPy; figures use Matplotlib.
+
+### Complete edge-selector stress controls
+
+`10N_AUDIT_NETWORK_SELECTOR_STRESS.py` reuses `10J.infer_case` rather than
+introducing another consensus-edge implementation. Before controls, it replays
+all 500 archived subsets and compares every selected edge with the original R
+outputs. It then generates ten independent datasets with common expected
+annotation yield and ten with the observed yields. All provenance labels receive
+the same global baseline profile: there are neither latent cross-gene links nor
+latent study shifts in these controls. The coordinate/BioSample hierarchy and
+independent gene-specific variation remain. Parameters and seeds are fixed in
+`config/network_selector_stress.json`.
+
+Each simulated dataset receives a newly estimated CLR reference and candidate
+set, followed by all 500 archived subsets, the 2,000-edge per-subset budget, sign
+consistency and original consensus thresholds. Clustering is not needed to
+evaluate whether edges survive these controls and is not executed. These controls
+test susceptibility to the stated recovery model. Their null concerns latent
+genes, not necessarily marginal relative-data association, and twenty controls
+do not estimate graph-wide FDR or certify all possible measurement models.
+
+```bash
+python scripts/10_functional_network/10N_AUDIT_NETWORK_SELECTOR_STRESS.py \
+  --matrix /path/to/atlas/inputs/functional_KO_counts_original.tsv.gz \
+  --metadata /path/to/atlas/inputs/metadata_functional.csv \
+  --samples config/samples/functional_accessions.txt \
+  --reference-edges /path/to/network/final_results/171/tables/171_consensus_edges.tsv.gz \
+  --reference-candidates /path/to/network/final_results/171/tables/171_candidate_KO_selection.tsv \
+  --reference-design /path/to/network/final_results/171/tables/171_bootstrap_design.tsv.gz \
+  --reference-membership /path/to/network/final_results/171/tables/171_bootstrap_edge_membership.tsv.gz \
+  --outdir /path/to/network-selector-stress --workers 4
+```
+
+### Calibration result and interpretation
+
+The 8,000-dataset chain campaign completed with 1,000 replicates per scenario.
+Family rejection rates in the three statistical nulls were 3.9%, 4.3% and 5.1%,
+with all Wilson upper 95% bounds below the declared 7.5% diagnostic limit.
+Recovery-stress rejection rates were 4.3% at equal expected yields, 12.5% at
+observed yields (95% interval 10.6–14.7%), and 9.7% with additional dropout
+(8.0–11.7%). The measurement-stress gate therefore failed. The prespecified
+nitrogen positive control was detected in 90.5% of Gaussian and 72.2% of recovered
+count simulations; these detection rates do not offset the failed stress check.
+
+In the observed data, none of the eight primary chain tests passed Holm 0.05:
+adjusted assumption-conditional P values ranged from 0.0546875 to 0.2001953.
+Some sensitivity variants crossed the threshold, which is not a reason to
+replace the primary specification. The scores remain descriptive and their
+tests are not promoted to biological evidence. Within-study coherence answers
+a different question from geographic differences between studies; lack of
+support here does not establish absence of a pathway or absence of biogeography.
+
+The full historical selector reproduced all 1,000,000 archived edge selections
+and all 1,062 consensus edges; the maximum mean-weight discrepancy was
+`1.9984e-15`. None of the twenty complete-selector controls produced a consensus
+edge (0/10 under each recovery condition). This limited result provides no basis
+for declaring the historical graph an artifact of recovery alone. It also does
+not resolve its provenance sensitivity, validate its communities, or make its
+modules equivalent to biogeochemical chains.
+
+**Decision:** retain the biochemical annotation and reaction-context layer.
+Keep co-detection, relative representation and statistical co-variation as
+separate evidence. Do not add cycle-coupling claims or a newly validated network
+to the manuscript from this campaign. The historical graph can be examined as
+an exploratory global co-abundance pattern; its biological labels must follow
+the actual annotated members. Re-run the declared diagnostics and calibration
+for the next input release instead of carrying forward a significance label.
