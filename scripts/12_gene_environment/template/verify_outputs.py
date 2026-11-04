@@ -44,7 +44,7 @@ def verify(root, viewers=False, cycle=None):
     for threshold in [1,2]:
         block_states=pd.read_csv(root/f'outputs/rule_block_states_ge{threshold}.tsv.gz',sep='\t').set_index(['rule_id','block'])
         assert block_states.index.is_unique and list(block_states.columns)==ids
-        state=pd.read_csv(src/f'rule_status_ge{threshold}.tsv',sep='\t',index_col=0).loc[ids]
+        state=pd.read_csv(src/f'rule_status_ge{threshold}.tsv',sep='\t',index_col=0).loc[ids,rules.rule_id]
         values={k:(mat.loc[k].to_numpy()>=threshold).astype('uint8') for k in raw.index if k in mat.index}
         for row in rules.itertuples():
             expected_blocks=ev.block_evidence(row.expression,values,len(ids))
@@ -55,6 +55,26 @@ def verify(root, viewers=False, cycle=None):
             np.testing.assert_array_equal(state[row.rule_id],implied)
         states.append(state.to_numpy())
     assert (states[0][states[1]==1]==1).all()
+    # Manuscript frequencies must use run IDs and unique coordinates, never
+    # row positions, numbers of runs, or numbers of study-coordinate summaries.
+    samples=pd.read_csv(src/'sample_analysis_manifest.tsv',sep='\t').set_index('run_accession')
+    assert samples.index.is_unique and set(samples.index)==set(ids)
+    summary=pd.read_csv(src/'rule_evidence_summary.tsv',sep='\t')
+    assert not summary.duplicated(['rule','threshold']).any()
+    assert len(summary)==len(rules)*2
+    assert set(summary.rule)==set(rules.rule_id) and set(summary.threshold)=={1,2}
+    for row in summary.itertuples():
+        state=states[row.threshold-1][:,list(rules.rule_id).index(row.rule)]
+        np.testing.assert_array_equal([row.met,row.not_met,row.indeterminate],[(state==s).sum() for s in [1,0,2]])
+        assert row.profiles==len(ids)
+        coords=samples.loc[ids,'coordinate_group']
+        assert row.met_coordinate_groups==coords.iloc[np.flatnonzero(state==1)].nunique()
+        assert row.total_coordinate_groups==coords.nunique()
+    integrated=json.loads((src/'integration_summary.json').read_text())
+    assert integrated['profiles']==len(ids)
+    assert integrated['coordinate_groups']==samples.coordinate_group.nunique()
+    assert integrated['study_coordinate_groups']==samples.analysis_group.nunique()
+    assert integrated['curated_processes']==len(pd.read_csv(root/'inputs/curated_processes.tsv',sep='\t'))
     diagnostics=pd.read_csv(src/'environment_association_diagnostics.tsv',sep='\t')
     assert not set(diagnostics)&{'p','q','p_value','q_value'}
     assert not diagnostics.duplicated(['KO','outcome','predictor']).any()

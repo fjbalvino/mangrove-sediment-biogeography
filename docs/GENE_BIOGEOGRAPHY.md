@@ -2,7 +2,7 @@
 
 This stage reproduces the eight-cycle atlas, operational rule evidence, environmental design diagnostics and exploratory gene–environment slopes. It integrates nitrogen with carbon, methane/C1, sulfur, phosphorus, iron acquisition, hydrogen/electron transfer, and respiration/phototrophy. The last two panels provide metabolic context; iron redox remains unresolved.
 
-The source derives from version 7 of the reviewed 191-profile package. That reference contains 97 rules, 65 curated processes, 69 displayed reaction groups and 368 unique queried KOs; 328 have matrix rows. These are historical reference counts, **not imposed dimensions for the next matrix**. A new run derives sample, coordinate, study, available-KO and calibration-family sizes from its inputs. The rule catalogue remains fixed until an explicit scientific curation revision.
+The source was checked against version 8 of the reviewed 191-profile package. That reference contains 97 rules, 65 curated processes, 69 displayed reaction groups and 368 unique queried KOs; 328 have matrix rows. These are historical reference counts, **not imposed dimensions for the next matrix**. A new run derives sample, coordinate, study, available-KO and calibration-family sizes from its inputs; process counts come from the supplied curated catalogue. The rule catalogue remains fixed until an explicit scientific curation revision.
 
 ## Scope and measurement
 
@@ -74,6 +74,10 @@ python workflow/08_RUN_GENE_BIOGEOGRAPHY.py --stage prepare \
 Alternatively replace `--samples ...` with `--all-matrix-samples` when every matrix column is explicitly approved. Do not retain `--expected-profiles 191` for the expanded dataset. New sample counts are determined from the selected IDs, not from metadata row count or file names. If the measurement changes to mapped counts/coverage/TPM, stop and revise the quantification/statistical contract instead of relabelling it.
 
 Preparation stages: validate inputs → stage immutable analysis-local copies → nitrogen summaries/slopes → design support → remaining-cycle summaries/slopes → curate labels → integrate shared KOs by ID → verify counts, full-matrix denominators, missingness, hierarchical weights and rule states. Shared KOs must agree before integration.
+
+Integration checks shared-KO diagnostic keys, model-support states and every numeric diagnostic column before retaining a single record. Missing, duplicated or conflicting records stop the stage; the numerical tolerance is `1e-10`. Panel-specific display labels are reconciled by KO ID, retaining the historical Amo/Pmo ambiguity. This does not pool the two calibration families or change model estimates.
+
+The existing `atlas/results/rule_evidence_summary.tsv` also reports `met_coordinate_groups` and `total_coordinate_groups` for every rule and threshold. A coordinate is counted once if at least one of its profiles meets the rule, regardless of how many runs or study labels share it. These are the geographic frequencies used in the manuscript, not counts of independent sites. `verify_outputs.py` recomputes them from accession-matched rule states and metadata. Figures, sample matrices and these generated tables stay in the local run directory.
 
 ## 2. Generate all eight viewers and local figures
 

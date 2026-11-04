@@ -27,5 +27,12 @@
     "atlas/assets/vendor/leaflet-LICENSE.txt": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb",
     "atlas/assets/vendor/README.txt": "29370c3ead7e4105eda6e2800b6809cef032ce575a4158f18d0c4e88b74e7d7e"
   },
-  "changes": "Portable input staging and dynamic cohort sizes; fresh plans and checkpoints required. See docs/GENE_BIOGEOGRAPHY.md."
+  "changes": "Portable input staging and dynamic cohort sizes; shared-KO diagnostic consistency checks and accession-matched geographic summaries. Fresh plans and checkpoints required. See docs/GENE_BIOGEOGRAPHY.md.",
+  "reference_verification": {
+    "package": "Biogeochemical_cycles_191.zip",
+    "version": 8,
+    "sha256": "b00bcaba43d0a816cf7c1819d69917ec65fb3a7bcfe3c97fb25313955b90593b",
+    "base_source_commit": "c9fca7d6afef1c48b9d68f0773dfcf6db0ef3153",
+    "scope": "The pre-update Python and R template sources match the accepted package. Current changes strengthen integration and reporting without changing the biological measurements or model estimates."
+  }
 }

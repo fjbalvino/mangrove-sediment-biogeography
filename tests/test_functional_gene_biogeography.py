@@ -58,6 +58,10 @@ class GeneBiogeography(unittest.TestCase):
         self.assertEqual(list(states.columns),self.ids)
         self.assertTrue((states.loc['N01_nifHDK'].to_numpy()==1).all())
         self.assertEqual(states.loc['N01_nifHDKENB',self.ids[0]].tolist(),[1,2,2,2])
+        summary=pd.read_csv(run/'atlas/results/rule_evidence_summary.tsv',sep='\t')
+        nif=summary[(summary.rule=='N01_nifHDK')&(summary.threshold==1)].iloc[0]
+        self.assertEqual(nif.met,16)
+        self.assertEqual(nif.met_coordinate_groups,16)
         preview=self.run_command('--stage','atlas','--atlas-cycle','N','--run-dir',run)
         self.assertIn('--cycle N',preview.stdout)
         self.assertNotIn('plot_supplementary_panels.py',preview.stdout)
@@ -80,6 +84,52 @@ class GeneBiogeography(unittest.TestCase):
     def test_preview_is_read_only(self):
         self.run_command(*self.args())
         self.assertFalse((self.base/'run').exists())
+
+    def test_geographic_summary_counts_coordinates_once(self):
+        self.meta['lat']=10.0
+        self.meta['lon']=np.tile([20.,20.,21.,22.],4)
+        for start in range(0,16,4):
+            for column in ['bio1','soc_mean','phh2o_mean']:
+                self.meta.loc[start+1,column]=self.meta.loc[start,column]
+        self.meta.sample(frac=1,random_state=3).to_csv(self.base/'meta.csv',index=False)
+        self.run_command(*self.args(),'--execute')
+        run=self.base/'run'
+        summary=pd.read_csv(run/'atlas/results/rule_evidence_summary.tsv',sep='\t')
+        nif=summary[(summary.rule=='N01_nifHDK')&(summary.threshold==1)].iloc[0]
+        self.assertEqual(nif.met,16)
+        self.assertEqual(nif.met_coordinate_groups,3)
+        self.assertEqual(nif.total_coordinate_groups,3)
+        integrated=json.loads((run/'atlas/results/integration_summary.json').read_text())
+        self.assertEqual(integrated['study_coordinate_groups'],12)
+        self.assertEqual(integrated['coordinate_groups'],3)
+        # The verifier must reject a report that counts study summaries as sites.
+        summary.loc[summary.rule=='N01_nifHDK','met_coordinate_groups']=12
+        summary.to_csv(run/'atlas/results/rule_evidence_summary.tsv',sep='\t',index=False)
+        result=subprocess.run([sys.executable,str(run/'verify_outputs.py')],capture_output=True,text=True,env=self.env,timeout=90)
+        self.assertNotEqual(result.returncode,0)
+
+    def test_shared_diagnostics_reject_conflicts_and_missing_records(self):
+        rng=np.random.default_rng(67)
+        self.mat.loc['K10944']=rng.integers(1,50,16)
+        self.mat.to_csv(self.base/'counts.tsv',sep='\t',index_label='KO')
+        self.run_command(*self.args(),'--execute')
+        run=self.base/'run'
+        path=run/'analysis_nitrogen/results/environment_association_diagnostics.tsv'
+        original=pd.read_csv(path,sep='\t')
+        selector=(original.KO=='K10944')&(original.outcome=='log2_positive_group_mean')
+        self.assertEqual(int(selector.sum()),3)
+        integrated=pd.read_csv(run/'atlas/results/environment_association_diagnostics.tsv',sep='\t')
+        self.assertEqual(set(integrated.loc[integrated.KO=='K10944','gene']),{'Amo/Pmo A (historical)'})
+        for alteration in ['coefficient','missing','duplicate']:
+            with self.subTest(alteration=alteration):
+                changed=original.copy()
+                if alteration=='coefficient':changed.loc[selector,'beta_per_sd']+=0.1
+                elif alteration=='missing':changed=changed.loc[~selector]
+                else:changed=pd.concat([changed,changed.loc[selector].iloc[[0]]],ignore_index=True)
+                changed.to_csv(path,sep='\t',index=False)
+                result=subprocess.run([sys.executable,str(run/'atlas/scripts/00_integrate_analyses.py')],capture_output=True,text=True,env=self.env,timeout=90)
+                self.assertNotEqual(result.returncode,0,result.stdout+result.stderr)
+                self.assertIn('diagnostic',result.stderr)
 
     def test_constant_predictors_are_not_estimable(self):
         p=ROOT/'scripts/12_gene_environment/template/analysis_nitrogen/scripts/12_gene_environment/12B_BUILD_NITROGEN_PILOT.py'
