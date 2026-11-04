@@ -65,10 +65,12 @@ class WorkflowPortabilityTests(unittest.TestCase):
                                   '--metadata', self.base / 'missing.csv',
                                   '--atlas-classes', self.base / 'missing.tsv',
                                   '--annotations', self.base / 'missing annotations',
+                                  '--functional-reference', self.base / 'missing KEGG reference',
                                   '--outdir', output, '--stop-after', 'G', '--dry-run')
         plan = json.loads(result.stdout)
         self.assertEqual(plan['stages'], ['prepare', 'B', 'A', 'C', 'D', 'E', 'F', 'G'])
         self.assertIn('PREVIEW ONLY', plan['status'])
+        self.assertEqual(plan['functional_reference'], str(self.base / 'missing KEGG reference'))
         self.assertFalse(output.exists())
 
     def test_source_export_excludes_local_assets_and_detects_tampering(self):

@@ -137,9 +137,104 @@ statistical module simply because it contains one shared enzyme.
 The annotation layer uses the existing 65-process, 97-rule atlas catalogue. It
 reports every KO's process membership, every logical block's representation in
 each statistical module, and genes present in the matrix but outside that module.
-KOs outside the targeted catalogue retain their original broad annotations;
-they are not classified as biologically unknown. Shared KOs remain explicitly
+KOs outside the targeted catalogue are now covered by the repertoire-wide
+reference mapping described below; they are not classified as biologically
+unknown. Shared KOs remain explicitly
 many-to-many and cannot independently confirm all listed pathways.
+
+### Repertoire-wide functional annotation
+
+`10O_EXTEND_FUNCTIONAL_ANNOTATION.py` extends interpretation beyond the selected
+biogeochemical cycles. It maps **every original matrix KO**, including zero-only
+rows and KOs excluded by network selection, to a frozen KEGG reference. This is
+identifier mapping, not sequence reannotation: the historical descriptions,
+counts and sample accessions remain unchanged. Current descriptions are added
+in a separate field, and changed or no-longer-listed entries are reported.
+
+The reference comprises KO names, PATHWAY and REACTION cross-references, the
+complete KO hierarchy, all detailed protein/RNA-family hierarchies listed in its BRITE branch,
+and all MODULE definitions listed at retrieval. This captures central metabolism,
+amino-acid/cofactor/lipid/nucleotide metabolism, transport, information processing,
+repair, protein folding, signaling, motility and other recorded functions. A
+downloaded hierarchy is not proof of its biological relevance to these sediments.
+Organismal/disease labels remain visible as reference context and cannot establish
+a host, pathogenicity, resistance phenotype or clinical risk.
+
+All memberships are retained. Descriptive tables count each KO once per term;
+overlapping term percentages need not sum to 100. Detailed BRITE paths preserve
+the distinctions among transporter subfamilies and other protein families.
+Reaction equations are reference chemistry, not observed flux or direction.
+An unclassified KO, a named KO outside a pathway, an explicitly uncharacterized
+protein and an identifier missing from the current reference remain distinct.
+
+MODULE definitions use the atlas's tested AND/OR/optional parser, with nested
+module expansion. Each definition is audited. Unsupported definitions, including
+unassigned `--` steps, remain unevaluated and are exported with the reason; they
+are never declared absent. Optional-only blocks are excluded from required-block
+coverage. Rules are evaluated separately within each community at thresholds of
+one and two annotation records. An unavailable matrix row is unknown, not zero.
+Meeting a community rule does not establish a complete pathway in one organism.
+
+The same logical blocks are overlaid on existing statistical modules, recording
+genes inside the module, measured genes elsewhere and unavailable rows. Existing
+edges receive shared pathway/module context without changing the graph. Broad
+global/overview maps and organismal/disease maps are excluded from the shared
+biological-pathway edge field. Shared membership does not demonstrate a direct
+reaction, adjacency, interaction or causal direction. Statistical modules are
+never renamed automatically after the most frequent pathway label. For example,
+transporters linked to the quorum-sensing map retain their transport functions;
+that map membership alone is not evidence of communication.
+
+This expansion is **descriptive**. It does not reuse the historical seven-category
+P values for the new annotation families, and does not enable the old KEGG
+enrichment switch. A new enrichment analysis would require a declared family,
+eligible candidate universe and selection-aware null model before execution.
+The frozen atlas rules and the eight-chain calibration also remain unchanged.
+
+Retrieve a reference explicitly (academic KEGG API use, no more than two request
+starts per second), then run offline annotation:
+
+```bash
+python scripts/10_functional_network/10O_EXTEND_FUNCTIONAL_ANNOTATION.py fetch-reference \
+  --outdir /path/to/kegg-reference
+python scripts/10_functional_network/10O_EXTEND_FUNCTIONAL_ANNOTATION.py annotate \
+  --matrix /path/to/functional_KO_counts_original.tsv.gz \
+  --samples config/samples/functional_accessions.txt \
+  --nodes /path/to/network/final_results/173/tables/173_network_nodes_annotated.tsv \
+  --candidates /path/to/network/final_results/171/tables/171_candidate_KO_selection.tsv \
+  --edges /path/to/network/final_results/171/tables/171_consensus_edges.tsv.gz \
+  --dictionary /path/to/annotations/137_KO_function_dictionary_used.tsv \
+  --snapshot /path/to/kegg-reference --outdir /path/to/broad-functional-context
+```
+
+For the full network driver, add `--functional-reference /path/to/kegg-reference`.
+It invokes this same canonical annotation after stage E, without live downloads
+or changes to inference. Omitting the argument preserves historical replay.
+Keep the raw reference, manifests and generated tables in the external companion,
+never Git. Reuse a verified snapshot for repeated analyses; deliberately fetching
+a new reference requires a new external snapshot and an annotation comparison.
+
+Primary documentation: [KEGG API](https://www.kegg.jp/kegg/rest/),
+[API manual](https://www.kegg.jp/kegg/rest/keggapi.html),
+[BRITE](https://www.kegg.jp/kegg/brite.html), and
+[MODULE logic](https://www.kegg.jp/kegg/module.html).
+Database citation: Kanehisa et al. (2025), *KEGG: biological systems database as
+a model of the real world*, *Nucleic Acids Research* 53:D672–D677,
+[doi:10.1093/nar/gkae909](https://doi.org/10.1093/nar/gkae909).
+
+The executed 191-profile audit covered 17,508 matrix KOs, 1,500 candidates and
+all 327 connected nodes, while preserving the 1,062 historical edges. Of these
+nodes, 306 have hierarchical/family context and 274 classified nodes lie outside
+the atlas's selected catalogue. The reference includes 56 detailed BRITE
+hierarchies and 583 MODULE definitions; 569 definitions were evaluated and 14
+with unsupported unassigned steps were retained without completion scores.
+The 217,358 per-sample module records reconcile with all summary counts.
+Within historical M06, 11 of 24 KOs belong to transporters, including five
+branched-chain amino-acid transport components. Within M01, 17 of 57 KOs map
+to aminoacyl-tRNA biosynthesis. These are descriptions of module contents,
+not new enrichment or activity claims. Full results and frozen reference bytes
+are in the external `Functional_network_pilot.zip` companion under
+`broad_functional_context/`.
 
 `config/gene_biogeography/network_reference_chains.json` adds eight selected
 reference chains spanning nitrogen, acetate, methane/C1 and sulfur. These are

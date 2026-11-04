@@ -23,6 +23,8 @@ def main():
     p.add_argument('--metadata', type=Path, required=True)
     p.add_argument('--atlas-classes', type=Path, required=True)
     p.add_argument('--annotations', type=Path, required=True)
+    p.add_argument('--functional-reference', type=Path,
+                   help='Frozen 10O KEGG reference directory for comprehensive descriptive annotation after E; no live queries.')
     p.add_argument('--outdir', type=Path, required=True)
     p.add_argument('--start-at', choices=['prepare', 'B', 'A', 'C', 'D', 'E', 'F', 'G'], default='prepare')
     p.add_argument('--stop-after', choices=['B', 'A', 'C', 'D', 'E', 'F', 'G'], default='F')
@@ -169,6 +171,16 @@ def main():
                 '--candidates', latest('171') / 'tables/171_candidate_KO_selection.tsv',
                 '--edges', latest('171') / 'tables/171_consensus_edges.tsv.gz',
                 '--outdir', latest('173') / 'biogeochemical_context'])
+            if args.functional_reference is not None:
+                run('E_broad_functional_context', [sys.executable,
+                    scripts / '10O_EXTEND_FUNCTIONAL_ANNOTATION.py', 'annotate',
+                    '--matrix', args.counts, '--samples', args.accessions,
+                    '--nodes', latest('173') / 'tables/173_network_nodes_annotated.tsv',
+                    '--candidates', latest('171') / 'tables/171_candidate_KO_selection.tsv',
+                    '--edges', latest('171') / 'tables/171_consensus_edges.tsv.gz',
+                    '--dictionary', args.annotations / '137_KO_function_dictionary_used.tsv',
+                    '--snapshot', args.functional_reference,
+                    '--outdir', latest('173') / 'broad_functional_context'])
     if args.stop_after in ['F', 'G']:
         run('verify', [sys.executable, scripts / '10I_VERIFY_NETWORK_OUTPUTS.py',
                        '--outdir', out])
