@@ -23,6 +23,8 @@ for(const [code,c] of Object.entries(cycles)){
  const paneZ=el=>Number(w.getComputedStyle(el).zIndex);
  function correctLayerOrder(){const tz=paneZ(api.terrain.getPane());return geographicLayers.length>0&&geographicLayers.every(l=>paneZ(l.getPane())<tz)&&[...api.markers.values()].every(m=>paneZ(m.getPane())>tz);}
  const layerOrderAtStart=correctLayerOrder();
+ const embeddedReliefPresent=api.map.hasLayer(api.offlineRelief)&&paneZ(api.offlineRelief.getPane())<150&&api.reliefImage.src.startsWith('data:image/jpeg;base64,');
+ const outlinesHaveNoLandFill=geographicLayers.every(l=>l.options.fill===false&&l.options.fillOpacity===0);
  const fallbackIgnoresClicks=geographicLayers.every(l=>l.options.interactive===false&&w.getComputedStyle(l.getPane()).pointerEvents==='none');
  const actualPaneOwnership=geographicLayers.every(l=>l._path?.closest('.leaflet-pane')===l.getPane())&&[...api.markers.values()].every(m=>m._path.closest('.leaflet-pane')===m.getPane());
  const terrainFullyOpaque=api.terrain.options.opacity===1&&d.getElementById('relief-opacity').value==='100';
@@ -31,7 +33,7 @@ for(const [code,c] of Object.entries(cycles)){
  const datum=w.eval('D');
  const sampleValues=datum.sample_values[sel.value.slice(7)];
  const cycleValuesUpdate=[...d.querySelectorAll('[data-ko-value]')].every(el=>el.textContent===(sampleValues[el.dataset.koValue]==null?'No row':Number(sampleValues[el.dataset.koValue]).toFixed(1)));
- const checks={cycle:code,layerOrderAtStart,fallbackIgnoresClicks,actualPaneOwnership,terrainFullyOpaque,layerLevels,cycleValuesUpdate,errors,options:sel.options.length,liveMarkers:api.markers.size,cards:d.querySelectorAll('#cards .card').length,sampleUpdates:d.getElementById('selection-title').textContent===sel.value.slice(7),cycleLinks:d.querySelectorAll('.cycle-switch a').length};
+ const checks={cycle:code,embeddedReliefPresent,outlinesHaveNoLandFill,layerOrderAtStart,fallbackIgnoresClicks,actualPaneOwnership,terrainFullyOpaque,layerLevels,cycleValuesUpdate,errors,options:sel.options.length,liveMarkers:api.markers.size,cards:d.querySelectorAll('#cards .card').length,sampleUpdates:d.getElementById('selection-title').textContent===sel.value.slice(7),cycleLinks:d.querySelectorAll('.cycle-switch a').length};
  d.getElementById('threshold').value='2';d.getElementById('threshold').dispatchEvent(new w.Event('change'));checks.rulesRendered=d.querySelectorAll('.rule-result').length;
  d.getElementById('zoom-in').click();checks.zoomButton=api.map.getZoom()===3;
  d.getElementById('zoom-selection').click();checks.zoomToSelection=api.map.getZoom()===12;
@@ -57,12 +59,13 @@ for(const [code,c] of Object.entries(cycles)){
  checks.nativeZoom=api.terrain.options.maxNativeZoom===17;
  const coords={x:32101,y:58620,z:17};const url=api.terrain.getTileUrl(coords);checks.highZoomTile=url.includes('/17/');
  checks.tilesAtCurrentZoom=Object.keys(api.terrain._tiles).some(k=>k.endsWith(':17'));
- api.terrain.fire('tileerror');checks.failureFallback=d.getElementById('map-status').textContent.includes('offline');
+ api.terrain.fire('tileerror');checks.failureFallback=d.getElementById('map-status').textContent.includes('Embedded colour relief')&&api.map.hasLayer(api.offlineRelief);
  api.terrain.fire('tileload');checks.terrainStatus=d.getElementById('map-status').textContent.includes('Detailed terrain');
- const toggle=d.getElementById('relief-toggle');toggle.checked=false;toggle.dispatchEvent(new w.Event('change'));checks.offlineOutline=api.map.hasLayer(api.terrain)===false&&Object.values(api.map._layers).some(l=>l.feature);
+ const toggle=d.getElementById('relief-toggle');toggle.checked=false;toggle.dispatchEvent(new w.Event('change'));checks.offlineOutline=api.map.hasLayer(api.terrain)===false&&api.map.hasLayer(api.offlineRelief)&&Object.values(api.map._layers).some(l=>l.feature);
  toggle.checked=true;toggle.dispatchEvent(new w.Event('change'));
  checks.layerOrderAfterToggle=api.map.hasLayer(api.terrain)&&correctLayerOrder();
  const opacity=d.getElementById('relief-opacity');opacity.value='65';opacity.dispatchEvent(new w.Event('input'));checks.opacityControl=api.terrain.options.opacity===.65;opacity.value='100';opacity.dispatchEvent(new w.Event('input'));
+ d.getElementById('terrain-retry').click();checks.retryTerrain=api.map.hasLayer(api.terrain)&&api.map.hasLayer(api.offlineRelief)&&d.getElementById('map-status').textContent.includes('retrying');
  checks.embeddedCycleGenes=d.querySelectorAll('[data-ko-fill]').length;
  const firstRule=Object.keys(datum.block_evidence)[0];
  const sampleId=Object.keys(datum.samples)[0];sel.value='sample:'+sampleId;sel.dispatchEvent(new w.Event('change'));
@@ -75,10 +78,12 @@ for(const [code,c] of Object.entries(cycles)){
    checks.blockEvidenceUpdates&&=Boolean(el)&&el.querySelector('.block-coverage').textContent.includes(lower.toFixed(1)+'–'+upper.toFixed(1)+'%')&&el.querySelectorAll('.block-details tbody tr').length===state.length;
   }
  }
- const supported=datum.diagnostics.find(row=>row.effective_information_studies!=null);d.getElementById('mapgene').value=supported.KO;d.getElementById('mapgene').dispatchEvent(new w.Event('change'));
- checks.conditionalSupportRendered=d.querySelectorAll('.conditional-support tbody tr').length===datum.diagnostics.filter(row=>row.KO===supported.KO).length&&d.querySelector('.conditional-support').textContent.includes('not the number of independent replicates');
+ const supported=datum.diagnostics.find(row=>row.effective_information_studies!=null);
+ if(supported){d.getElementById('mapgene').value=supported.KO;d.getElementById('mapgene').dispatchEvent(new w.Event('change'));
+ checks.conditionalSupportRendered=d.querySelectorAll('.conditional-support tbody tr').length===datum.diagnostics.filter(row=>row.KO===supported.KO).length&&d.querySelector('.conditional-support').textContent.includes('not the number of independent replicates');}
+ else{checks.conditionalSupportRendered=d.getElementById('selected-diagnostic').textContent.includes('No estimable');}
  checks.noSignificanceAdded=!datum.diagnostics.some(row=>['p','q','p_value','q_value'].some(key=>Object.hasOwn(row,key)));
- checks.passed=errors.length===0&&checks.options===1+Object.keys(datum.samples).length+Object.keys(datum.groups).length&&checks.liveMarkers===Object.keys(datum.coordinate_values).length&&checks.cycleLinks===(datum.available_cycles?.length||8)&&checks.cards>0&&checks.embeddedCycleGenes>0&&['sampleUpdates','zoomButton','zoomToSelection','overlapChooser','overlapSampleAccessible','geneUpdates','highZoom','nativeZoom','highZoomTile','tilesAtCurrentZoom','failureFallback','terrainStatus','offlineOutline','markerColoursUpdate','noLeafletSizingOverride','nativeOverlayDimensions','compactAttribution','markerPathsPresent','cycleValuesUpdate','layerOrderAtStart','fallbackIgnoresClicks','actualPaneOwnership','terrainFullyOpaque','layerOrderAtHighZoom','layerOrderAfterToggle','opacityControl','blockEvidenceUpdates','conditionalSupportRendered','noSignificanceAdded'].every(k=>checks[k]);
+ checks.passed=errors.length===0&&checks.options===1+Object.keys(datum.samples).length+Object.keys(datum.groups).length&&checks.liveMarkers===Object.keys(datum.coordinate_values).length&&checks.cycleLinks===(datum.available_cycles?.length||8)&&checks.cards>0&&checks.embeddedCycleGenes>0&&['embeddedReliefPresent','outlinesHaveNoLandFill','retryTerrain','sampleUpdates','zoomButton','zoomToSelection','overlapChooser','overlapSampleAccessible','geneUpdates','highZoom','nativeZoom','highZoomTile','tilesAtCurrentZoom','failureFallback','terrainStatus','offlineOutline','markerColoursUpdate','noLeafletSizingOverride','nativeOverlayDimensions','compactAttribution','markerPathsPresent','cycleValuesUpdate','layerOrderAtStart','fallbackIgnoresClicks','actualPaneOwnership','terrainFullyOpaque','layerOrderAtHighZoom','layerOrderAfterToggle','opacityControl','blockEvidenceUpdates','conditionalSupportRendered','noSignificanceAdded'].every(k=>checks[k]);
  results.push(checks);w.close();
 }
 const out={runtime:'Real bundled Leaflet 1.9.4 in jsdom 26; element sizes and SVG support mocked. Interaction, all-media CSS isolation, SVG dimensions, actual layer panes/z-order, opacity, toggle and tile-URL tests; not a browser pixel-layout test. No tile downloads by this test.',results};

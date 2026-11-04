@@ -99,7 +99,7 @@ Environmental support expands beneath the original slope table. It reports predi
 
 For standalone DOM checks, set `ATLAS_TEST_CYCLE=N` in addition to `ATLAS_TEST_ROOT`. The test checks the new evidence controls alongside layer order, marker visibility, overlap selection and zoom. Browser pixel checks remain a separate release task.
 
-A descriptive pilot may document a previous calibration through `reference_calibration.json` only after independently matching the inputs by identifier. This record binds the archive summary and current input files to checksums; the viewer explicitly states that simulations were not rerun. Never create this record for Dani's new matrix. Fresh matrix releases require fresh calibration.
+A descriptive pilot may document a previous calibration through `reference_calibration.json` (nitrogen) and `reference_calibration_remaining.json` (remaining-cycle family) only after independently matching the inputs by identifier. Each record binds its archive summary and current input files to checksums; the viewer explicitly states that simulations were not rerun. Never create this record for Dani's new matrix. Fresh matrix releases require fresh calibration.
 
 Open the run's `atlas/index.html`. Every panel includes map zoom and overlap selection, a biochemical reference diagram, an individual-gene heatmap, environmental sensitivity, rules and methods. Plasma is shared across all panels within a release; the upper scale is recalculated for that release and recorded. Compare colour scales explicitly between releases. Heatmap columns decrease in signed longitude, east to west. Figures and derived data stay local.
 
@@ -113,6 +113,10 @@ python /path/to/runs/functional-complete/verify_outputs.py --viewers
 ATLAS_TEST_ROOT=/path/to/runs/functional-complete/atlas \
   node /path/to/runs/functional-complete/atlas/tests/test_viewers.cjs
 ```
+
+All eight panels include the same logical-block evidence and conditional environmental support controls introduced in the nitrogen pilot. The map now retains a bundled colour-relief background when online tiles are unavailable. The Natural Earth 2:1 raster is resampled into Web Mercator once during the build, then rendered as small local canvas tiles at each zoom. No large stretched image, opaque land polygon or external download is needed for this overview. Resampling does not add geographic detail. The online OpenTopoMap layer retains native zoom 17, the provider's configured maximum in this viewer; samples remain above both map layers. Use **Reload terrain** after a network interruption. The maximum online detail requires a browser that permits external tile requests.
+
+Projection tests independently check pixel-centre coordinates, the Mercator latitude limit, colour retention and longitude alignment. DOM tests check that the relief remains active after tile failure or when online detail is disabled, and that boundary outlines have no fill. Release browser checks must block all tile requests, verify visible coloured relief at low/high zoom, then test real online tile loading at zoom 17. Checking a tile URL alone is insufficient.
 
 The Node checks cover selection, marker colour changes, thresholds, map zoom, overlap lists, CSS sizing and layer order. They do not replace visual inspection in a real browser. Local supplementary panels are generated under `atlas/supplement/`; figure numbers are assigned editorially rather than carried into every future dataset.
 

@@ -20,3 +20,5 @@
 .conditional-support summary{cursor:pointer;color:#674582;font-size:13px;margin-bottom:12px}
 .conditional-support .trace-table{margin:12px 0}
 .conditional-support .trace-table td:nth-child(2){width:auto}
+
+#terrain-retry{padding:4px 9px;border:1px solid #d4c9df;border-radius:6px;background:#faf7fd;color:#613784;font-size:11px}

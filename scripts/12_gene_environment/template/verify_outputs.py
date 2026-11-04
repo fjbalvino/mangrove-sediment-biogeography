@@ -69,6 +69,7 @@ def verify(root, viewers=False, cycle=None):
             text=(root/'atlas/figures'/info['slug']/'viewer.html').read_text()
             assert '<html lang="en">' in text and 'id="map"' in text
             assert 'id="sensitivity-image"' in text and 'id="heatmap-image"' in text
+            assert 'id="terrain-retry"' in text and '"offline_relief"' in text
             assert not re.findall(r'__[A-Z_]+__',text)
     result={'passed':True,'profiles':len(ids),'rules':len(rules),'panels':len(cycles),'unavailable_KOs':len(missing),'viewers_checked':viewers,'viewer_cycle':cycle or 'all',
             'scope':'Numerical and structural verification; not validation of ecological inference or browser rendering'}

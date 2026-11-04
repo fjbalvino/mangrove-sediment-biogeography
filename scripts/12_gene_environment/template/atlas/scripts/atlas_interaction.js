@@ -71,23 +71,45 @@ function openPointChooser(el){
 $('chooser-close').addEventListener('click',()=>{$('point-chooser').hidden=true;});
 
 geoMap=L.map('map',{zoomControl:false,minZoom:2,maxZoom:17,scrollWheelZoom:true,preferCanvas:false,attributionControl:true}).setView([12,5],2);
-// The fallback belongs beneath raster tiles, never in the sample overlay pane.
-const overviewPane=geoMap.createPane('offlineOverview');
-overviewPane.style.zIndex='150';
-overviewPane.style.pointerEvents='none';
-const overview=L.geoJSON(D.world,{pane:'offlineOverview',interactive:false,style:{color:'#9aa9af',weight:.65,fillColor:'#e4eae7',fillOpacity:1}}).addTo(geoMap);
+// Embedded relief is tiled locally so high zoom never creates a giant image element.
+// Its Web Mercator projection matches the online tiles; resampling adds no detail.
+const reliefPane=geoMap.createPane('offlineRelief');reliefPane.style.zIndex='140';reliefPane.style.pointerEvents='none';
+const reliefImage=new Image();
+const reliefReady=new Promise((resolve,reject)=>{reliefImage.onload=resolve;reliefImage.onerror=reject;});
+reliefImage.src=D.offline_relief.image;
+const EmbeddedRelief=L.GridLayer.extend({
+ createTile:function(coords,done){
+  const tile=document.createElement('canvas');tile.width=tile.height=256;tile.setAttribute('aria-hidden','true');
+  reliefReady.then(()=>{try{const span=reliefImage.naturalWidth/Math.pow(2,coords.z);tile.getContext('2d').drawImage(reliefImage,coords.x*span,coords.y*span,span,span,0,0,256,256);done(null,tile);}catch(error){done(error,tile);}},error=>done(error,tile));
+  return tile;
+ }
+});
+const offlineRelief=new EmbeddedRelief({pane:'offlineRelief',tileSize:256,maxZoom:17,opacity:1,updateWhenIdle:true,keepBuffer:1}).addTo(geoMap);
+const overviewPane=geoMap.createPane('offlineOverview');overviewPane.style.zIndex='150';overviewPane.style.pointerEvents='none';
+const overview=L.geoJSON(D.world,{pane:'offlineOverview',interactive:false,style:{color:'#a8b6b7',weight:.45,fill:false,fillOpacity:0}}).addTo(geoMap);
 geoMap.attributionControl.setPrefix('<a href="https://leafletjs.com/" title="Interactive map library">Leaflet</a>');
-geoMap.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a> overview');
+geoMap.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a> embedded relief');
 const terrain=L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png',{maxNativeZoom:17,maxZoom:17,opacity:1,updateWhenIdle:true,keepBuffer:1,attribution:'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM · Map style © <a href="https://opentopomap.org/">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>)'});
 let loadedTiles=0,tileErrors=0;
-terrain.on('tileload',()=>{loadedTiles++;$('map-status').textContent='Detailed terrain · tiles update when you zoom · internet connected';});
-terrain.on('tileerror',()=>{tileErrors++;$('map-status').textContent=loadedTiles?'Some terrain tiles could not load. Sample coordinates remain visible.':'Terrain unavailable: showing the offline geographic overview. Sample selection and zoom still work.';});
-terrain.on('loading',()=>{$('map-status').textContent='Loading terrain for this view…';});
-if(navigator.onLine!==false)terrain.addTo(geoMap);else{$('relief-toggle').checked=false;$('map-status').textContent='Offline geographic overview. Enable detailed terrain when connected.';}
+function terrainStatus(){
+ if(!$('relief-toggle').checked)return;
+ $('map-status').textContent=loadedTiles?(tileErrors?'Detailed terrain partly loaded · embedded colour relief fills unavailable tiles.':'Detailed terrain · tiles update when you zoom · internet connected'):'Embedded colour relief · online detail unavailable. Reload terrain or open the downloaded HTML in a browser with internet.';
+}
+terrain.on('tileload',()=>{loadedTiles++;terrainStatus();});
+terrain.on('tileerror',()=>{tileErrors++;terrainStatus();});
+terrain.on('loading',()=>{loadedTiles=0;tileErrors=0;$('map-status').textContent='Embedded colour relief · loading online detail for this view…';});
+terrain.on('load',terrainStatus);
+if(navigator.onLine!==false)terrain.addTo(geoMap);else{$('map-status').textContent='Embedded colour relief · offline. High-resolution detail will load when connected.';}
+function retryTerrain(){
+ $('relief-toggle').checked=true;loadedTiles=0;tileErrors=0;updateRelief();terrain.redraw();
+ $('map-status').textContent='Embedded colour relief · retrying online detail…';
+}
+$('terrain-retry').addEventListener('click',retryTerrain);
+window.addEventListener('online',()=>{if($('relief-toggle').checked)retryTerrain();});
 pointElements.forEach(el=>{const id=el.dataset.coord,g=coords[id][0][1];const marker=L.circleMarker([g.lat,g.lon],{radius:6,color:'#342440',weight:1,fillOpacity:1,bubblingMouseEvents:false}).addTo(geoMap);liveMarkers.set(id,marker);marker.on('click',()=>selectPoint(el));if(marker._path){marker._path.classList.add('sample-marker');marker._path.setAttribute('data-coordinate',id);marker._path.setAttribute('tabindex','0');marker._path.setAttribute('role','button');marker._path.setAttribute('aria-label','Select '+g.Country+', '+g.Locality);marker._path.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPoint(el);}});}});
 L.control.scale({imperial:false,maxWidth:140}).addTo(geoMap);
 function renderMapView(){const z=geoMap.getZoom();$('zoom-level').textContent='Zoom '+z;$('zoom-in').disabled=z>=17;$('zoom-out').disabled=z<=2;}
-function updateRelief(){if($('relief-toggle').checked){if(!geoMap.hasLayer(terrain))terrain.addTo(geoMap);terrain.setOpacity(Number($('relief-opacity').value)/100);}else{geoMap.removeLayer(terrain);$('map-status').textContent='Offline geographic overview · detailed terrain disabled';}$('relief-opacity').disabled=!$('relief-toggle').checked;}
+function updateRelief(){if($('relief-toggle').checked){if(!geoMap.hasLayer(terrain))terrain.addTo(geoMap);terrain.setOpacity(Number($('relief-opacity').value)/100);}else{geoMap.removeLayer(terrain);$('map-status').textContent='Embedded colour relief · online detail disabled';}$('relief-opacity').disabled=!$('relief-toggle').checked;}
 $('zoom-in').addEventListener('click',()=>geoMap.zoomIn());$('zoom-out').addEventListener('click',()=>geoMap.zoomOut());$('zoom-reset').addEventListener('click',()=>geoMap.setView([12,5],2));
 $('zoom-selection').addEventListener('click',()=>{const m=current().meta;if(!m){$('map-status').textContent='Choose a sample or group first.';return;}geoMap.setView([m.lat,m.lon],Math.max(geoMap.getZoom(),12));});
 geoMap.on('zoomend moveend',renderMapView);window.addEventListener('resize',()=>geoMap.invalidateSize());
@@ -98,4 +120,4 @@ $('heatmap-zoom').addEventListener('change',()=>{$('heatmap-image').style.width=
 document.querySelectorAll('a[href="#methods"]').forEach(a=>a.addEventListener('click',()=>{$('methods').open=true;}));
 update();renderMapView();
 // Expose a minimal testing interface; this does not change scientific data.
-window.atlasMap={map:geoMap,terrain,overview,markers:liveMarkers,tileSource:'https://tile.opentopomap.org/{z}/{x}/{y}.png'};
+window.atlasMap={map:geoMap,terrain,overview,offlineRelief,reliefImage,markers:liveMarkers,tileSource:'https://tile.opentopomap.org/{z}/{x}/{y}.png'};
