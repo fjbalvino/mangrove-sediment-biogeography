@@ -49,6 +49,11 @@ matrices and fitted R objects are not included in the code repository.
    documented historical text-matching rules. Script 10A records rule scores
    and ties. Module numbers are size ranks and do not carry fixed biological
    labels across runs.
+   The driver now also calls `lib/biogeochemical_context.py` after 10E. This
+   overlays the atlas's frozen KO-to-process rules on the existing partition,
+   retaining many-to-many membership, optional components, alternatives and
+   unavailable matrix rows. It does not modify edges, modules or the existing
+   category enrichment tests. The context outputs are descriptive.
 6. Evaluate enrichment using 4,999 blocked permutations. Connected-node tests
    condition on occurrence, total abundance and CLR variance; module tests
    additionally condition on degree and absolute strength. Functional
@@ -118,3 +123,127 @@ python tools/build_functional_network_documents.py --repository . --figure /path
 Word text uses Arial 11, black, with bold titles only. The main report embeds Figure 5; the separate supplementary report retains all 42 primary category tests, the informative annotation comparison, and grouped threshold results. Complete sensitivity tables remain in TSV files.
 
 The external archived summaries omit per-omission accession lists and host-specific execution paths. Complete sample manifests remain in the companion archive and are regenerated locally. The network is Figure 5 in the current manuscript; the regional workflow retains its historical filenames for compatibility with archived outputs.
+
+## Biochemical interpretation and redesign pilot
+
+The biological target is reproducible covariation among encoded functions in
+their reaction and pathway context. A statistical module and a KEGG biochemical
+module are different objects. Do not assign the name of a complete cycle to a
+statistical module simply because it contains one shared enzyme.
+
+The annotation layer uses the existing 65-process, 97-rule atlas catalogue. It
+reports every KO's process membership, every logical block's representation in
+each statistical module, and genes present in the matrix but outside that module.
+KOs outside the targeted catalogue retain their original broad annotations;
+they are not classified as biologically unknown. Shared KOs remain explicitly
+many-to-many and cannot independently confirm all listed pathways.
+
+`config/gene_biogeography/network_reference_chains.json` adds eight selected
+reference chains spanning nitrogen, acetate, methane/C1 and sulfur. These are
+biochemical context links, never additional inferred edges. Successive chemical
+steps are curated explicitly; their order is not guessed from whitespace in a
+logical expression. Electron-transfer or recycling machinery is kept separate
+from the carbon-transfer chain. All eight atlas panels receive rule/context
+coverage, but this initial chain file does not claim exhaustive ordered reaction
+coverage of every process. The curated rules remain unchanged.
+
+Source definitions: [KEGG module semantics](https://www.kegg.jp/kegg/module.html),
+[nitrogen-oxide reduction](https://www.kegg.jp/entry/M00529),
+[ammonium-producing nitrate reduction](https://www.kegg.jp/entry/M00530),
+[nitrate assimilation](https://www.kegg.jp/entry/M00531),
+[CO2-linked methane pathway](https://www.kegg.jp/entry/M00567),
+[acetate-linked methane pathway](https://www.kegg.jp/entry/M00357), and
+[sulfate-pathway context](https://www.kegg.jp/entry/M00596).
+Reference direction is not measured direction. Nar/Nxr, Mcr, Apr/Dsr and
+reversible acetate reactions retain their existing ambiguities.
+
+### Diagnostic execution
+
+Run this before changing the final network inference. Inputs are the accepted
+atlas matrix/metadata and the archived network's current 171/173 outputs. The
+pilot requires an empty output directory and matches samples only by accession.
+
+```bash
+python scripts/10_functional_network/10L_AUDIT_PROCESS_CONTEXT.py \
+  --matrix /path/to/atlas/inputs/functional_KO_counts_original.tsv.gz \
+  --metadata /path/to/atlas/inputs/metadata_functional.csv \
+  --samples config/samples/functional_accessions.txt \
+  --reference-nodes /path/to/network/final_results/173/tables/173_network_nodes_annotated.tsv \
+  --reference-edges /path/to/network/final_results/171/tables/171_consensus_edges.tsv.gz \
+  --reference-candidates /path/to/network/final_results/171/tables/171_candidate_KO_selection.tsv \
+  --reference-design /path/to/network/final_results/171/tables/171_bootstrap_design.tsv.gz \
+  --outdir /path/to/network-process-pilot
+```
+
+The historical candidate identifiers and CLR variances must reproduce before
+the pilot proceeds. This guard compares the supplied reference with its source
+matrix; it does not impose the old candidate set on Dani's future matrix. New
+data first require their own reference run and a new calibration.
+
+The pilot compares run-level global proportionality, equal-study weighted
+study-coordinate proportionality, and within-study coordinate deviations. CLR
+coordinates are averaged within BioSample labels, then labels within each
+study-coordinate group; each study has equal total weight and its coordinate
+groups share that weight equally. This is a mean of CLR coordinates, not the
+atlas's arithmetic mean of per-million annotations. Coordinates are grouped
+at five decimal places for consistency with the atlas, without implying that
+the original coordinates have that precision. Studies with one coordinate
+group supply no within-study coordinate contrast. These are distinct descriptive
+estimands, not alternative tests of the same null.
+
+Sensitivity uses pseudocounts 0.5, 1 and 2 in original annotation-record units;
+the original association reference is held fixed for edge-weight comparisons.
+A separate comparison uses all detected matrix rows as CLR reference. Feature
+selection is independently repeated for each pseudocount, with and without the
+influential project. The exact archived 500 subsets also provide unconditional
+weights for the same historical edges. Their percentiles are sampling
+sensitivity ranges, not confidence intervals. The custom proportionality
+implementation is checked against the independent log-ratio-variance identity;
+the pilot does not claim execution of the R `propr` package.
+
+### Verified findings from the 191-profile pilot, 2026-11-04
+
+- Reproduced all 1,500 historical candidate identities and their CLR variances.
+  All 1,062 historical consensus edges were positive.
+- Of 368 queried atlas KOs, 328 have matrix rows, 125 enter the historical
+  candidate set and only 19 occur in the six major modules (236 KOs).
+  No nitrogen-catalogue KO is connected in the historical network. Sulfur has
+  two connected KOs, neither in a major module. Cycle-specific counts overlap
+  when KOs have multiple process memberships.
+- The selected Nap → NirK/S → cNOR → NosZ reference chain is co-detected in
+  153/191 profiles at one record per component and 141/191 at two. This is a
+  community-level, architecture-specific statement, not complete denitrification
+  in an organism, expression, net nitrogen loss or evidence of a statistical edge.
+- The influential project's six profiles have median total assignments 12,255.5
+  and median detected KOs 2,018, versus 389,810 and 8,372 in the other 185.
+  Those contrasts identify a recovery-related explanation to test; they do not
+  demonstrate its cause or justify excluding the project.
+- There are 85 study-coordinate groups in 44 provenance labels. Only 10 labels
+  have multiple coordinates (51 groups). These labels are not certified
+  independent studies. Median proportionality of historical edges is 0.978
+  globally, 0.974 under study-coordinate weighting and 0.829 within studies.
+  At the historical diagnostic cutoff 0.95, 123/1,062 edges remain above the
+  cutoff within studies, and 13/1,062 after omitting the influential project
+  (9 labels, 46 groups). These are not significant-edge counts or FDR estimates.
+- Omitting the project leaves all historical edges above 0.95 in the run-level
+  global calculation. Its effect on the old selected topology therefore cannot
+  be read simply as disappearance of strong global covariation: ranking,
+  the per-draw edge budget and consensus selection also matter.
+- Pseudocount changes alter candidate identity (Jaccard 0.717 for 0.5 and
+  0.803 for 2, relative to 1). The conditional-minus-unconditional mean weight
+  difference is small in this run (mean 0.000441; maximum 0.003945).
+
+The pilot exports three PNG/PDF figures, complete tabular evidence and checksums
+outside Git. Input matrices and metadata are not modified. It does not reinfer
+final modules, run null-network simulations, establish edge FDR, validate held-out
+studies, test new process enrichment or replace manuscript results. Those stages
+must follow the sampling and annotation diagnosis. Preserve the distinction
+between the existing six modules and any subsequently inferred partition.
+
+The next calibration must test both a discovery network and a prespecified
+process-focused coherence analysis. The latter retains measured members of the
+curated chains even when they fail the discovery network's variability ranking;
+it must use its own declared hypothesis family and must not add edges merely
+because a biochemical reference connects two steps. Module interpretation will
+then report which steps are represented together, split between modules,
+outside the selected network, or unavailable in the matrix.

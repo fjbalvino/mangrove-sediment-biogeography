@@ -162,6 +162,13 @@ def main():
                 '--study', study, '--run156', latest('156'), '--rscript', args.rscript])
         script, = scripts.glob('10' + stage + '_*.R')
         run(stage, [args.rscript, '--vanilla', script, *common, *extra])
+        if stage == 'E':
+            run('E_biogeochemical_context', [sys.executable, scripts / 'lib/biogeochemical_context.py',
+                '--matrix', args.counts, '--samples', args.accessions,
+                '--nodes', latest('173') / 'tables/173_network_nodes_annotated.tsv',
+                '--candidates', latest('171') / 'tables/171_candidate_KO_selection.tsv',
+                '--edges', latest('171') / 'tables/171_consensus_edges.tsv.gz',
+                '--outdir', latest('173') / 'biogeochemical_context'])
     if args.stop_after in ['F', 'G']:
         run('verify', [sys.executable, scripts / '10I_VERIFY_NETWORK_OUTPUTS.py',
                        '--outdir', out])
