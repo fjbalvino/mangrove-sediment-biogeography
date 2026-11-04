@@ -4,6 +4,7 @@ const root=process.env.ATLAS_TEST_ROOT||path.resolve(__dirname,'..');
 const cycles=JSON.parse(fs.readFileSync(path.join(root,'curation/cycles.json')));
 const results=[];
 for(const [code,c] of Object.entries(cycles)){
+ if(process.env.ATLAS_TEST_CYCLE&&code!==process.env.ATLAS_TEST_CYCLE)continue;
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=new JSDOM(fs.readFileSync(path.join(root,'figures',c.slug,'viewer.html'),'utf8'),{
   runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,
@@ -63,7 +64,21 @@ for(const [code,c] of Object.entries(cycles)){
  checks.layerOrderAfterToggle=api.map.hasLayer(api.terrain)&&correctLayerOrder();
  const opacity=d.getElementById('relief-opacity');opacity.value='65';opacity.dispatchEvent(new w.Event('input'));checks.opacityControl=api.terrain.options.opacity===.65;opacity.value='100';opacity.dispatchEvent(new w.Event('input'));
  checks.embeddedCycleGenes=d.querySelectorAll('[data-ko-fill]').length;
- checks.passed=errors.length===0&&checks.options===1+Object.keys(datum.samples).length+Object.keys(datum.groups).length&&checks.liveMarkers===Object.keys(datum.coordinate_values).length&&checks.cycleLinks===8&&checks.cards>0&&checks.embeddedCycleGenes>0&&['sampleUpdates','zoomButton','zoomToSelection','overlapChooser','overlapSampleAccessible','geneUpdates','highZoom','nativeZoom','highZoomTile','tilesAtCurrentZoom','failureFallback','terrainStatus','offlineOutline','markerColoursUpdate','noLeafletSizingOverride','nativeOverlayDimensions','compactAttribution','markerPathsPresent','cycleValuesUpdate','layerOrderAtStart','fallbackIgnoresClicks','actualPaneOwnership','terrainFullyOpaque','layerOrderAtHighZoom','layerOrderAfterToggle','opacityControl'].every(k=>checks[k]);
+ const firstRule=Object.keys(datum.block_evidence)[0];
+ const sampleId=Object.keys(datum.samples)[0];sel.value='sample:'+sampleId;sel.dispatchEvent(new w.Event('change'));
+ checks.blockEvidenceUpdates=true;
+ for(const threshold of ['1','2']){
+  d.getElementById('threshold').value=threshold;d.getElementById('threshold').dispatchEvent(new w.Event('change'));
+  for(const [rid,b] of Object.entries(datum.block_evidence)){
+   const state=b.samples[threshold][sampleId],lower=100*state.filter(s=>s===1).length/state.length,upper=100*state.filter(s=>s!==0).length/state.length;
+   const el=d.querySelector('[data-rule="'+rid+'"]');
+   checks.blockEvidenceUpdates&&=Boolean(el)&&el.querySelector('.block-coverage').textContent.includes(lower.toFixed(1)+'–'+upper.toFixed(1)+'%')&&el.querySelectorAll('.block-details tbody tr').length===state.length;
+  }
+ }
+ const supported=datum.diagnostics.find(row=>row.effective_information_studies!=null);d.getElementById('mapgene').value=supported.KO;d.getElementById('mapgene').dispatchEvent(new w.Event('change'));
+ checks.conditionalSupportRendered=d.querySelectorAll('.conditional-support tbody tr').length===datum.diagnostics.filter(row=>row.KO===supported.KO).length&&d.querySelector('.conditional-support').textContent.includes('not the number of independent replicates');
+ checks.noSignificanceAdded=!datum.diagnostics.some(row=>['p','q','p_value','q_value'].some(key=>Object.hasOwn(row,key)));
+ checks.passed=errors.length===0&&checks.options===1+Object.keys(datum.samples).length+Object.keys(datum.groups).length&&checks.liveMarkers===Object.keys(datum.coordinate_values).length&&checks.cycleLinks===(datum.available_cycles?.length||8)&&checks.cards>0&&checks.embeddedCycleGenes>0&&['sampleUpdates','zoomButton','zoomToSelection','overlapChooser','overlapSampleAccessible','geneUpdates','highZoom','nativeZoom','highZoomTile','tilesAtCurrentZoom','failureFallback','terrainStatus','offlineOutline','markerColoursUpdate','noLeafletSizingOverride','nativeOverlayDimensions','compactAttribution','markerPathsPresent','cycleValuesUpdate','layerOrderAtStart','fallbackIgnoresClicks','actualPaneOwnership','terrainFullyOpaque','layerOrderAtHighZoom','layerOrderAfterToggle','opacityControl','blockEvidenceUpdates','conditionalSupportRendered','noSignificanceAdded'].every(k=>checks[k]);
  results.push(checks);w.close();
 }
 const out={runtime:'Real bundled Leaflet 1.9.4 in jsdom 26; element sizes and SVG support mocked. Interaction, all-media CSS isolation, SVG dimensions, actual layer panes/z-order, opacity, toggle and tile-URL tests; not a browser pixel-layout test. No tile downloads by this test.',results};

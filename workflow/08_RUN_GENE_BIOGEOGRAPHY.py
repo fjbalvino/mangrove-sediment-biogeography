@@ -134,6 +134,9 @@ def commands(stage, run, args):
         return [[py,str(ns/'12B_BUILD_NITROGEN_PILOT.py'),'--metadata',str(run/'inputs/metadata_functional.csv'),'--matrix',str(run/'inputs/functional_KO_counts_original.tsv.gz'),'--samples',str(run/'inputs/functional_accessions.txt'),'--rules',str(run/'inputs/operational_rules.tsv'),'--reactions',str(run/'analysis_nitrogen/config/gene_environment/nitrogen_reactions.json'),'--outdir',str(run/'analysis_nitrogen/results')],
                 [py,str(ns/'12D_DESIGN_SUPPORT.py')],[py,str(rs/'01_prepare.py')],[py,str(rs/'06_curate.py')],[py,str(run/'block_evidence.py')],[py,str(run/'atlas/scripts/00_integrate_analyses.py')],[py,str(run/'verify_outputs.py')]]
     if stage == 'atlas':
+        if getattr(args,'atlas_cycle',None):
+            return [[py,str(run/'atlas/scripts/08_build_atlas.py'),'--cycle',args.atlas_cycle],
+                    [py,str(run/'verify_outputs.py'),'--viewers','--cycle',args.atlas_cycle]]
         return [[py,str(run/'atlas/scripts/08_build_atlas.py')],[py,str(run/'plot_supplementary_panels.py')],[py,str(run/'verify_outputs.py'),'--viewers']]
     if stage == 'calibration-plan':
         return [[py,str(ns/'12G_PREPARE_FINAL_CALIBRATION.py')],[py,str(rs/'03_prepare_calibration.py')]]
@@ -156,6 +159,7 @@ def main():
     parser.add_argument('--expected-profiles',type=int)
     parser.add_argument('--run-dir',required=True,type=Path)
     parser.add_argument('--assets',type=Path,help='Local atlas/assets directory from the reference package; never uploaded')
+    parser.add_argument('--atlas-cycle',choices=['N','C','CH4_C1','S','P','Fe','H2_electrons','O2_light'],help='Build a standalone cycle viewer; omit to build the complete atlas')
     parser.add_argument('--workers',type=int,default=2)
     parser.add_argument('--execute',action='store_true')
     args = parser.parse_args();run=args.run_dir.resolve()

@@ -83,6 +83,24 @@ python workflow/08_RUN_GENE_BIOGEOGRAPHY.py --stage atlas \
   --assets /path/to/biogeochemical_atlas_191/atlas/assets --execute
 ```
 
+To regenerate only the nitrogen pilot with the same full-atlas colour scale:
+
+```bash
+python workflow/08_RUN_GENE_BIOGEOGRAPHY.py --stage atlas --atlas-cycle N \
+  --run-dir /path/to/runs/functional-complete \
+  --assets /path/to/biogeochemical_atlas_191/atlas/assets --execute
+```
+
+The standalone viewer is `atlas/figures/nitrogen/viewer.html`. Its navigation contains only available panels, so the single HTML file has no dangling links to other cycles. Preparation still computes the common analysis objects; this preserves the full-matrix denominator and shared-KO checks. No new biological cohort is selected by `--atlas-cycle`.
+
+Each operational rule now expands into logical-block evidence at thresholds of one and two annotation records. Mandatory subunits joined with `+` remain a single block; alternatives and unavailable rows retain three-state logic. Sample bounds are detected blocks / all blocks through (detected + unresolvable blocks) / all blocks. Group summaries use the established BioSample weights; the overview weights study–coordinate groups equally. These bounds are descriptive, not confidence intervals or pathway completeness within organisms. Exact per-block states are exported as `outputs/rule_block_states_ge1.tsv.gz` and `rule_block_states_ge2.tsv.gz`.
+
+Environmental support expands beneath the original slope table. It reports predictor variation remaining after adjustment, contributing study labels, the largest conditional study share, and inverse information concentration. None is a count of independent biological replicates or a new inferential correction. The original coefficients, sensitivity ranges, gene colours and strict rule decisions are preserved.
+
+For standalone DOM checks, set `ATLAS_TEST_CYCLE=N` in addition to `ATLAS_TEST_ROOT`. The test checks the new evidence controls alongside layer order, marker visibility, overlap selection and zoom. Browser pixel checks remain a separate release task.
+
+A descriptive pilot may document a previous calibration through `reference_calibration.json` only after independently matching the inputs by identifier. This record binds the archive summary and current input files to checksums; the viewer explicitly states that simulations were not rerun. Never create this record for Dani's new matrix. Fresh matrix releases require fresh calibration.
+
 Open the run's `atlas/index.html`. Every panel includes map zoom and overlap selection, a biochemical reference diagram, an individual-gene heatmap, environmental sensitivity, rules and methods. Plasma is shared across all panels within a release; the upper scale is recalculated for that release and recorded. Compare colour scales explicitly between releases. Heatmap columns decrease in signed longitude, east to west. Figures and derived data stay local.
 
 The map retains the corrected Leaflet layer order: offline overview below terrain; sample markers above terrain. OpenTopoMap tiles load on demand, never in bulk. Terrain availability depends on internet/provider access and does not improve coordinate precision. Asset provenance and attribution are visible in the viewers. The landing-page manuscript links refer to the historical supplements, not automatically to the new cohort.

@@ -13,10 +13,15 @@ def main():
     matrix = matrix.loc[:, ids]
     rules = pd.read_csv(root/'inputs/operational_rules.tsv', sep='\t')
     rows, definitions = [], []
+    out = root/'outputs'
     for threshold in (1, 2):
+        block_states = []
         values = {k: (row.to_numpy() >= threshold).astype(np.int8) for k, row in matrix.iterrows()}
         for rule in rules.itertuples():
             result = block_evidence(rule.expression, values, len(ids))
+            for b, state in enumerate(result['states']):
+                block_states.append(dict(rule_id=rule.rule_id, block=b+1,
+                                         **dict(zip(ids, state))))
             if threshold == 1:
                 definitions.extend(dict(rule_id=rule.rule_id, block=i+1, expression=b)
                                    for i, b in enumerate(result['blocks']))
@@ -24,7 +29,8 @@ def main():
                 rows.append(dict(run_accession=run, rule_id=rule.rule_id, threshold=threshold,
                     n_blocks=result['n_blocks'],
                     **{k: result[k][i] for k in ('n_detected','n_not_met','n_unknown','coverage_lower','coverage_upper')}))
-    out = root/'outputs'
+        pd.DataFrame(block_states).to_csv(out/f'rule_block_states_ge{threshold}.tsv.gz',
+                                         sep='\t', index=False)
     pd.DataFrame(rows).to_csv(out/'rule_block_evidence.tsv.gz', sep='\t', index=False)
     pd.DataFrame(definitions).to_csv(out/'rule_block_definitions.tsv', sep='\t', index=False)
     (out/'rule_block_interpretation.json').write_text(json.dumps({
