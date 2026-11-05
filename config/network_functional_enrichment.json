@@ -1,0 +1,22 @@
+{
+  "seed": 20261105,
+  "primary_universe": "union_of_existing_major_modules",
+  "sensitivity_universe": "all_connected_nodes_with_other_nodes_as_outside_label",
+  "covariates": ["prevalence_fraction", "log10_total_count", "CLR_variance", "degree", "strength_abs"],
+  "block_target_size": 35,
+  "block_min_size": 12,
+  "kmeans_n_init": 50,
+  "kmeans_max_iter": 200,
+  "minimum_set_KOs_in_primary_universe": 3,
+  "minimum_nonset_KOs_in_primary_universe": 3,
+  "family": "all_eligible_terms_cross_all_major_modules_including_zero_cells",
+  "term_sources": ["biological_pathway_categories", "nonoverview_biological_pathways", "BRITE_families", "detailed_BRITE_families", "nonoptional_KEGG_MODULE_memberships"],
+  "exact_test": "upper_tail_of_convolution_of_stratum_specific_hypergeometric_distributions",
+  "multiplicity": "Benjamini_Yekutieli_across_complete_family",
+  "joint_null_guard": "standardized_maxT_from_common_blockwise_label_permutations",
+  "permutations": 99999,
+  "precision_amendment": "A 9999-draw computational pilot produced maxT Monte Carlo intervals near 0.05. Increase both complete families once to 99999 draws; all hypotheses, exact tests, matching settings and decision thresholds remain fixed. No further outcome-dependent extensions.",
+  "alpha": 0.05,
+  "support": "BY_adjusted_P_and_joint_null_maxT_P_both_at_most_alpha",
+  "scope": "Exploratory conditional annotation enrichment; no independent validation of network discovery or ecosystem flux"
+}

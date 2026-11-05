@@ -185,11 +185,10 @@ never renamed automatically after the most frequent pathway label. For example,
 transporters linked to the quorum-sensing map retain their transport functions;
 that map membership alone is not evidence of communication.
 
-This expansion is **descriptive**. It does not reuse the historical seven-category
-P values for the new annotation families, and does not enable the old KEGG
-enrichment switch. A new enrichment analysis would require a declared family,
-eligible candidate universe and selection-aware null model before execution.
-The frozen atlas rules and the eight-chain calibration also remain unchanged.
+This annotation expansion is **descriptive**. It does not reuse the historical
+seven-category P values or enable the old KEGG enrichment switch. The separate
+conditional tests below use their own declared family and comparison universes.
+The frozen atlas rules and the eight-chain calibration remain unchanged.
 
 Retrieve a reference explicitly (academic KEGG API use, no more than two request
 starts per second), then run offline annotation:
@@ -235,6 +234,105 @@ to aminoacyl-tRNA biosynthesis. These are descriptions of module contents,
 not new enrichment or activity claims. Full results and frozen reference bytes
 are in the external `Functional_network_pilot.zip` companion under
 `broad_functional_context/`.
+
+### Conditional enrichment of the expanded annotation
+
+`10P_ENRICH_NETWORK_FUNCTIONS.py` tests the existing six major modules without
+changing nodes, edges or community assignments. The primary comparison universe
+is their union (236 KOs); sensitivity includes all 327 connected KOs and assigns
+the other 91 nodes to an outside label. The original 1,500 candidates include
+disconnected nodes, which have no comparable connected-module assignment and are
+not the primary reference. Selection already depends on detection/count filters,
+CLR variance and stable associations; the graph is not simply the most abundant
+genes or an exhaustive definition of the functional core.
+
+Terms comprise biological pathway categories, nonoverview pathways, BRITE
+families and detailed subfamilies, and nonoptional MODULE memberships. Eligibility
+requires at least three member and three nonmember KOs in the union of major
+modules. Filtering uses that union, never a specific module's enrichment result.
+All eligible terms are crossed with all major modules, including zero-count
+cells. Overlapping sets and multiple annotations are retained. In this release,
+150 sets yield 900 tests in each comparison universe.
+
+KOs are grouped by prevalence, log10(total annotation records + 1), CLR variance,
+degree and absolute weighted strength. Median/MAD scaling is followed by
+scikit-learn KMeans (Lloyd, 50 starts, seed 20261105, 200 iterations), targeting
+35 KOs per block and merging blocks smaller than 12 into the nearest centroid.
+Matching does not use functional annotations or module labels. It conditions
+on coarse covariate blocks, not exact covariate equality. Block membership and
+within-block covariate ranges are exported so this approximation can be audited.
+
+The null exchanges module labels within blocks while preserving block-specific
+module sizes and complete annotation vectors. For each term/module pair, the
+one-sided count probability is computed by convolution of independent
+stratum-specific hypergeometric distributions. Benjamini–Yekutieli adjustment
+uses the entire 900-test family. As an additional joint-null safeguard, common
+label permutations produce the maximum standardized enrichment across all tests.
+The empirical probability is (exceedances + 1)/(permutations + 1). A reported
+support flag requires both adjusted probabilities at most 0.05. The maxT
+calculation is a guard under the stated joint exchangeability null; no strong
+familywise-error guarantee under arbitrary mixtures of alternatives is claimed.
+
+A 9,999-draw computational pilot identified Monte Carlo uncertainty near 0.05.
+One documented precision amendment increased both complete families to 99,999
+draws while retaining all hypotheses, blocks, exact tests and thresholds. Wilson
+intervals for Monte Carlo uncertainty are exported; no further outcome-dependent
+extension is used. Exact P values and BY adjustments do not depend on this draw
+count. Synthetic exhaustive-allocation tests independently check the conditional
+distribution, and empirical null means are checked against its exact expectation.
+
+These are **exploratory competitive annotation tests conditional on the selected
+graph**. They are not independent confirmation of network discovery, sample-level
+differential abundance, or evidence of reaction direction, activity or flux.
+The earlier process-coherence calibration tests a different question and does
+not validate these enrichment tests. Original matrix values and annotation
+records are never relabeled as transcript abundance or activity.
+
+```bash
+python scripts/10_functional_network/10P_ENRICH_NETWORK_FUNCTIONS.py \
+  --annotation /path/to/broad-functional-context \
+  --nodes /path/to/network/final_results/173/tables/173_network_nodes_annotated.tsv \
+  --candidates /path/to/network/final_results/171/tables/171_candidate_KO_selection.tsv \
+  --edges /path/to/network/final_results/171/tables/171_consensus_edges.tsv.gz \
+  --outdir /path/to/functional-enrichment
+python scripts/10_functional_network/10Q_PLOT_FUNCTIONAL_ENRICHMENT.py \
+  --enrichment /path/to/functional-enrichment \
+  --annotation /path/to/broad-functional-context \
+  --matrix /path/to/functional_KO_counts_original.tsv.gz \
+  --samples config/samples/functional_accessions.txt \
+  --outdir /path/to/functional-enrichment/figures
+```
+
+The enrichment output directory must be empty. The plotting matrix must match
+the annotation source hash. Generated tables, figures, reference bytes and
+permutation draws belong in the external companion, never Git.
+
+The current primary test supports five term/module combinations, all in M01 or
+M06; three combinations persist with the connected-node reference. Two of those
+three are the same observed KO set: translation and aminoacyl-tRNA biosynthesis
+both contain 17 M01 KOs. They are one biological signal, not independent findings.
+The other retained combination is M06 membership of KEGG's quorum-sensing map:
+all 11 contributing genes are transporters. This does not support a claim of
+quorum sensing, and the separately tested broad transporter category does not
+meet the joint criterion. M03's seven NADH–quinone oxidoreductase components
+remain descriptive. Oxidative phosphorylation in M03 passes BY alone but not
+the joint maxT guard; it is not marked as supported.
+
+`10Q` displays KO counts, module proportions and primary support together, keeping
+unstarred functions visible. All primary supported terms are shown; identical
+memberships can share a row with an exported alias record. Selected respiratory
+and branched-chain amino-acid transport components are shown separately from
+statistical support. Per-profile rules preserve KEGG alternatives, including
+NuoB/C/D fusion options. Community co-detection does not establish a complete
+complex within one organism. For a new cohort, rerun annotation, inference and
+the declared tests; do not transfer existing support labels.
+
+Implementation sources: [SciPy hypergeometric distribution](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.hypergeom.html),
+[SciPy false-discovery adjustment](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.false_discovery_control.html),
+[scikit-learn 1.8 KMeans](https://scikit-learn.org/1.8/modules/generated/sklearn.cluster.KMeans.html),
+[R multiplicity documentation](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/p.adjust.html),
+[Phipson and Smyth (2010)](https://doi.org/10.2202/1544-6115.1585), and
+[KEGG MODULE M00144](https://www.kegg.jp/entry/M00144).
 
 `config/gene_biogeography/network_reference_chains.json` adds eight selected
 reference chains spanning nitrogen, acetate, methane/C1 and sulfur. These are

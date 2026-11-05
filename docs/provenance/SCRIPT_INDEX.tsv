@@ -64,6 +64,8 @@ order	block	canonical_file	role
 10M	functional_network	scripts/10_functional_network/lib/plot_calibration.py	Render complete calibration and process-coherence sensitivity diagnostics
 10N	functional_network	scripts/10_functional_network/10N_AUDIT_NETWORK_SELECTOR_STRESS.py	Replay the complete edge selector and test simulated annotation-recovery controls
 10O	functional_network	scripts/10_functional_network/10O_EXTEND_FUNCTIONAL_ANNOTATION.py	Map the full KO repertoire to frozen KEGG pathways, detailed protein families, reactions and logical modules without changing network inference
+10P	functional_network	scripts/10_functional_network/10P_ENRICH_NETWORK_FUNCTIONS.py	Test conditional enrichment across the full eligible function-by-module family with exact blocked probabilities and multiplicity control
+10Q	functional_network	scripts/10_functional_network/10Q_PLOT_FUNCTIONAL_ENRICHMENT.py	Plot descriptive functional composition, conditional support and selected molecular components
 11A	biogeochemical_cycles	scripts/11_biogeochemical_cycles/11A_EVALUATE_BIOGEOCHEMICAL_RULES.py	Evaluate frozen community KO rules with explicit unknown values
 11B	biogeochemical_cycles	scripts/11_biogeochemical_cycles/11B_PLOT_BIOGEOCHEMICAL_EVIDENCE.py	Render local descriptive biogeochemical evidence and detection figures
 11C	biogeochemical_cycles	scripts/11_biogeochemical_cycles/11C_VERIFY_BIOGEOCHEMICAL_OUTPUTS.py	Independently reconcile rule matrices, long evidence and summaries
