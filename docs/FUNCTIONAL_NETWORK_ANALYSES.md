@@ -115,6 +115,13 @@ archive when the documents change. The companion package includes local figures 
 
 ## Figure and report regeneration
 
+The archived stage-G figure below has the earlier three-panel organization.
+The current four-panel Figure 5 is assembled with `10Q --figure5-from` after the
+expanded enrichment has been plotted; see “Current four-panel Figure 5” below.
+Its biological annotation replaces the old enrichment and membership-sensitivity
+panels. The historical report prose is not automatically updated by this figure
+operation and must not supply the new panel legend.
+
 The driver verifies all five source-input SHA256 checksums before execution. Panel a labels every module with its current functional description and KO count. Labels are generated from the tested category table; modules without enrichment are labelled Diverse functions. Panel b contains the supported primary categories; an open point and asterisk flag annotation-sensitive support. Panel c contrasts mean co-assignment across 500 edge perturbations with the median and observed range across 43 BioProject omissions. The unresolved project-label unit is reported separately in the supplement. Stage G validates plotted nodes and edges against the current inference, without imposing historical numbers, and exports the three-panel figure and individual panels at 600 dpi plus vector PDF.
 
 To regenerate only the figure after a completed analysis, supply the same input arguments and add `--start-at G --stop-after G`. Rebuild both Word reports with:
@@ -333,6 +340,54 @@ Implementation sources: [SciPy hypergeometric distribution](https://docs.scipy.o
 [R multiplicity documentation](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/p.adjust.html),
 [Phipson and Smyth (2010)](https://doi.org/10.2202/1544-6115.1585), and
 [KEGG MODULE M00144](https://www.kegg.jp/entry/M00144).
+
+### Current four-panel Figure 5
+
+The same `10Q_PLOT_FUNCTIONAL_ENRICHMENT.py` now assembles the manuscript figure
+from its previously verified plotted tables and the existing stage-G graph
+coordinates. It does not rerun inference, enrichment, layout optimization or
+community detection. Panel a preserves all 236 major-module nodes, their
+coordinates, persistence symbols and the same 999 displayed edges. Module IDs
+and KO counts replace historical functional labels so that labels do not imply
+support from the superseded category analysis. Panel b is the expanded functional
+heatmap; panels c and d show respiratory and transport components. Component
+colors match the graph's M03 and M06 colors; the heatmap retains plasma.
+
+```bash
+python scripts/10_functional_network/10Q_PLOT_FUNCTIONAL_ENRICHMENT.py \
+  --figure5-from /path/to/functional-enrichment/figures \
+  --network-nodes /path/to/network/final_results/177/tables/177_network_nodes_used.tsv \
+  --network-edges /path/to/network/final_results/177/tables/177_network_edges_used.tsv.gz \
+  --outdir /path/to/manuscript-figure-5
+```
+
+Outputs are `Figure_5_functional_coabundance.png` (600 dpi), its vector PDF and
+`Figure_5_provenance.json`. Module identities, sizes, input identifiers and
+heatmap percentages are checked before rendering. The companion archive contains
+the current figure, its caption and the exact graph inputs; none are uploaded
+to GitHub. The older regional Figure_5 files belong to the current manuscript's
+Figure 6 and must not be overwritten with this network figure.
+
+**Figure 5 | Functional organization of the co-abundance network.**
+(a) Six major modules from the 191-metagenome analysis, showing 236 KOs and
+999 associations; the full network contains 327 connected KOs and 1,062
+associations. Colors identify modules; labels give module IDs and KO counts.
+Squares, circles and triangles indicate absolute-core, near-global and realm-core
+KOs, respectively. (b) Selected functional annotations across modules. Numbers
+are distinct KOs; shading gives their percentage of the module, not abundance.
+Annotations overlap. Asterisks indicate primary conditional enrichment meeting
+both Benjamini–Yekutieli adjusted P ≤ 0.05 and joint-null maxT P ≤ 0.05 across
+150 eligible sets and six modules (900 comparisons), using exact blocked count
+probabilities and 99,999 common label permutations. Translation and tRNA
+aminoacylation share the same observed KO set and are displayed once. The M06
+quorum-sensing map membership is supported by transporter genes and is not
+evidence of communication. (c) NADH–quinone oxidoreductase components, with
+M03 members in green and other detected components in gray. Alternative NuoB/C/D
+fusion architectures are indicated. (d) Five branched-chain amino-acid transport
+components in M06, grouped by their reference roles. Box fractions give profiles
+with at least one annotation record. Co-detection is community-level evidence;
+it does not establish same-organism completion, activity or flux. Panels c and d
+describe component membership, not inferred reaction order or physical structure.
 
 `config/gene_biogeography/network_reference_chains.json` adds eight selected
 reference chains spanning nitrogen, acetate, methane/C1 and sulfur. These are
