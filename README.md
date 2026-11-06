@@ -98,8 +98,8 @@ The accepted map-layer fixes, zoom/overlap controls, English labels and east-to-
 heatmaps are retained. Matrices, metadata, figures, generated HTML containing data,
 and simulation checkpoints remain local. The [atlas publication guide](docs/ATLAS_PUBLICATION.md)
 provides a local export and an inactive GitHub Pages workflow example; no public
-atlas deployment is activated by this source update. Existing network code remains
-available for provenance; its scientific redesign is pending.
+atlas deployment is activated by this source update. The current network module includes expanded annotation, selected-set enrichment
+and descriptive functional reconstruction; see [network methods](docs/FUNCTIONAL_NETWORK_ANALYSES.md).
 
 ## Repository and output directories
 

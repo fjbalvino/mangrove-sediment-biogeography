@@ -2,5 +2,18 @@
   "catalog_source": "158_FIG5D_SHELL_KO_REALM_SIGNATURES.R builtin_process_catalog",
   "source_script_sha256": "c6d53a76273bb5daec4358cd45965b5778ff08bdc18fb1cbf111389e9f56aa6a",
   "n_original_KOs": 34,
-  "selection": "Original six groups retained; membership in the current Shell fraction is recomputed before scoring. No selection using new effect sizes."
+  "selection": "Original six groups retained; membership in the current Shell fraction is recomputed before scoring. No selection using new effect sizes.",
+  "label_review": {
+    "date": "2026-11-05",
+    "membership_changed": false,
+    "meaning": "Selected annotation sets; not complete pathways, activity or resolved net direction",
+    "references": [
+      "https://www.kegg.jp/entry/K00370",
+      "https://www.kegg.jp/entry/K00394",
+      "https://www.kegg.jp/entry/K03388",
+      "https://doi.org/10.1099/mic.0.2007/008250-0",
+      "https://doi.org/10.1038/s41396-018-0209-7",
+      "https://doi.org/10.1128/jb.180.10.2583-2589.1998"
+    ]
+  }
 }

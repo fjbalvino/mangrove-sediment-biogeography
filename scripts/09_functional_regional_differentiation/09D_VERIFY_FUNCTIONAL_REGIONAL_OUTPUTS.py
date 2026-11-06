@@ -14,6 +14,7 @@ def main():
     p.add_argument('--accessions', type=Path, required=True)
     p.add_argument('--metadata', type=Path, required=True)
     p.add_argument('--counts', type=Path, required=True)
+    p.add_argument('--verify-process-map', action='store_true', help='Also verify selected-set scores, effects, coordinates and thiocyanate co-detection.')
     a = p.parse_args()
     def read(name):
         return pd.read_csv(a.tables/name, sep='\t')
@@ -100,6 +101,42 @@ def main():
             'input_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [a.accessions,a.metadata,a.counts]},
             'main_statistics':rows,'paired_contrasts':contrasts,'sensitivity_intervals':intervals,'persistence':persistence.to_dict(orient='records')}
     (a.tables/'180_independent_verification.json').write_text(json.dumps(result,indent=2)+'\n')
+    if a.verify_process_map:
+        shell=master.index[master.prevalence_class.eq('Shell')]
+        clr=np.log1p(counts.loc[shell].T);clr=clr.sub(clr.mean(axis=1),axis=0)
+        cat=read('181_process_catalog_validation.tsv');cat=cat[cat.included_in_score]
+        groups=list(cat.process_id.drop_duplicates())
+        score=pd.DataFrame({g:clr[cat.loc[cat.process_id.eq(g),'KO']].mean(axis=1) for g in groups})
+        score=(score-score.mean())/score.std(ddof=1)
+        observed=read('181_sample_process_scores_z.tsv').set_index('run_accession').loc[allowed,groups]
+        score_error=float(np.abs(score-observed).to_numpy().max());assert score_error<1e-12
+        effects=read('181_process_balanced_effects.tsv');draws=read('181_process_sampling_manifest.tsv')
+        effect_error=0.
+        for row in draws.itertuples():
+            ids=row.selected_run_accessions.split(';');y=score.loc[ids].to_numpy()
+            realm=pd.get_dummies(meta.loc[ids,'REALM'],dtype=float).to_numpy()
+            base=np.column_stack([np.ones(len(ids)),np.log10(counts[ids].sum()).to_numpy()])
+            full=np.column_stack([base,realm[:,1:]])
+            rss=lambda design:((y-design@np.linalg.lstsq(design,y,rcond=None)[0])**2).sum(axis=0)
+            sst=((y-y.mean(axis=0))**2).sum(axis=0)
+            raw=1-rss(realm)/sst;conditional=(rss(base)-rss(full))/sst
+            expected=effects[(effects.design==row.design)&(effects.iteration==row.iteration)].set_index('process_id').loc[groups]
+            effect_error=max(effect_error,float(np.abs(raw-expected.R2).max()),float(np.abs(conditional-expected.adjusted_unique_R2).max()))
+        assert effect_error<1e-12
+        units=meta.REALM+' | '+meta.Country+' | '+meta.core_locality
+        centers=clr.groupby(units).mean();dist=((centers-centers.mean())**2).mean(axis=1)**.5
+        mapped=read('182_shell_locality_turnover_summary.tsv').set_index('locality_id')
+        map_error=float(np.abs(dist-mapped.turnover_point_estimate).max());assert map_error<1e-12
+        for unit,g in meta.groupby(units):
+            coord=g[['lat','lon']].dropna();r=mapped.loc[unit]
+            assert bool(r.mappable)==bool(len(coord)) and r.n_georeferenced_profiles==len(coord)
+            if len(coord):assert np.allclose(coord.median().to_numpy(),r[['lat','lon']].to_numpy(dtype=float))
+        scn=read('181_thiocyanate_subunit_codetection.tsv').set_index('run_accession').loc[allowed]
+        for threshold in (1,2):
+            expected=(counts.loc[['K20760','K20761','K20762']]>=threshold).all(axis=0)
+            assert (scn[f'all_three_ge_{threshold}']==expected).all()
+        checks=dict(status='PASS',standardized_score_values=int(score.size),effect_values=int(len(effects)*2),locality_values=len(mapped),score_max_error=score_error,effect_max_error=effect_error,map_max_error=map_error,coordinates_verified=True,thiocyanate_codetection_verified=True)
+        (a.tables/'181_182_independent_python_verification.json').write_text(json.dumps(checks,indent=2)+'\n')
     print(json.dumps({k:v for k,v in result.items() if k not in ['main_statistics','paired_contrasts','sensitivity_intervals','persistence']}))
 
 

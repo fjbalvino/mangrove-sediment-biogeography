@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Build separate plain-text Word reports with bold titles and real figures."""
 import argparse
+import io
+import os
+import hashlib
+from zipfile import ZipFile
 import re
 from pathlib import Path
 import pandas as pd
@@ -26,7 +30,7 @@ def format_doc(doc,title):
         st.paragraph_format.space_after=Pt(6)
         st.paragraph_format.keep_with_next=name in ['Title','Heading 1','Heading 2','Heading 3']
     doc.core_properties.title=title;doc.core_properties.author='MAGENTA'
-    doc.core_properties.subject='Figure 5 functional prevalence, selected processes and locality turnover'
+    doc.core_properties.subject='Figure 6 functional prevalence, selected processes and locality turnover'
     for sec in doc.sections:
         for part in [sec.header,sec.footer]:
             for p in part.paragraphs:p.text=''
@@ -69,6 +73,17 @@ def picture(doc,path,width):
     if desc:desc[0].set('descr',path.stem.replace('_',' '))
 
 
+def save_docx(doc, path):
+    buffer=io.BytesIO();doc.save(buffer);data=buffer.getvalue()
+    with ZipFile(io.BytesIO(data)) as archive:
+        assert archive.testzip() is None
+    temporary=path.with_suffix('.docx.partial')
+    with temporary.open('wb') as handle:
+        handle.write(data);handle.flush();os.fsync(handle.fileno())
+    temporary.replace(path)
+    assert hashlib.sha256(path.read_bytes()).digest()==hashlib.sha256(data).digest()
+
+
 def sections(path):
     result={}
     for part in re.split(r'^## ',path.read_text(),flags=re.M)[1:]:
@@ -78,7 +93,7 @@ def sections(path):
 
 
 def page(doc,title):
-    doc.add_page_break();paragraph(doc,title,True)
+    paragraph(doc,title,True).paragraph_format.page_break_before=True
 
 
 def main():
@@ -88,23 +103,23 @@ def main():
     a=p.parse_args();a.outdir.mkdir(parents=True,exist_ok=True)
     repo=Path(__file__).resolve().parents[1];tabs=a.results/'tables';plots=a.results/'plots'
     text=(repo/'docs/FUNCTIONAL_REGIONAL_RESULTS.md').read_text()
-    title,body=text.split('\n',1);body,caption=body.split('## Figure 5 caption\n')
+    title,body=text.split('\n',1);body,caption=body.split('## Figure 6 caption\n')
     doc=Document();format_doc(doc,title.lstrip('# '))
     paragraph(doc,title.lstrip('# '),True)
     for x in body.strip().split('\n\n'):paragraph(doc,x)
     cap=caption.strip().split('\n\n')
     paragraph(doc,cap[0],True)
     for x in cap[1:]:paragraph(doc,x)
-    page(doc,'Figure 5')
-    picture(doc,plots/'Figure_5_functional_regional_identity_combined.png',7)
-    doc.save(a.outdir/'Functional_regional_results.docx')
+    page(doc,'Figure 6')
+    picture(doc,plots/'Figure_5_functional_regional_identity_combined.png',6.1375)
+    save_docx(doc,a.outdir/'Functional_regional_results.docx')
     if a.main_only:
         print('Replaced main report; figure retained; plain text and bold titles.')
         return
 
     s=sections(repo/'docs/FUNCTIONAL_REGIONAL_SUPPLEMENTARY_RESULTS.md')
-    doc=Document();format_doc(doc,'Supplementary results and methods for Figure 5')
-    paragraph(doc,'Supplementary results and methods for Figure 5',True)
+    doc=Document();format_doc(doc,'Supplementary results and methods for Figure 6')
+    paragraph(doc,'Supplementary results and methods for Figure 6',True)
     paragraph(doc,'Cohort and persistence reconciliation',True)
     for x in s['Cohort and persistence reconciliation']:paragraph(doc,x)
     paragraph(doc,'Balanced sampling and transformations',True)
@@ -150,7 +165,7 @@ def main():
     for label,g in cat[cat.included_in_score].groupby('process_label',sort=False):
         rows.append([label,', '.join(g.KO)])
     table(doc,['Selected process','Shell KOs'],rows,[2.6,4.4])
-    paragraph(doc,'K00441 was excluded from methanogenic/Hdr electron transfer because its current prevalence is 95.29%. The original catalog contained 34 KOs; the current Shell-only catalog contains 33. The complete inclusion audit and alternative-design effect sizes accompany the analysis tables.')
+    paragraph(doc,'K00441 was excluded from Hdr and hydrogenase components because its current prevalence is 95.29%. The original catalog contained 34 KOs; the current Shell-only catalog contains 33. The complete inclusion audit and alternative-design effect sizes accompany the analysis tables.')
 
     page(doc,'Locality Shell turnover')
     for x in s['Locality Shell turnover']:paragraph(doc,x)
@@ -158,8 +173,10 @@ def main():
     page(doc,'Locality turnover and resampling uncertainty')
     picture(doc,plots/'Supplementary_shell_locality_turnover.png',7)
     paragraph(doc,'Supplementary figure Shell turnover across all named localities',True)
-    paragraph(doc,'Points show direct RMS Aitchison distance from each locality mean CLR profile to the equally weighted global centroid of all 26 localities. Lines show 5th–95th percentiles from 500 within-locality profile bootstraps that recompute the global centroid. n indicates profiles. Colours distinguish Central Indo-Pacific (blue), Tropical Atlantic (orange), Western Indo-Pacific (green) and Tropical Eastern Pacific (purple). Open diamonds and asterisks identify localities without coordinates, retained in calculations but omitted from the geographic map. Percentiles describe within-locality resampling variation and can exclude the direct estimator; they do not include study or locality selection uncertainty.')
-    doc.save(a.outdir/'Functional_regional_supplementary_results.docx')
+    paragraph(doc,'Points show direct RMS Aitchison distance from each locality mean CLR profile to the equally weighted global centroid of all 26 localities. Lines show 5th–95th percentiles from 500 within-locality profile bootstraps that recompute the global centroid. n indicates profiles. Colours distinguish Central Indo-Pacific (blue), Tropical Atlantic (orange), Western Indo-Pacific (green) and Tropical Eastern Pacific (purple). All 26 localities are represented on the updated geographic map. Percentiles describe within-locality resampling variation and can exclude the direct estimator; they do not include study or locality selection uncertainty.')
+    page(doc,'Annotation references')
+    for x in s['Annotation references']:paragraph(doc,x)
+    save_docx(doc,a.outdir/'Functional_regional_supplementary_results.docx')
     print('Replaced both Word reports: 11-point black text; bold titles only; no headers, footers, shading or inline emphasis.')
 
 

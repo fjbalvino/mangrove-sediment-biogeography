@@ -33,7 +33,7 @@ The taxonomic supplement covers S1–S10; the functional supplement S11–S13; t
 | Functional geography | 184 profiles at 57 sites | Primary replicated-realm tests use 56 sites; TA–CIP uses 45 sites |
 | Functional network | 191 profiles; 1,500 candidate KOs | 500 subsamples of 81 profiles; cap four per each of 26 realm–country–locality strata |
 | Regional functional comparisons | 191 for classification; 188 eligible in three realms | 499 selections of 18 profiles (3 × 6 localities); alternative: 12 (3 × 4) |
-| Shell locality map | All 26 locality centroids; 23 mappable localities, 184 profiles | All localities contribute to the global centroid, including the three without coordinates |
+| Shell locality map | 26 mapped locality centroids, 191 profiles | All localities contribute equally to the global centroid; coordinate approximations retain their uncertainty |
 
 `run_accession` is the canonical profile key. Sampling site, named locality, realm and study are separate metadata fields. Keep missing coordinates and covariates explicit.
 
@@ -42,7 +42,7 @@ The taxonomic supplement covers S1–S10; the functional supplement S11–S13; t
 - Core-associated taxa account for 27.4% of eligible features and 62.6% of counts assigned to those features. These denominators differ from all detected taxa and all classified reads.
 - The shared functional fraction comprises 24 absolute-core, 1,104 near-global and 1,415 realm-core KOs: 2,543 features (14.5%) and 86.2% of KO annotation counts. The remaining 14,939 KOs are peripheral.
 - Prevalent/Shell/Cloud and absolute-core/near-global/realm-core/periphery are different classifications. The corrected balanced comparisons have the highest median regional differentiation among Prevalent KOs; they do not support a general Shell advantage.
-- The network has 327 connected KOs and 1,062 edges; six major modules contain 236 KOs and 999 edges. Information-processing and transport/membrane enrichment persist across annotation treatments; carbon/carbohydrate enrichment is annotation-sensitive.
+- The network has 327 connected KOs and 1,062 edges; six major modules contain 236 KOs and 999 edges. Expanded annotation supports tRNA-aminoacylation enrichment in M01; respiratory components in M03 and amino-acid transport components in M06 remain descriptive groupings.
 - Network edges are co-abundance associations. BioProject omission, especially PRJNA437562, changes module organization. They are not direct interactions or evidence of metabolic activity.
 - Geography/environment overlap strongly with study identity. Assemblies, KO annotation counts and these observational designs do not establish ecological causation or expression.
 
@@ -64,5 +64,5 @@ The current eight-panel atlas and exploratory gene–environment methods are in
 design support correspond to Supplementary information 6 (Tables S34–S39, Figures
 S8–S9); the remaining-panel calibration corresponds to Supplementary information
 7 (Tables S40–S41, Figure S10). Future cohorts require new design diagnostics and
-calibration; numbering is reassigned when the manuscript is updated. The main
-network section is pending scientific redesign, and this driver does not refit it.
+calibration; numbering is reassigned when the manuscript is updated. The network workflow includes expanded functional annotation and selected-set
+enrichment; the atlas driver does not refit the network.

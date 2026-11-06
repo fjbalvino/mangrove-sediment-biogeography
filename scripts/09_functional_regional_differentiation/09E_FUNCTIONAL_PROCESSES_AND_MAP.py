@@ -67,6 +67,24 @@ def main():
     assert set(catalog.loc[~catalog.included_in_score,'KO'])=={'K00441'}
     catalog.to_csv(a.tables/'181_process_catalog_validation.tsv', sep='\t', index=False)
     used = catalog[catalog.included_in_score]
+    # Preserve the selected sets, but distinguish a score from co-detection of
+    # an enzyme's structural subunits. Counts are annotation records, not reads.
+    detection = catalog[['process_id','process_label','KO','KO_role','included_in_score']].copy()
+    for threshold in (1, 2):
+        detection[f'profiles_ge_{threshold}_records'] = (counts.loc[detection.KO] >= threshold).sum(axis=1).to_numpy()
+    detection['total_annotation_records'] = counts.loc[detection.KO].sum(axis=1).to_numpy()
+    detection.to_csv(a.tables/'181_selected_KO_detection.tsv', sep='\t', index=False)
+    scn_kos = ['K20760','K20761','K20762']
+    scn = meta[['REALM','Country','core_locality']].copy()
+    for ko in scn_kos: scn[ko] = counts.loc[ko]
+    scn_summary = []
+    for threshold in (1, 2):
+        scn[f'all_three_ge_{threshold}'] = (counts.loc[scn_kos] >= threshold).all(axis=0)
+        for realm, selected in [('All profiles', scn), *list(scn.groupby('REALM', sort=True))]:
+            scn_summary.append(dict(realm=realm, threshold_records=threshold,
+                n_profiles=len(selected), n_codetected=int(selected[f'all_three_ge_{threshold}'].sum())))
+    scn.to_csv(a.tables/'181_thiocyanate_subunit_codetection.tsv', sep='\t')
+    pd.DataFrame(scn_summary).to_csv(a.tables/'181_thiocyanate_codetection_summary.tsv', sep='\t', index=False)
     processes = catalog.process_id.unique().tolist()
     labels = catalog.drop_duplicates('process_id').set_index('process_id').process_label.to_dict()
     scores = np.column_stack([x[:, [shell_index[k] for k in used.loc[used.process_id==g,'KO']]].mean(axis=1) for g in processes])
@@ -131,8 +149,12 @@ def main():
         lon=float(coord.lon.median()) if len(coord) else np.nan
         rows.append(dict(locality_id=u,realm=m.REALM.iloc[0],country=m.Country.iloc[0],locality=m.core_locality.iloc[0],n_profiles=len(m),n_georeferenced_profiles=len(coord),n_coordinate_sites=len(coord.drop_duplicates()),lat=lat,lon=lon,mappable=bool(len(coord)),turnover_point_estimate=turnover[j],bootstrap_median=np.median(boot[:,j]),bootstrap_q05=np.quantile(boot[:,j],.05),bootstrap_q95=np.quantile(boot[:,j],.95)))
     locality=pd.DataFrame(rows)
-    assert len(locality)==26 and locality.mappable.sum()==23 and locality.n_profiles.sum()==191
-    assert locality.n_georeferenced_profiles.sum()==184
+    assert len(locality)==26 and locality.n_profiles.sum()==191
+    complete = meta[['lat','lon']].notna().all(axis=1)
+    assert np.isfinite(meta.loc[complete,['lat','lon']].to_numpy()).all()
+    assert meta.loc[complete,'lat'].between(-90,90).all() and meta.loc[complete,'lon'].between(-180,180).all()
+    assert locality.n_georeferenced_profiles.sum()==complete.sum()
+    assert locality.mappable.sum()==meta.loc[complete,'locality_id'].nunique()
     locality.to_csv(a.tables/'182_shell_locality_turnover_summary.tsv',sep='\t',index=False)
     pd.DataFrame(boot,columns=units).rename_axis('bootstrap_iteration').to_csv(a.tables/'182_shell_locality_bootstrap.tsv.gz',sep='\t',compression={'method':'gzip','mtime':0})
     meta.reset_index()[['run_accession','REALM','Country','core_locality','locality_id','lat','lon']].to_csv(a.tables/'182_sample_locality_manifest.tsv',sep='\t',index=False)

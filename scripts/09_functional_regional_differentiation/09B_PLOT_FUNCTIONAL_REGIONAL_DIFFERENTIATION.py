@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble Figure 5 and two supplementary diagnostics from validated tables."""
+"""Assemble manuscript Figure 6 and three supplementary diagnostics from validated tables."""
 import argparse
 import hashlib
 import io
@@ -128,7 +128,7 @@ def panel_contrast(ax,raw):
 
 def panel_process(fig, heat_ax, effect_ax, process, heat):
     order=['sulfur_respiration','methanogenic_hdr_transfer','nitrate_sulfite_respiration','thiocyanate_degradation','aromatic_phenolic_transformation','environmental_sensing_osmoregulation']
-    labels=['Anaerobic sulfur\nrespiration','Methanogenic/Hdr\nelectron transfer','Anaerobic nitrate and\nsulfite respiration','Thiocyanate degradation','Aromatic and phenolic\ntransformation','Environmental sensing\nand osmoregulation']
+    labels=['Sulfur redox\ncomponents','Hdr and hydrogenase\ncomponents','Nitrate/nitrite and\nsulfite redox components','Thiocyanate hydrolase\nsubunits','Aromatic-compound\ntransformation components','EnvZ-OmpR and\nKdpD-KdpE regulators']
     realms=['Central Indo-Pacific','Tropical Atlantic','Western Indo-Pacific']
     effects=process[process.design=='3 x 6'].set_index('process_id').loc[order]
     values=heat.pivot(index='process_id',columns='realm',values='balanced_mean_process_z').loc[order,realms].to_numpy()
@@ -148,12 +148,12 @@ def panel_process(fig, heat_ax, effect_ax, process, heat):
         effect_ax.scatter(r.R2_median,i,color='#D55E00',s=44,zorder=3)
     effect_ax.set_ylim(5.5,-.5);effect_ax.set_xlim(0,.6)
     effect_ax.set_yticks([]);effect_ax.set_xticks([0,.2,.4,.6])
-    effect_ax.set_xlabel('Regional $R^2$\nof process score',fontsize=11)
+    effect_ax.set_xlabel('Regional $R^2$\nof annotation score',fontsize=11)
     tidy(effect_ax)
     pos=heat_ax.get_position();fig.text(.025,pos.y1+.04,'c',fontsize=18,fontweight='bold')
     cb=fig.add_axes([pos.x0+.025,pos.y0-.035,pos.width-.05,.010 if fig.get_size_inches()[1]>8 else .025])
     cbar=fig.colorbar(im,cax=cb,orientation='horizontal',ticks=[-.8,0,.8])
-    cbar.ax.tick_params(labelsize=9,length=2);cbar.set_label('Balanced mean process score (z)',fontsize=10,labelpad=2)
+    cbar.ax.tick_params(labelsize=9,length=2);cbar.set_label('Balanced mean annotation score (z)',fontsize=10,labelpad=2)
 
 
 def draw_world(ax,world):
@@ -174,7 +174,7 @@ def panel_map(fig,ax,data,world):
     ax.set(xlim=(-120,140),ylim=(-38,50));ax.set_aspect('equal',adjustable='box');ax.axis('off')
     ax.text(-.038,1.04,'d',transform=ax.transAxes,fontsize=18,fontweight='bold')
     ax.text(0,1.06,'Shell compositional turnover across named localities',transform=ax.transAxes,fontsize=12,fontweight='bold')
-    for bounds,xlim,ylim,label in [([.025,.025,.19,.36],(-39.3,-38.1),(-13.3,-12.35),'Brazil'),([.76,.025,.22,.36],(108,115),(20.4,23.1),'South China')]:
+    for bounds,xlim,ylim,label in [([.025,.025,.19,.36],(-39.3,-38.1),(-13.3,-12.35),'Brazil'),([.76,.025,.22,.36],(108,115),(17.8,23.1),'South China')]:
         inset=ax.inset_axes(bounds)
         draw_world(inset,world)
         q=z[z.lon.between(*xlim)&z.lat.between(*ylim)]
@@ -188,6 +188,70 @@ def panel_map(fig,ax,data,world):
     cbar.ax.tick_params(labelsize=9,length=2);cbar.set_label('RMS Aitchison distance from the global centroid',fontsize=9,labelpad=2)
     handles=[ax.scatter([],[],s=18+7*n,facecolor='white',edgecolor='#222222',linewidth=.7,label=str(n)) for n in [1,5,10,20]]
     ax.legend(handles=handles,title='Metagenomes (capped at 20)',ncol=4,frameon=False,loc='upper center',bbox_to_anchor=(.77,-.02),fontsize=9,title_fontsize=9,handletextpad=.35,columnspacing=1)
+
+
+def manuscript_figure(cross, inter, process, heat, locality, world):
+    """Exact manuscript canvas; label sizes remain >=8 pt at 441.9 pt width."""
+    width,height=441.9,600.
+    fig=plt.figure(figsize=(width/72,height/72))
+    def box(x,y,w,h):return [x/width,1-(y+h)/height,w/width,h/height]
+    def text(x,y,s,size=8.5,**kw):return fig.text(x/width,1-y/height,s,va='top',fontsize=size,**kw)
+    for x,y,letter,label in [(5,3,'a','Persistence and prevalence'),(239,3,'b','Regional differentiation'),(5,206,'c','Selected functional sets'),(5,438,'d','Shell composition across localities')]:
+        text(x,y,letter,12,weight='bold');text(x+14,y+2,label,9,weight='bold')
+    axa=fig.add_axes(box(74,32,132,133));axb=fig.add_axes(box(320,32,109,133))
+    panel_a(axa,cross);panel_b(axb,inter);axb.set_xticks([0,.1,.2])
+    for ax in (axa,axb):
+        ax.set_title('',loc='left')
+        for t in list(ax.texts):
+            if t.get_text() in ('a','b'):t.remove()
+            else:t.set_fontsize(8)
+        ax.tick_params(axis='both',labelsize=8)
+        ax.xaxis.label.set_fontsize(8)
+    class_counts=cross.groupby('prevalence_class').n_KOs.sum()
+    axa.set_xticklabels([f'{g}\n{class_counts[g]:,}\nKOs' for g in ['Prevalent','Shell','Cloud']],fontsize=8)
+    ah=fig.add_axes(box(168,249,157,138));ae=fig.add_axes(box(350,249,79,138))
+    order=['sulfur_respiration','methanogenic_hdr_transfer','nitrate_sulfite_respiration','thiocyanate_degradation','aromatic_phenolic_transformation','environmental_sensing_osmoregulation']
+    effects=process[process.design.eq('3 x 6')].set_index('process_id').loc[order]
+    short_labels=['Sulfur redox','Hdr and hydrogenases','Nitrate/nitrite and\nsulfite redox','Thiocyanate hydrolase','Aromatic transformations','EnvZ-OmpR / KdpD-KdpE']
+    labels=[label+(' ' if i==0 else '\n')+f'(n = {int(n)})' for i,(label,n) in enumerate(zip(short_labels,effects.n_KOs))]
+    realms=['Central Indo-Pacific','Tropical Atlantic','Western Indo-Pacific']
+    values=heat.pivot(index='process_id',columns='realm',values='balanced_mean_process_z').loc[order,realms].to_numpy()
+    cmap=LinearSegmentedColormap.from_list('annotation_diverging',['#2166AC','#F7F7F7','#B2182B'])
+    im=ah.imshow(values,aspect='auto',vmin=-.8,vmax=.8,cmap=cmap)
+    ah.set_yticks(range(6),labels,fontsize=8);ah.set_xticks(range(3),['Central\nIndo-Pacific','Tropical\nAtlantic','Western\nIndo-Pacific'],fontsize=8)
+    ah.xaxis.tick_top();ah.tick_params(which='both',length=0,pad=5)
+    ah.set_xticks(np.arange(-.5,3),minor=True);ah.set_yticks(np.arange(-.5,6),minor=True);ah.grid(which='minor',color='white',lw=.7)
+    for s in ah.spines.values():s.set_visible(False)
+    for i in range(6):
+        for j in range(3):ah.text(j,i,f'{values[i,j]:+.2f}',ha='center',va='center',fontsize=8.5,color='white' if abs(values[i,j])>.6 else '#222222')
+    for i,r in enumerate(effects.itertuples()):
+        ae.plot([r.R2_q05,r.R2_q95],[i,i],color='#888888',lw=1.4);ae.scatter(r.R2_median,i,color='#D55E00',s=18,zorder=3)
+    ae.set_ylim(5.5,-.5);ae.set_xlim(0,.6);ae.set_yticks([]);ae.set_xticks([0,.2,.4,.6]);tidy(ae);ae.tick_params(labelsize=8)
+    ae.set_xlabel('Regional $R^2$',fontsize=8)
+    cb=fig.colorbar(im,cax=fig.add_axes(box(178,404,137,5)),orientation='horizontal',ticks=[-.8,0,.8]);cb.ax.tick_params(labelsize=8,length=2,pad=2)
+    cb.set_label('Mean annotation score (z)',fontsize=8,labelpad=2)
+    from matplotlib.colors import Normalize
+    norm=Normalize(.25,1.15);z=locality[locality.mappable].sort_values('n_profiles',ascending=False)
+    ax=fig.add_axes(box(12,461,420,110));draw_world(ax,world)
+    size=lambda n:8+2.5*np.minimum(n,20)
+    ax.scatter(z.lon,z.lat,s=size(z.n_profiles),c=z.turnover_point_estimate,cmap='viridis',norm=norm,edgecolors='#222222',linewidths=.4,zorder=3)
+    ax.set(xlim=(-120,140),ylim=(-38,50));ax.set_aspect('equal',adjustable='box');ax.axis('off')
+    for bounds,xlim,ylim,label in [([.015,.005,.22,.38],(-39.3,-38.1),(-13.3,-12.35),'Brazil'),([.78,.005,.22,.38],(108,115),(17.8,23.1),'South China')]:
+        ai=ax.inset_axes(bounds);draw_world(ai,world);q=z[z.lon.between(*xlim)&z.lat.between(*ylim)]
+        ai.scatter(q.lon,q.lat,s=size(q.n_profiles)*.65,c=q.turnover_point_estimate,cmap='viridis',norm=norm,edgecolors='#222222',linewidths=.35,zorder=3)
+        ai.set(xlim=xlim,ylim=ylim,xticks=[],yticks=[]);ai.set_title(label,fontsize=8,pad=2,bbox={'facecolor':'white','edgecolor':'none','pad':.3})
+        for sp in ai.spines.values():sp.set_color('#AAAAAA');sp.set_linewidth(.4)
+    cb=fig.colorbar(plt.cm.ScalarMappable(norm=norm,cmap='viridis'),cax=fig.add_axes(box(29,572,142,4)),orientation='horizontal',ticks=[.3,.5,.7,.9,1.1]);cb.ax.tick_params(labelsize=8,length=2,pad=2)
+    cb.set_label('RMS Aitchison distance',fontsize=8,labelpad=2)
+    handles=[plt.Line2D([],[],marker='o',linestyle='',markersize=np.sqrt(size(n)),markerfacecolor='white',markeredgecolor='#222222',markeredgewidth=.4,label=str(n)) for n in (1,5,10,20)]
+    fig.legend(handles=handles,title='Metagenomes (capped at 20)',loc='lower right',bbox_to_anchor=(.985,.002),ncol=4,frameon=False,fontsize=8,title_fontsize=8,handletextpad=.2,columnspacing=.6,borderaxespad=0)
+    fig.canvas.draw();renderer=fig.canvas.get_renderer()
+    texts=[t for t in fig.findobj(matplotlib.text.Text) if t.get_visible() and t.get_text()]
+    assert min(t.get_fontsize() for t in texts)>=8
+    for t in texts:
+        b=t.get_window_extent(renderer)
+        if b.x0<-.5 or b.y0<-.5 or b.x1>fig.bbox.x1+.5 or b.y1>fig.bbox.y1+.5:raise ValueError('Text outside figure: '+t.get_text()+' '+str(b.bounds))
+    return fig
 
 
 def main():
@@ -207,13 +271,7 @@ def main():
     process=read('181_process_regional_summary.tsv')
     heat=read('181_process_heatmap.tsv')
     locality=read('182_shell_locality_turnover_summary.tsv')
-    fig=plt.figure(figsize=(10.5,13.2))
-    axa=fig.add_axes([.19,.718,.30,.235]);axb=fig.add_axes([.71,.718,.26,.235])
-    panel_a(axa,cross);panel_b(axb,inter)
-    ah=fig.add_axes([.34,.388,.33,.25]);ae=fig.add_axes([.74,.388,.23,.25])
-    panel_process(fig,ah,ae,process,heat)
-    axm=fig.add_axes([.06,.060,.91,.225])
-    panel_map(fig,axm,locality,world)
+    fig=manuscript_figure(cross,inter,process,heat,locality,world)
     save(fig,a.outdir,'Figure_5_functional_regional_identity_combined',formats=('png',) if a.map_only else ('png','pdf','tiff'))
     if a.map_only:
         fig=plt.figure(figsize=(10.5,4.8));axm=fig.add_axes([.06,.24,.91,.65])
@@ -265,8 +323,8 @@ def main():
     for ax in axes:tidy(ax)
     save(fig,a.outdir,'Supplementary_functional_regional_diagnostics')
     exports={p.name:{'size_bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in a.outdir.iterdir() if p.suffix in ['.png','.pdf','.tiff']}
-    (a.outdir/'figure_validation.json').write_text(json.dumps({'status':'PASS','figure5_panels':4,'dpi':600,'source':'current Figure 5 tables','deletion_intervals':'range across exclusion medians','sampling_intervals':'5th–95th percentiles','supplementary_sensitivity_rows':summary,'panel_c':'six selected process scores','panel_d':'named-locality RMS Aitchison turnover','exports':exports},indent=2)+'\n')
-    print('Figure 5 and supplementary figures exported.',flush=True)
+    (a.outdir/'figure_validation.json').write_text(json.dumps({'status':'PASS','manuscript_figure':6,'legacy_filename_prefix':'Figure_5','panels':4,'canvas_pt':[441.9,600],'minimum_text_pt':8,'mapped_localities':int(locality.mappable.sum()),'mapped_profiles':int(locality.loc[locality.mappable,'n_profiles'].sum()),'dpi':600,'source':'current validated regional tables','deletion_intervals':'range across exclusion medians','sampling_intervals':'5th–95th percentiles','supplementary_sensitivity_rows':summary,'panel_c':'six selected process scores','panel_d':'named-locality RMS Aitchison turnover','exports':exports},indent=2)+'\n')
+    print('Manuscript Figure 6 and supplementary figures exported.',flush=True)
 
 
 if __name__=='__main__':main()

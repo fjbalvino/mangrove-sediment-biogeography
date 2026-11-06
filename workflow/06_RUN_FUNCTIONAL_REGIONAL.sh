@@ -52,7 +52,7 @@ if (( ! EXECUTE )); then
   printf '%q ' "${COMMAND[@]}"; printf '\n'
   printf 'External basemap: %s\n' "$MAP_FILE"
   printf 'Then: verify cohorts, calculate process scores and locality turnover, independently verify in R, and render manuscript Figure 6 (historical Figure_5 filenames).\n'
-  if (( COMPLETE_PANELS )); then printf 'Existing balanced results will be verified and reused; only missing process/map analyses are recalculated.\n'; fi
+  if (( COMPLETE_PANELS )); then printf 'Existing balanced results will be verified and reused; process/map analyses are recalculated from the supplied metadata and catalog.\n'; fi
   exit 0
 fi
 for f in "$MATRIX" "$META" "$ATLAS" "$DICTIONARY" "$ACCESSIONS" "$MAP_FILE"; do
@@ -70,6 +70,8 @@ fi
   --counts "$MATRIX" --metadata "$META" --accessions "$ACCESSIONS" \
   --catalog "$REPO_ROOT/config/functional_process_catalog.tsv" \
   --tables "$OUTPUT_DIR/tables" --objects "$OUTPUT_DIR/rds"
+"$PYTHON_BIN" "$BLOCK/09D_VERIFY_FUNCTIONAL_REGIONAL_OUTPUTS.py" \
+  --tables "$OUTPUT_DIR/tables" --accessions "$ACCESSIONS" --metadata "$META" --counts "$MATRIX" --verify-process-map
 "$RSCRIPT_BIN" --vanilla "$BLOCK/09F_VERIFY_FUNCTIONAL_PROCESS_MAP.R" \
   --counts "$MATRIX" --metadata "$META" --catalog "$REPO_ROOT/config/functional_process_catalog.tsv" \
   --tables "$OUTPUT_DIR/tables"
