@@ -1,6 +1,25 @@
 # Supplementary results for the functional network
 
-The network from 191 metagenomes contained 1,062 associations among 327 connected KOs. Six major modules contained 236 KOs and 999 associations. Information-processing and transport/membrane enrichment retained support across annotation treatments; carbon/carbohydrate enrichment did not. Sensitivity analyses assess distinct sources of uncertainty and do not establish a unique biological partition.
+Supplementary Table S14 describes module composition; Tables S23–S27 document network and sampling sensitivity. The expanded annotation analysis below supports the current Figure 5. Tables S15–S22 retain the earlier keyword-category analysis as a historical sensitivity record and do not supply the current enrichment claims.
+
+The network from 191 metagenomes contains 1,062 associations among 327 connected KOs. Six major modules contain 236 KOs and 999 associations. The expanded analysis identifies enrichment of tRNA aminoacylation in M01 and transporter-driven membership of a reference pathway map in M06. Respiratory components in M03 and the complete reference Liv component set in M06 are interpreted descriptively.
+
+## Expanded functional annotation and conditional enrichment
+
+A frozen KEGG reference mapped all 17,508 original matrix KOs, including zero-only rows and KOs excluded from network selection, to names, pathways, reactions, BRITE families and MODULE definitions. The reference contained 56 detailed BRITE hierarchies and 583 MODULE definitions. Required components, alternatives, optional steps and nested definitions were retained. Of these definitions, 569 could be evaluated; 14 containing unsupported unassigned steps remained unresolved. This operation mapped identifiers and did not reannotate sequences or alter the graph.
+
+Eligible sets comprised biological pathway categories, nonoverview biological pathways, broad and detailed BRITE families, and nonoptional MODULE memberships. Sets required at least three member and three nonmember KOs among the 236 major-module KOs. All 150 eligible sets were tested in all six modules, including zero counts, yielding 900 comparisons. The primary background was the union of major modules; sensitivity used all 327 connected KOs, assigning the other 91 KOs to an outside label.
+
+Matching covariates were prevalence, log10(total annotation records + 1), CLR variance, degree and absolute weighted strength. Median/MAD scaling preceded scikit-learn KMeans with the Lloyd algorithm, 50 starts, seed 20261105 and a maximum of 200 iterations. The target was 35 KOs per block; blocks smaller than 12 were merged with the nearest centroid. This yielded primary block sizes of 46, 57, 75, 13 and 45. Matching did not use annotations or module labels and conditions on coarse covariate similarity, not exact equality.
+
+The null exchanges module labels within blocks, preserving block-specific module counts and complete annotation vectors. Exact one-sided count probabilities were obtained by convolution of block-specific hypergeometric distributions. Benjamini–Yekutieli adjustment included all 900 tests. An additional maxT check compared each standardized count excess with the maximum across all tests under 99,999 common within-block label permutations; empirical probabilities were (exceedances + 1)/(permutations + 1). Support required both BY-adjusted and maxT P ≤ 0.05. This is a safeguard under the specified joint exchangeability null, not a claim of strong familywise control under arbitrary alternatives. Synthetic exhaustive-allocation checks and agreement between empirical and exact null means verified the numerical implementation.
+
+Five term–module combinations met both criteria in the primary background, and three retained support with all connected KOs. Translation and tRNA aminoacylation represent the same 17-KO set in M01 and are one biological signal: observed/expected = 17/5.062 (3.36-fold), BY-adjusted P = 2.443 × 10⁻⁷ and maxT P = 0.00949; sensitivity maxT P = 0.04619. The other persistent combination was M06 membership of the quorum-sensing map (11 KOs; 4.32-fold; primary BY-adjusted P = 8.198 × 10⁻⁵ and maxT P = 0.01023; sensitivity maxT P = 0.00674). All 11 contributors are transporters; this does not demonstrate communication, and the separately tested broad transporter category did not meet both criteria. Two additional amino-acid-related annotations in M01 passed only in the primary background.
+
+Seven NADH–quinone oxidoreductase components belong to M03, and five Liv uptake components belong to M06. Neither set met the joint enrichment criterion. Across the full matrix, the respiratory component rule, including NuoB/C/D fusion alternatives, was met in 176/191 communities at one record per required component and 168/191 at two records. The five Liv components co-occurred in 175/191 and 170/191, respectively. These community summaries do not establish completion in individual genomes. Statistical modules describe covariation and are not biochemical pathway definitions.
+
+These tests are exploratory and conditional on the graph selected from the same data. The separate process-chain calibration did not release a validated test of biochemical coupling and is not used to support these enrichment claims. The complete 900-test families, matching diagnostics, reference snapshots, code versions and Monte Carlo intervals are retained under functional_enrichment/ and broad_functional_context/ in Functional_network_pilot.zip. Reproducible procedures are documented in scripts 10O–10Q and docs/FUNCTIONAL_NETWORK_ANALYSES.md in the project repository.
+
 
 ## Module composition
 
@@ -17,7 +36,7 @@ Major modules contained at least 10 KOs and were labelled by decreasing size, th
 | M05 | 27 | 1 | 26 | 0 |
 | M06 | 24 | 1 | 15 | 8 |
 
-## Functional category support and annotation sensitivity
+## Historical category support and annotation sensitivity
 
 Primary categories were assigned from the frozen KO-description dictionary using the existing keyword rules and their deterministic tie order. Adding the incomplete historical KEGG MODULE text was evaluated with exactly the same permutation labels. Neither treatment is an independent biological validation. Fold enrichment is the observed count plus 0.5 divided by the mean permuted count plus 0.5. A supported label identifies an enriched category, not the function of every KO in the module.
 
@@ -51,7 +70,7 @@ Four thousand nine hundred and ninety-nine permutations shuffled module labels w
 
 Near-global functions were predominant descriptively but were not enriched after conditioning on selection covariates. For major modules versus connected nodes, the observed near-global proportion was 0.822 versus 0.810 under the null, with BY q = 1. Candidate filtering and graph selection therefore matter when interpreting a core functional profile.
 
-## Complete primary category tests
+## Historical complete keyword-category tests
 
 O is the observed count; E is the permutation mean. P is the upper-tail empirical probability. BY q and maxT P refer to the complete 42-test family. Categories with no enrichment remain visible to avoid reporting only significant comparisons. NA denotes an undefined standardized maxT statistic: for M05 in Signal and stress and metals, the observed and all permuted counts were zero. BY includes all 42 comparisons; maxT uses the 41 comparisons with positive permutation variance.
 

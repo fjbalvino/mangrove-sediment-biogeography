@@ -120,7 +120,13 @@ The current four-panel Figure 5 is assembled with `10Q --figure5-from` after the
 expanded enrichment has been plotted; see “Current four-panel Figure 5” below.
 Its biological annotation replaces the old enrichment and membership-sensitivity
 panels. The historical report prose is not automatically updated by this figure
-operation and must not supply the new panel legend.
+operation and must not supply the new panel legend. The canonical
+`FUNCTIONAL_NETWORK_RESULTS.md` now contains the current results, four-panel
+caption, methods and literature-supported discussion, matching the online
+manuscript. `FUNCTIONAL_NETWORK_SUPPLEMENTARY_RESULTS.md` includes the expanded
+900-test procedure; its earlier keyword-category tables are explicitly historical.
+The old `build_functional_network_text.py` requires `--historical-output` outside
+the repository and cannot overwrite the current manuscript sources.
 
 The driver verifies all five source-input SHA256 checksums before execution. Panel a labels every module with its current functional description and KO count. Labels are generated from the tested category table; modules without enrichment are labelled Diverse functions. Panel b contains the supported primary categories; an open point and asterisk flag annotation-sensitive support. Panel c contrasts mean co-assignment across 500 edge perturbations with the median and observed range across 43 BioProject omissions. The unresolved project-label unit is reported separately in the supplement. Stage G validates plotted nodes and edges against the current inference, without imposing historical numbers, and exports the three-panel figure and individual panels at 600 dpi plus vector PDF.
 

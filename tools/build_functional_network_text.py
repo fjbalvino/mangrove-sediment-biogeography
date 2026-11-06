@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Regenerate the canonical Figure 5 manuscript sources from verified tables."""
+"""Replay historical seven-category prose into an explicit external directory.
+
+Current manuscript prose uses expanded annotation and is maintained in docs/.
+This historical generator must not overwrite those canonical documents.
+"""
 import argparse,json,re
 from pathlib import Path
 import numpy as np
@@ -20,7 +24,13 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--analysis',type=Path,required=True);p.add_argument('--study',type=Path,required=True)
     p.add_argument('--parameter-audit',type=Path,required=True);p.add_argument('--repository',type=Path,default=Path(__file__).resolve().parents[1])
+    p.add_argument('--historical-output',type=Path,required=True,
+                   help='External directory for superseded seven-category prose; never the canonical docs directory.')
     a=p.parse_args();runs={}
+    if a.historical_output.resolve().is_relative_to(a.repository.resolve()):
+        p.error('--historical-output must be outside the repository to preserve current manuscript text.')
+    if a.historical_output.exists() and any(a.historical_output.iterdir()):
+        p.error('--historical-output must be empty.')
     for num in ['144','156','171','172','173','174']:
         # Delivered tables use portable stage directories; fresh runs use LATEST pointers.
         if (a.analysis/num/'STATUS.txt').is_file():
@@ -68,7 +78,8 @@ def main():
       '(b) Primary category enrichment supported by both Benjamini–Yekutieli q ≤ 0.05 and maxT family-wise P ≤ 0.05 across 4,999 blocked permutations and 42 module–category comparisons. Point sizes and labels give category KO counts; the dashed line denotes no enrichment. The open point and asterisk mark support sensitive to adding partial pathway annotations. '
       '(c) Membership sensitivity with 50-start Leiden re-estimation. Circles show mean within-module co-assignment across 500 edge perturbations; diamonds show the median across 43 BioProject omissions, with horizontal lines spanning the observed range. Edges were retained in perturbations according to their consensus selection frequencies. Higher co-assignment indicates that pairs remain together but does not penalize mergers. These ranges are not confidence intervals.')
 
-    docs=a.repository/'docs';(docs/'FUNCTIONAL_NETWORK_RESULTS.md').write_text('**'+title+'**\n\n'+main_text+'\n\n'+caption+'\n')
+    docs=a.historical_output;docs.mkdir(parents=True,exist_ok=True)
+    (docs/'FUNCTIONAL_NETWORK_RESULTS.md').write_text('**'+title+'**\n\n'+main_text+'\n\n'+caption+'\n')
     comp=pd.crosstab(nodes.module_label,nodes.functional_core_class).reindex(columns=['absolute_global_core','near_global','realm_core_only']).reset_index()
     comp.insert(1,'KOs',comp.iloc[:,1:].sum(axis=1));comp.columns=['Module','KOs','Absolute core','Near-global','Realm-core']
     sub=['# Supplementary results for the functional network',
