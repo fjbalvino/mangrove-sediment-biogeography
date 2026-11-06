@@ -45,10 +45,10 @@ DISPLAY=[
 ]
 
 
-def save_figure(fig,path,dpi=300):
+def save_figure(fig,path,dpi=300,*,tight=True):
     with tempfile.NamedTemporaryFile(dir=path.parent,suffix=path.suffix,delete=False) as tmp:
         name=Path(tmp.name)
-    fig.savefig(name,dpi=dpi,facecolor='white',bbox_inches='tight')
+    fig.savefig(name,dpi=dpi,facecolor='white',bbox_inches='tight' if tight else None)
     name.replace(path)
 
 
@@ -84,95 +84,108 @@ def manuscript_figure():
             raise ValueError('Module sizes differ between graph and heatmap')
     palette=dict(zip(modules,['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9']))
     if len(modules)>len(palette):raise ValueError('More modules than the declared manuscript palette')
-    plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10.5,'axes.titleweight':'bold','pdf.fonttype':42})
-    fig=plt.figure(figsize=(12.8,11.8));dark='#172238';muted='#536174'
-    fig.text(.035,.974,'a',fontsize=17,weight='bold',color=dark)
-    fig.text(.061,.974,'Co-abundance network',fontsize=13,weight='bold',color=dark)
-    fig.text(.363,.974,'b',fontsize=17,weight='bold',color=dark)
-    fig.text(.389,.974,'Functional composition and enrichment',fontsize=13,weight='bold',color=dark)
-    ax=fig.add_axes([.026,.435,.285,.510])
+    # Compose at the actual 441.9-point manuscript width. Font sizes below are
+    # final print sizes; exporting a large canvas and shrinking it caused 4–5 pt
+    # labels in the previous manuscript layout.
+    plt.rcParams.update({'font.family':'DejaVu Sans','font.size':8.5,'axes.titleweight':'bold','pdf.fonttype':42})
+    width,height=441.9,575.
+    fig=plt.figure(figsize=(width/72,height/72));dark='#172238';muted='#536174'
+    def box(x,y,w,h):
+        return [x/width,(height-y-h)/height,w/width,h/height]
+    def label(x,y,text,size=8.5,**kw):
+        return fig.text(x/width,1-y/height,text,fontsize=size,va='top',color=kw.pop('color',dark),**kw)
+    label(3,1,'a',12,weight='bold');label(17,3,'Co-abundance network',9.3,weight='bold')
+    label(151,1,'b',12,weight='bold');label(165,3,'Functional composition and enrichment',9.3,weight='bold')
+    ax=fig.add_axes(box(4,42,136,226))
     ax.add_collection(LineCollection(edges[['x','y','xend','yend']].to_numpy().reshape(-1,2,2),
-                                    colors='#7A7A7A',linewidths=.22,alpha=.28))
+                                    colors='#7A7A7A',linewidths=.18,alpha=.30))
     shapes={'Absolute global core':'s','Near-global':'o','Realm-core':'^','Peripheral':'D'}
     for tier,marker in shapes.items():
         group=nodes[nodes.tier.eq(tier)]
         ax.scatter(group.x,group.y,c=[palette[m] for m in group.module],marker=marker,
-                   s=12,edgecolors='#222222',linewidths=.22,alpha=.96,zorder=3)
+                   s=6,edgecolors='#222222',linewidths=.17,alpha=.96,zorder=3)
     dx=[.05,.10,-.30,.38,.25,-.08];dy=[.30,-.35,.17,.38,-.22,-.23]
     xr=nodes.x.max()-nodes.x.min();yr=nodes.y.max()-nodes.y.min()
     for i,module in enumerate(modules):
         g=nodes[nodes.module.eq(module)];x,y=g[['x','y']].median()
         lx,ly=x+dx[i]*xr,y+dy[i]*yr
-        ax.plot([x,lx],[y,ly],color=palette[module],linewidth=.55,zorder=2)
-        ax.text(lx,ly,f'{module}\n{len(g)} KOs',ha='center',va='center',fontsize=10.5,weight='bold',
-                bbox=dict(facecolor='white',edgecolor='none',pad=2),zorder=4,color=dark)
+        ax.plot([x,lx],[y,ly],color=palette[module],linewidth=.5,zorder=2)
+        ax.text(lx,ly,f'{module}\n{len(g)} KOs',ha='center',va='center',fontsize=8.5,weight='bold',
+                bbox=dict(facecolor='white',edgecolor='none',pad=1.3),zorder=4,color=dark)
     ax.set_aspect('equal');ax.autoscale_view();ax.margins(x=.20,y=.12);ax.axis('off')
     handles=[Line2D([],[],marker=mark,color='none',markerfacecolor='white',markeredgecolor='#5b6371',
-                    markeredgewidth=.7,markersize=5,label=tier) for tier,mark in shapes.items() if tier in set(nodes.tier)]
-    ax.legend(handles=handles,loc='upper left',bbox_to_anchor=(.05,-.015),frameon=False,
-              title='Persistence class',fontsize=9,title_fontsize=9.5,handletextpad=.5,borderaxespad=0)
+                    markeredgewidth=.7,markersize=4,label=tier) for tier,mark in shapes.items() if tier in set(nodes.tier)]
+    fig.legend(handles=handles,loc='upper left',bbox_to_anchor=(8/width,1-280/height),frameon=False,
+               title='Persistence class',fontsize=8,title_fontsize=8.5,handletextpad=.5,borderaxespad=0)
     terms=composition[['term_id','label']].drop_duplicates()
     counts=composition.pivot(index='term_id',columns='module',values='n_KOs').reindex(index=terms.term_id,columns=modules)
     percentages=composition.pivot(index='term_id',columns='module',values='percent_module').reindex(index=terms.term_id,columns=modules)
     stars=composition.pivot(index='term_id',columns='module',values='supported').reindex(index=terms.term_id,columns=modules)
     if counts.isna().any().any():raise ValueError('Incomplete plotted function-by-module grid')
-    bx=fig.add_axes([.655,.445,.31,.484])
-    cmap=plt.get_cmap('plasma').copy();cmap.set_bad('#f0f2f6')
-    # Vector cells preserve sharp artwork at publication size and in PDF editors.
-    bx.set_facecolor('#f0f2f6')
-    im=bx.pcolormesh(np.arange(len(modules)+1)-.5,np.arange(len(terms)+1)-.5,
+    labels=['\n'.join(textwrap.wrap(text,31,break_long_words=False,break_on_hyphens=False)) for text in terms.label]
+    # Give wrapped labels extra row height instead of shrinking their type.
+    row_heights=np.array([1+.75*text.count('\n') for text in labels])
+    y_edges=np.r_[0,np.cumsum(row_heights)];y_mid=(y_edges[:-1]+y_edges[1:])/2
+    bx=fig.add_axes(box(310,36,126,270))
+    cmap=plt.get_cmap('plasma').copy();cmap.set_bad('#f0f2f6');bx.set_facecolor('#f0f2f6')
+    im=bx.pcolormesh(np.arange(len(modules)+1)-.5,y_edges,
         np.ma.masked_where(counts.to_numpy()==0,percentages),cmap=cmap,vmin=0,vmax=50,rasterized=False)
-    bx.set_xlim(-.5,len(modules)-.5);bx.set_ylim(len(terms)-.5,-.5)
-    labels=['\n'.join(textwrap.wrap(label,37,break_long_words=False,break_on_hyphens=False)) for label in terms.label]
-    bx.set_yticks(range(len(terms)),labels,fontsize=10)
-    for tick in bx.get_yticklabels():tick.set_linespacing(.95)
-    bx.set_xticks(range(len(modules)),[f'{m}\n{sizes[m]} KOs' for m in modules],fontsize=10)
-    bx.xaxis.tick_top();bx.tick_params(axis='both',length=0,pad=6)
-    bx.set_xticks(np.arange(-.5,len(modules)),minor=True);bx.set_yticks(np.arange(-.5,len(terms)),minor=True)
-    bx.grid(which='minor',color='white',linewidth=1.2);bx.tick_params(which='minor',length=0)
+    bx.set_xlim(-.5,len(modules)-.5);bx.set_ylim(y_edges[-1],0)
+    bx.set_yticks(y_mid,labels,fontsize=8)
+    for tick in bx.get_yticklabels():tick.set_linespacing(1.0)
+    bx.set_xticks(range(len(modules)),modules,fontsize=8.5)
+    bx.xaxis.tick_top();bx.tick_params(axis='both',length=0,pad=4)
+    bx.set_xticks(np.arange(-.5,len(modules)),minor=True);bx.set_yticks(y_edges,minor=True)
+    bx.grid(which='minor',color='white',linewidth=.65);bx.tick_params(which='minor',length=0)
     for spine in bx.spines.values():spine.set_visible(False)
     for i in range(len(terms)):
         for j in range(len(modules)):
             n=int(counts.iloc[i,j]);pct=percentages.iloc[i,j]
-            bx.text(j,i,str(n)+('*' if stars.iloc[i,j] else ''),ha='center',va='center',fontsize=10.5,
-                weight='bold' if stars.iloc[i,j] else 'normal',color='#8390a2' if n==0 else (dark if pct>=32 else 'white'))
-    cb=fig.colorbar(im,cax=fig.add_axes([.67,.407,.28,.011]),orientation='horizontal')
-    cb.solids.set_rasterized(False)
-    cb.solids.set_edgecolor('face');cb.solids.set_linewidth(.25)
-    cb.set_ticks([0,10,20,30,40,50]);cb.ax.tick_params(labelsize=9,length=2)
-    cb.set_label('KOs assigned to the function (% of module)',fontsize=9.5,labelpad=4)
-    fig.text(.035,.337,'c',fontsize=17,weight='bold',color=dark)
-    fig.text(.061,.337,'Respiratory machinery',fontsize=13,weight='bold',color=dark)
-    fig.text(.56,.337,'d',fontsize=17,weight='bold',color=dark)
-    fig.text(.586,.337,'Nutrient transport',fontsize=13,weight='bold',color=dark)
-    cx=fig.add_axes([.041,.075,.45,.24]);cx.set_xlim(0,4);cx.set_ylim(0,4.9);cx.axis('off')
-    cx.text(0,4.7,'NADH-quinone oxidoreductase | M03',fontsize=10.5,color=dark)
+            bx.text(j,y_mid[i],str(n)+('*' if stars.iloc[i,j] else ''),ha='center',va='center',fontsize=8.5,
+                    weight='bold' if stars.iloc[i,j] else 'normal',color='#667085' if n==0 else (dark if pct>=32 else 'white'))
+    cb=fig.colorbar(im,cax=fig.add_axes(box(315,320,116,5)),orientation='horizontal')
+    cb.solids.set_rasterized(False);cb.solids.set_edgecolor('face');cb.solids.set_linewidth(.15)
+    cb.set_ticks([0,10,20,30,40,50]);cb.ax.tick_params(labelsize=8,length=2,pad=2)
+    cb.set_label('KOs assigned (% of module)',fontsize=8,labelpad=3)
+    label(3,365,'c',12,weight='bold');label(17,367,'Respiratory machinery',10,weight='bold')
+    label(274,365,'d',12,weight='bold');label(288,367,'Nutrient transport',10,weight='bold')
+    label(3,384,'NADH–quinone oxidoreductase | M03',8.5)
+    label(274,384,'Branched-chain amino acids | M06',8)
+    cx=fig.add_axes(box(3,405,253,132));cx.set_xlim(0,4);cx.set_ylim(0,4);cx.axis('off')
     respiratory=components[components.system.eq('NADH_quinone_oxidoreductase')]
     for i,r in enumerate(respiratory.itertuples()):
-        rr,col=divmod(i,4);y=3.50-rr*.91;highlight=r.highlighted_module=='M03'
-        cx.add_patch(FancyBboxPatch((col+.03,y),.91,.79,boxstyle='round,pad=.02,rounding_size=.05',
-                    facecolor=palette['M03'] if highlight else '#e7eaf0',edgecolor='white'))
+        rr,col=divmod(i,4);y=3-rr;highlight=r.highlighted_module=='M03'
+        cx.add_patch(FancyBboxPatch((col+.02,y+.035),.94,.93,boxstyle='round,pad=.005,rounding_size=.035',
+                    facecolor=palette['M03'] if highlight else '#e7eaf0',edgecolor='white',linewidth=.5))
         color='white' if highlight else dark
-        for yy,txt,size,weight in [(.60,r.label,10.5,'bold'),(.33,r.KO,9,'normal'),(.08,f'{r.profiles_detected}/{profile_count}',8.8,'normal')]:
-            cx.text(col+.485,y+yy,txt,ha='center',fontsize=size,weight=weight,color=color)
-    fig.text(.041,.061,'B/C/D alternatives: B + C + D, B + CD, or BCD.',fontsize=9,color=muted)
-    fig.text(.041,.043,f"Full KEGG rule met in {codetection['1']['NADH_rule_met']}/{profile_count} community profiles.",fontsize=9,color=dark)
-    tx=fig.add_axes([.566,.075,.40,.24]);tx.set_xlim(0,3);tx.set_ylim(0,4.9);tx.axis('off')
-    tx.text(0,4.7,'Branched-chain amino acids | M06',fontsize=10.5,color=dark)
+        for yy,txt,size,weight in [(.73,r.label,9,'bold'),(.43,r.KO,8,'normal'),(.14,f'{r.profiles_detected}/{profile_count}',8,'normal')]:
+            cx.text(col+.49,y+yy,txt,ha='center',va='center',fontsize=size,weight=weight,color=color)
+    label(3,546,'NuoB/C/D: B + C + D, B + CD, or BCD.',8)
+    label(3,559,f"Full rule: {codetection['1']['NADH_rule_met']}/{profile_count} profiles.",8)
+    tx=fig.add_axes(box(274,404,164,132));tx.set_xlim(0,3);tx.set_ylim(0,4);tx.axis('off')
     indexed=components.set_index('KO')
     for col,(title,kos) in enumerate([('Binding',['K01999']),('Membrane',['K01997','K01998']),('ATP binding',['K01996','K01995'])]):
-        tx.text(col+.46,3.9,title,ha='center',fontsize=10,weight='bold',color=dark)
+        tx.text(col+.48,3.92,title,ha='center',va='top',fontsize=8,weight='bold',color=dark)
         for rr,ko in enumerate(kos):
-            y=2.40-rr*1.22;r=indexed.loc[ko]
-            tx.add_patch(FancyBboxPatch((col+.035,y),.87,1.02,boxstyle='round,pad=.02,rounding_size=.05',
-                        facecolor=palette['M06'] if r.highlighted_module=='M06' else '#e7eaf0',edgecolor='white'))
-            for yy,txt,size,weight in [(.73,r.label,11,'bold'),(.43,ko,9.5,'normal'),(.15,f'{r.profiles_detected}/{profile_count}',9,'normal')]:
-                tx.text(col+.47,y+yy,txt,ha='center',fontsize=size,weight=weight,color=dark)
-    fig.text(.566,.061,f"Five components co-detected in {codetection['1']['five_Liv_components_codetected']}/{profile_count} profiles.",fontsize=9,color=dark)
-    fig.text(.566,.043,'Box colors match network modules; gray: outside that module.',fontsize=9,color=muted)
-    # Detailed statistical and biological interpretation belongs in the caption.
-    fig.text(.035,.013,'* Primary conditional enrichment supported. Box fractions: profiles with ≥1 annotation record. Community co-detection does not establish same-organism completion.',fontsize=8.4,color=muted)
-    for ext in ['png','pdf']:save_figure(fig,out/('Figure_5_functional_coabundance.'+ext),dpi=600)
+            y=2.12-rr*1.56;r=indexed.loc[ko]
+            tx.add_patch(FancyBboxPatch((col+.025,y),.93,1.31,boxstyle='round,pad=.005,rounding_size=.035',
+                        facecolor=palette['M06'] if r.highlighted_module=='M06' else '#e7eaf0',edgecolor='white',linewidth=.5))
+            for yy,txt,size,weight in [(.99,r.label,9,'bold'),(.63,ko,8,'normal'),(.28,f'{r.profiles_detected}/{profile_count}',8,'normal')]:
+                tx.text(col+.49,y+yy,txt,ha='center',va='center',fontsize=size,weight=weight,color=dark)
+    label(274,546,f"All five: {codetection['1']['five_Liv_components_codetected']}/{profile_count} profiles.",8)
+    label(274,559,'Grey: detected outside the module.',8)
+    # Statistical and biological qualifications remain in the manuscript caption.
+    # Export an exact-size canvas so manuscript insertion preserves print size.
+    fig.canvas.draw();renderer=fig.canvas.get_renderer()
+    visible_text=[t for t in fig.findobj(matplotlib.text.Text) if t.get_visible() and t.get_text()]
+    font_sizes=sorted(set(t.get_fontsize() for t in visible_text))
+    if min(font_sizes)<8:raise ValueError('Text below the 8-point manuscript minimum')
+    outside=[]
+    for t in visible_text:
+        b=t.get_window_extent(renderer);fb=fig.bbox
+        if b.x0<-.5 or b.y0<-.5 or b.x1>fb.x1+.5 or b.y1>fb.y1+.5:outside.append(t.get_text())
+    if outside:raise ValueError('Text outside manuscript canvas: '+repr(outside))
+    for ext in ['png','pdf']:save_figure(fig,out/('Figure_5_functional_coabundance.'+ext),dpi=600,tight=False)
     plt.close(fig)
     inputs=[args.network_nodes,args.network_edges,*[base/f for f in ['plotted_functional_composition.tsv',
             'plotted_component_context.tsv','component_codetection.json','figure_provenance.json']]]
@@ -183,7 +196,7 @@ def manuscript_figure():
         panel_mapping={'a':'Previous network a; graph geometry and persistence unchanged; module IDs and sizes retained',
             'b':'New enrichment panel a','c':'New enrichment panel b','d':'New enrichment panel c'},
         presentation_changes=['Remove historical function labels from network','Match component highlights to network module colors'],
-        statistical_analysis_rerun=False))
+        statistical_analysis_rerun=False, typography={'family':'DejaVu Sans','width_pt':width,'height_pt':height,'font_sizes_pt':font_sizes,'minimum_effective_font_pt_at_441_9_pt':min(font_sizes),'text_outside_canvas':outside}))
     print(json.dumps(dict(files=['Figure_5_functional_coabundance.png','Figure_5_functional_coabundance.pdf'],
                          nodes=len(nodes),edges=len(edges),heatmap_cells=int(counts.size))))
 

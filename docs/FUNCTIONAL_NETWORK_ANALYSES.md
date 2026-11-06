@@ -374,6 +374,16 @@ the current figure, its caption and the exact graph inputs; none are uploaded
 to GitHub. The older regional Figure_5 files belong to the current manuscript's
 Figure 6 and must not be overwritten with this network figure.
 
+The manuscript artwork uses DejaVu Sans on an exact 441.9 × 575 point canvas
+(6.1375 × 7.9861 inches). Insert it at that width to retain the 8-point minimum
+type size; labels use 8–10 points and panel letters use 12 points. The previous
+large canvas was reduced in the manuscript, making most text approximately
+4–5 points. Wrapped heatmap labels now receive extra row height. Exporting
+without a tight bounding box preserves the intended print dimensions. The
+renderer checks the minimum font size and rejects text outside the canvas;
+font sizes and dimensions are recorded in the provenance JSON. This layout
+change preserves the existing graph, heatmap values and component counts.
+
 **Figure 5 | Functional organization of the co-abundance network.**
 (a) Six major modules from the 191-metagenome analysis, showing 236 KOs and
 999 associations; the full network contains 327 connected KOs and 1,062
