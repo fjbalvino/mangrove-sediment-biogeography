@@ -1,6 +1,6 @@
 # Manuscript-to-code guide
 
-Source: **A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**, manuscript and five supplementary documents reviewed on 26 October 2026. This guide records the current manuscript organization. It does not replace the manuscript or redefine its statistical units.
+Source: [**A global metagenomic atlas reveals shared functional potential across geographically structured mangrove microbiomes**](https://docs.google.com/document/d/1mWT2gLjBz-psqwSs22N8uT6ytLXDLbYxuddUx4FsNG4), the current online manuscript and its supplementary analyses. This guide records the current manuscript organization. It does not replace the manuscript or redefine its statistical units.
 
 ## Results and supplementary material
 
@@ -10,11 +10,12 @@ Source: **A global metagenomic atlas reveals shared functional potential across 
 | Taxonomic diversity is structured by environmental and spatial gradients | 2 | Scripts 03–04; workflow 03 | S2–S7; figures S1–S3 |
 | Non-selection categories and spatially persistent taxa | 3 | Scripts 05–06; workflow 03 with `--core`; iCAMP separately | S8–S10 |
 | A widely shared functional backbone | 4 | Scripts 08; workflow 04 | S11–S13; figure S4 |
-| Widely distributed KOs form co-abundance modules | 5 | Scripts 10; workflow 05 | S14–S27 |
-| Regional differentiation across functional classes and selected Shell processes | 6 | Scripts 09; workflow 06 | S28–S32; figures S5–S7 |
+| Co-abundance modules recover shared cellular machinery | 5 | Scripts 10; workflow 05 | S14–S27 |
+| Regional differentiation across functional classes and selected Shell annotation sets | 6 | Scripts 09; workflow 06 | S28–S32; figures S5–S7 |
+| Shared biogeochemical components and localized gene sets | Interactive atlas; figure S10 | Scripts 11–12; workflows 07–08 | S34–S41; figures S8–S10 |
 | Analysis-specific sample definitions | All | Accession manifests and each script's audit outputs | S33 |
 
-The taxonomic supplement covers S1–S10; the functional supplement S11–S13; the network supplement S14–S27; the regional supplement S28–S32. The fifth document is the cohort registry, Table S33.
+The taxonomic supplement covers S1–S10; the functional supplement S11–S13; the network supplement S14–S27; the regional supplement S28–S32. The fifth document is the cohort registry, Table S33; the sixth and seventh cover the gene–environment design and calibration (S34–S41, figures S8–S10).
 
 ## Cohort registry
 
@@ -30,10 +31,13 @@ The taxonomic supplement covers S1–S10; the functional supplement S11–S13; t
 | Core geographic/climatic comparisons | 43 / 41 locality profiles | Pool within named localities; do not substitute sampling sites |
 | iCAMP | 400 profiles, six realms, 1,892 genera, 24,692 within-realm pairs | Separate completed analysis; 999 randomizations |
 | Functional atlas | 191 paired profiles, 17,482 detected KOs | Select from a 194-profile, 17,508-KO source matrix; remove three air controls and 26 all-zero KOs |
-| Functional geography | 184 profiles at 57 sites | Primary replicated-realm tests use 56 sites; TA–CIP uses 45 sites |
+| Functional geography | Original coordinate-available subset of 184 profiles at 57 sites | Primary replicated-realm tests use 56 sites; TA–CIP uses 45 sites; these estimates were not recalculated when coordinates were recovered for later maps |
+| Biogeochemical geographic summaries | 191 profiles in 63 coordinate reporting groups | Recovered coordinates are used in the marker atlas; coordinate groups do not certify independent sites |
 | Functional network | 191 profiles; 1,500 candidate KOs | 500 subsamples of 81 profiles; cap four per each of 26 realm–country–locality strata |
 | Regional functional comparisons | 191 for classification; 188 eligible in three realms | 499 selections of 18 profiles (3 × 6 localities); alternative: 12 (3 × 4) |
 | Shell locality map | 26 mapped locality centroids, 191 profiles | All localities contribute equally to the global centroid; coordinate approximations retain their uncertainty |
+
+Results proceed from taxonomic structure and persistence to the shared functional repertoire (Figure 4), cellular-system modules (Figure 5), regional representation (Figure 6), and curated biogeochemical gene combinations. Methods follow this sequence. Reference numbers in the network text follow the reordered bibliography of the online manuscript.
 
 `run_accession` is the canonical profile key. Sampling site, named locality, realm and study are separate metadata fields. Keep missing coordinates and covariates explicit.
 
