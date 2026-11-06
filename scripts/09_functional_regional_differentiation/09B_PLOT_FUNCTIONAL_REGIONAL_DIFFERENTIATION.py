@@ -213,7 +213,7 @@ def manuscript_figure(cross, inter, process, heat, locality, world):
     order=['sulfur_respiration','methanogenic_hdr_transfer','nitrate_sulfite_respiration','thiocyanate_degradation','aromatic_phenolic_transformation','environmental_sensing_osmoregulation']
     effects=process[process.design.eq('3 x 6')].set_index('process_id').loc[order]
     short_labels=['Sulfur redox','Hdr and hydrogenases','Nitrate/nitrite and\nsulfite redox','Thiocyanate hydrolase','Aromatic transformations','EnvZ-OmpR / KdpD-KdpE']
-    labels=[label+(' ' if i==0 else '\n')+f'(n = {int(n)})' for i,(label,n) in enumerate(zip(short_labels,effects.n_KOs))]
+    labels=[label+(' ' if i in (0,2) else '\n')+f'(n = {int(n)})' for i,(label,n) in enumerate(zip(short_labels,effects.n_KOs))]
     realms=['Central Indo-Pacific','Tropical Atlantic','Western Indo-Pacific']
     values=heat.pivot(index='process_id',columns='realm',values='balanced_mean_process_z').loc[order,realms].to_numpy()
     cmap=LinearSegmentedColormap.from_list('annotation_diverging',['#2166AC','#F7F7F7','#B2182B'])

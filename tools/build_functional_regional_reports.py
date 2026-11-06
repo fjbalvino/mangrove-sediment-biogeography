@@ -153,7 +153,8 @@ def main():
     paragraph(doc,'(a) Regional R² distributions for Prevalent, Shell and Cloud under primary three-realm × six-locality and alternative three-realm × four-locality designs (499 selections each). Boxes indicate medians and interquartile ranges; whiskers extend to observations within 1.5 interquartile ranges. (b) Shell R² minus the larger of Prevalent and Cloud R², calculated within each selection. Filled points and lines show medians and 5th–95th percentiles for the two designs and annotation-total adjustment (499 selections), and feature-count, occurrence and prevalence sensitivities (99). Open diamonds and intervals show medians and full ranges across six eligible country-deletion medians and 42 study/BioProject-deletion medians. Each deletion used 99 selections. Positive contrasts favour Shell; these intervals describe sensitivity rather than population confidence.')
 
     page(doc,'Selected Shell process scores')
-    for x in s['Selected Shell process scores']:paragraph(doc,x)
+    for x in s['Selected Shell process scores']:
+        paragraph(doc,x).paragraph_format.space_after=Pt(2)
     page(doc,'Process effect sizes and catalog')
     effect=pd.read_csv(tabs/'181_process_regional_summary.tsv',sep='\t')
     z=effect[effect.design=='3 x 6']
