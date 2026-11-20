@@ -165,3 +165,18 @@ The cardinal recovery step (02J) additionally requires the preceding salinity
 metadata and accession audit. Archive its complete query-attempt table and updated
 request cache. Preserve old coordinate warnings; numerical recovery is not a
 coordinate correction or proof of local hydrological representativeness.
+
+## Restart metadata: mangrove cover and tidal range
+
+[02K and 02L](docs/MANGROVE_COVER_AND_TIDES.md) keep their results external.
+Archive the fixed-year GMW 4.1.12 source (CC BY 4.0), its verified download and
+hashes, the exact preceding restart metadata and the per-accession coverage audit.
+The 2020 reference is common to all rows; it is not sample-date vegetation cover.
+
+FES2022b model access must be obtained through AVISO under its license. The current
+work supplied a pending-input audit because the real atlas could not be downloaded
+without authentication. Preserve this distinction: no numerical tide values have
+been extracted for the study by that preflight. A completed future extraction
+must archive the atlas hashes, full-period settings and coastal-review decisions.
+No source GeoPackages, NetCDF files, access credentials or output tables belong
+in this code repository.

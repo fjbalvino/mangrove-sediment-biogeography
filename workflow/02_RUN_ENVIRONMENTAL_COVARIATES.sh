@@ -199,6 +199,31 @@ if [ "$RC" -eq 0 ] && [ "${BIOORACLE_ENABLE:-0}" = "1" ]; then
   fi
 fi
 
+if [ "$RC" -eq 0 ] && [ "${GMW_ENABLE:-0}" = "1" ]; then
+  GMW_METADATA="$TABLE_DIR/02K_metadata_with_mangrove_cover.csv"
+  run_step "02K_GMW_COVER" \
+    "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02K_EXTRACT_GMW_COVER.py" \
+    --base "$FINAL_STAGE_METADATA" --out "$GMW_METADATA" \
+    --audit-dir "$DIAG_DIR/02K_gmw" --cache-dir "$GMW_CACHE_DIR"
+  RC=$?
+  FINAL_STAGE_METADATA="$GMW_METADATA"
+fi
+
+if [ "$RC" -eq 0 ] && [ "${FES_TIDAL_ENABLE:-0}" = "1" ]; then
+  TIDAL_METADATA="$TABLE_DIR/02L_metadata_with_tidal_range.csv"
+  FES_COMMAND=(
+    "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02L_EXTRACT_FES_TIDAL_RANGE.py"
+    --base "$FINAL_STAGE_METADATA" --out "$TIDAL_METADATA"
+    --atlas-dir "$FES_ATLAS_DIR" --audit-dir "$DIAG_DIR/02L_fes"
+  )
+  if [ -n "${FES_COASTAL_REVIEW:-}" ]; then
+    FES_COMMAND+=(--review "$FES_COASTAL_REVIEW")
+  fi
+  run_step "02L_FES_TIDAL_RANGE" "${FES_COMMAND[@]}"
+  RC=$?
+  FINAL_STAGE_METADATA="$TIDAL_METADATA"
+fi
+
 if [ "$RC" -eq 0 ]; then
   run_step "02G_VALIDATE_METADATA" \
     "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02G_VALIDATE_ENVIRONMENTAL_METADATA.py" \

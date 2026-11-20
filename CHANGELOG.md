@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-19 — Mangrove cover and tidal-range pipeline
+
+- Add pinned GMW 4.1.12 / 2020 mapped-cover extraction in fixed geodesic 2 km
+  buffers, preserving real mapped zeros, original metadata and coordinate warnings.
+- Add FES2022b preflight and astronomical mean-range computation with reviewed
+  coastal anchors; report missing authorized model inputs without creating values.
+- Integrate optional workflow stages, dependencies and geometric/numerical tests.
+- Keep all metadata, model files and audit tables outside the repository.
+
 ## 2026-11-19 — Recover marine salinity NA by cardinal search
 
 - Reuse the environmental pipeline geodesic offsets for origin-first N/E/S/W

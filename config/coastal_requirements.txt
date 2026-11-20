@@ -1,0 +1,7 @@
+# Environmental geometry plus the tested official FES prediction engine.
+-r python_requirements.txt
+pyogrio>=0.7
+scipy>=1.10
+netCDF4>=1.6
+PyYAML>=6
+pyfes==2026.5.2

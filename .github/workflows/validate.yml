@@ -23,7 +23,7 @@ jobs:
         with:
           r-version: "4.3.3"
       - name: Install Python analysis dependencies
-        run: python -m pip install -r config/functional_requirements.txt
+        run: python -m pip install -r config/functional_requirements.txt -r config/coastal_requirements.txt
       - name: Install R statistical test dependency
         run: Rscript -e 'install.packages("vegan", repos = "https://cloud.r-project.org")'
       - name: Validate source, statistical contracts, portability and checksums

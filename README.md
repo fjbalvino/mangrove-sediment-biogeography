@@ -44,6 +44,12 @@ keeping coastal review evidence separate from the main table. A subsequent 02J
 step recovers missing pairs by progressive cardinal queries while preserving
 existing values and prior coordinate warnings.
 
+The [mangrove-cover and tide stages](docs/MANGROVE_COVER_AND_TIDES.md) add mapped
+2020 mangrove extent in fixed 2 km buffers and provide an independent FES2022b
+tidal-range pipeline. The latter requires an authorized external atlas; its
+preflight distinguishes pending inputs from completed extraction. Data stay
+outside the repository.
+
 ## Prerequisites and installation
 
 Use Bash, Python and R on Linux or a compatible Unix environment. The [installation guide](docs/INSTALLATION.md) separates dependencies for statistical analyses from tools and external databases needed for raw-read processing. Resource requirements depend on the chosen stage; raw-read classification and assembly need substantially more storage and memory than documentation checks.
