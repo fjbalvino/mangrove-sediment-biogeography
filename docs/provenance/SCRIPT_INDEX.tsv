@@ -16,6 +16,7 @@ order	block	canonical_file	role
 02G	environmental_covariates	scripts/02_environmental_covariates/02G_VALIDATE_ENVIRONMENTAL_METADATA.py	Validate reproduced covariates
 02H	environmental_covariates	scripts/02_environmental_covariates/02H_EXTRACT_BIOORACLE_SALINITY.py	Append Bio-ORACLE v3 marine salinity with complete decadal coverage and separate spatial audit
 02I	environmental_covariates	scripts/02_environmental_covariates/02I_PLOT_BIOORACLE_AUDIT.py	Plot accession coverage and mapped coordinate coverage from salinity audit
+02J	environmental_covariates	scripts/02_environmental_covariates/02J_RECOVER_BIOORACLE_SALINITY_NA.py	Recover only missing salinity pairs by progressive N/E/S/W queries with preserved prior values and warnings
 02H	environmental_covariates	scripts/02_environmental_covariates/metadata_pipeline_common.py	Shared deterministic IO/geospatial utilities
 03A	alpha_diversity	scripts/03_alpha_diversity/03A_CALCULATE_HILL_DIVERSITY_BY_REALM.R	Hill diversity by realm
 03B	alpha_diversity	scripts/03_alpha_diversity/03B_FIT_SHANNON_ENVIRONMENTAL_GAM.R	Environmental Shannon GAMs

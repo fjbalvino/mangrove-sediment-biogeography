@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-11-19 — Recover marine salinity NA by cardinal search
+
+- Reuse the environmental pipeline geodesic offsets for origin-first N/E/S/W
+  queries at increasing radii, with separate query and source-cell distances.
+- Fill only missing salinity pairs; preserve existing values and keep prior
+  coordinate/spatial warnings in the audit without blocking regional extraction.
+- Extend the coverage figure, optional workflow stage and regression tests.
+
 ## 2026-11-19 — Bio-ORACLE surface salinity
 
 - Add independent, accession-preserving extraction of mean surface salinity and

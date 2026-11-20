@@ -108,6 +108,61 @@ create independent environmental replicates. Future models should examine
 native-only versus reviewed-coastal subsets, missingness and positional uncertainty
 before interpreting salinity associations. No fitted model changes in this step.
 
+## Recover remaining NA using cardinal searches (02J)
+
+The requested follow-up uses the radial-search pattern in
+`02E_EXTRACT_SOILGRIDS_TOPSOIL_0_30CM.py`: query the original point, increase the
+radius, and accept the first complete result in the direction sequence. 02E uses
+250, 500, 1000 and 2000 m, with eight configurable bearings by default. For this
+marine layer, 02J uses exactly **N, E, S, W** and reuses
+`metadata_pipeline_common.offset_point`, including its geodesic calculation and
+longitude wrapping. It does not claim to find the globally nearest marine pixel.
+
+The marine search retains those four initial radii and extends them to 5, 10,
+20, 30 and 50 km to accommodate the 0.05° marine grid and coastal NoData mask.
+These are explicit operational choices, not ecological validity thresholds.
+Both the nominal query radius and actual distance to the cell center must be
+within the declared maximum. The audit records both: they are not interchangeable
+when a displaced query falls within a relatively large grid cell. Repeated cells
+are logged without downloading them again. Both statistics and both decades must
+be available at the same cell.
+
+```bash
+python scripts/02_environmental_covariates/02J_RECOVER_BIOORACLE_SALINITY_NA.py \
+  --base "$PREVIOUS_DIR/Metadata_reinicio_401_reconciliada.csv" \
+  --previous-audit "$PREVIOUS_DIR/salinity_audit/sample_salinity_audit.csv" \
+  --out "$METADATA_OUTPUT_DIR/Metadata_reinicio_401_reconciliada.csv" \
+  --audit-dir "$METADATA_OUTPUT_DIR/salinity_audit" \
+  --cache-dir "$ENVIRONMENTAL_CACHE/biooracle" \
+  --radial-steps-m 250,500,1000,2000,5000,10000,20000,30000,50000 \
+  --max-anchor-distance-m 50000
+```
+
+02J fills only rows where both salinity fields are missing. Every existing value,
+other field, coordinate, accession and row position is preserved. It verifies that
+the preceding audit matches the input metadata. Partially populated salinity pairs
+fail rather than mixing source cells. Cached source responses from 02H are reused,
+newly needed cells are fetched on demand, and `--offline` reproduces the result.
+The shared environmental helper requires NumPy and pandas, already declared by the
+project. The whole workflow enables this optional stage with
+`BIOORACLE_FILL_MISSING_CARDINAL=1` alongside `BIOORACLE_ENABLE=1`; historical
+workflow defaults remain unchanged.
+
+Unlike the initial 02H screen, this explicitly requested regional extraction does
+not block values because of inherited coordinate warnings or previous spatial
+holds. It retains `previous_status`, `previous_reason` and the original evidence,
+plus `recovery_note`, in the separate audit. A recovered numerical value does not
+validate the coordinate, waterbody connectivity or sediment salinity. No original
+coordinates are corrected. Missing/invalid coordinates remain NA, as do locations
+without a complete result along the declared cardinal queries within the bound.
+That last status does not assert an exhaustive absence of marine data in a circle.
+
+Additional outputs are `cardinal_search_attempts.csv`, `recovered_accessions.csv`,
+`registros_sin_salinidad.csv` and `cardinal_recovery_manifest.json`. The combined
+`sample_salinity_audit.csv` retains all accessions and the earlier evidence. No
+additional columns are added to the main metadata table. Preserve the preceding
+metadata/audit and the updated cache for exact reconstruction of the filling step.
+
 ## Coverage figure
 
 With Matplotlib and NumPy installed, render an external PNG/SVG from the audit:

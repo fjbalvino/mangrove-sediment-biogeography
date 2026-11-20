@@ -40,7 +40,9 @@ The [manuscript guide](docs/MANUSCRIPT_GUIDE.md) maps every result section, supp
 
 The [Bio-ORACLE salinity extension](docs/BIOORACLE_SALINITY.md) adds two marine
 reference covariates to external restart metadata while preserving all rows and
-keeping coastal review evidence separate from the main table.
+keeping coastal review evidence separate from the main table. A subsequent 02J
+step recovers missing pairs by progressive cardinal queries while preserving
+existing values and prior coordinate warnings.
 
 ## Prerequisites and installation
 

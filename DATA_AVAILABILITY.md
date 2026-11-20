@@ -160,3 +160,8 @@ audit, review decisions, dictionary, source metadata and checksummed request cac
 Archive these together. Two covariates use the 2000–2019 surface baseline; neither
 represents measured porewater salinity. The legacy dataset hashes above remain
 historical reference hashes and are not hashes of the restart metadata.
+
+The cardinal recovery step (02J) additionally requires the preceding salinity
+metadata and accession audit. Archive its complete query-attempt table and updated
+request cache. Preserve old coordinate warnings; numerical recovery is not a
+coordinate correction or proof of local hydrological representativeness.

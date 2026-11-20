@@ -186,6 +186,17 @@ if [ "$RC" -eq 0 ] && [ "${BIOORACLE_ENABLE:-0}" = "1" ]; then
   fi
   run_step "02H_BIOORACLE_SALINITY" "${BIOORACLE_COMMAND[@]}"
   RC=$?
+  if [ "$RC" -eq 0 ] && [ "${BIOORACLE_FILL_MISSING_CARDINAL:-0}" = "1" ]; then
+    CARDINAL_METADATA="$TABLE_DIR/02J_metadata_with_marine_salinity.csv"
+    run_step "02J_RECOVER_BIOORACLE_NA" \
+      "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02J_RECOVER_BIOORACLE_SALINITY_NA.py" \
+      --base "$FINAL_STAGE_METADATA" --out "$CARDINAL_METADATA" \
+      --previous-audit "$DIAG_DIR/02H_biooracle/sample_salinity_audit.csv" \
+      --audit-dir "$DIAG_DIR/02J_biooracle" --cache-dir "$ENVIRONMENTAL_CACHE/biooracle" \
+      --max-anchor-distance-m "${BIOORACLE_CARDINAL_MAX_M:-50000}"
+    RC=$?
+    FINAL_STAGE_METADATA="$CARDINAL_METADATA"
+  fi
 fi
 
 if [ "$RC" -eq 0 ]; then
