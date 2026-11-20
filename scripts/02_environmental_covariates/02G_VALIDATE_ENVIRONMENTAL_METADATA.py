@@ -21,6 +21,7 @@ GAM_COLUMNS = [
     "soc_mean", "ph_mean", "sand_mean", "silt_mean", "clay_mean", "bdod_mean",
 ]
 MEOW_COLUMNS = ["REALM", "PROVINCE", "ECOREGION"]
+SALINITY_COLUMNS = ["marine_salinity_mean", "marine_salinity_annual_range"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -70,7 +71,16 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     missingness: List[Dict[str, Any]] = []
-    for column in [*GAM_COLUMNS, *MEOW_COLUMNS]:
+    salinity_columns = [c for c in SALINITY_COLUMNS if c in metadata]
+    if salinity_columns and salinity_columns != SALINITY_COLUMNS:
+        raise ValueError("Both marine salinity columns must be supplied together")
+    for column in salinity_columns:
+        numeric = pd.to_numeric(metadata[column], errors="coerce")
+        if (metadata[column].notna() & (~np.isfinite(numeric) | (numeric < 0))).any():
+            raise ValueError(f"Invalid marine salinity statistic: {column}")
+    if salinity_columns and not metadata[SALINITY_COLUMNS[0]].isna().equals(metadata[SALINITY_COLUMNS[1]].isna()):
+        raise ValueError("Marine salinity columns must have matching availability")
+    for column in [*GAM_COLUMNS, *MEOW_COLUMNS, *salinity_columns]:
         values = metadata[column]
         if column in MEOW_COLUMNS:
             missing = values.isna() | values.astype("string").str.strip().isin(["", "NA", "Unassigned"])

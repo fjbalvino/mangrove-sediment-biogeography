@@ -62,6 +62,7 @@ CLIMATE_METADATA="$TABLE_DIR/02C_metadata_worldclim.csv"
 GBIF_METADATA="$TABLE_DIR/02D_metadata_gbif.csv"
 SOIL_METADATA="$TABLE_DIR/02E_metadata_soilgrids.csv"
 MEOW_METADATA="$TABLE_DIR/02F_metadata_environmental_complete.csv"
+FINAL_STAGE_METADATA="$MEOW_METADATA"
 
 run_step() {
   STEP="$1"
@@ -173,10 +174,24 @@ if [ "$RC" -eq 0 ]; then
   RC=$?
 fi
 
+if [ "$RC" -eq 0 ] && [ "${BIOORACLE_ENABLE:-0}" = "1" ]; then
+  FINAL_STAGE_METADATA="$TABLE_DIR/02H_metadata_with_marine_salinity.csv"
+  BIOORACLE_COMMAND=(
+    "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02H_EXTRACT_BIOORACLE_SALINITY.py"
+    --base "$MEOW_METADATA" --out "$FINAL_STAGE_METADATA"
+    --audit-dir "$DIAG_DIR/02H_biooracle" --cache-dir "$ENVIRONMENTAL_CACHE/biooracle"
+  )
+  if [ -n "${BIOORACLE_REVIEW:-}" ]; then
+    BIOORACLE_COMMAND+=(--review "$BIOORACLE_REVIEW")
+  fi
+  run_step "02H_BIOORACLE_SALINITY" "${BIOORACLE_COMMAND[@]}"
+  RC=$?
+fi
+
 if [ "$RC" -eq 0 ]; then
   run_step "02G_VALIDATE_METADATA" \
     "$PYTHON_BIN" "$PACKAGE_ROOT/scripts/02_environmental_covariates/02G_VALIDATE_ENVIRONMENTAL_METADATA.py" \
-    --metadata "$MEOW_METADATA" \
+    --metadata "$FINAL_STAGE_METADATA" \
     --out-dir "$RUN_DIR/02G_validation" \
     --expected-rows "$EXPECTED_TAXONOMIC_SAMPLES"
   RC=$?
@@ -188,7 +203,7 @@ if [ "$EXECUTE" -eq 1 ] && [ "$RC" -eq 0 ]; then
     RC=3
   else
     mkdir -p "$(dirname "$ENVIRONMENTAL_METADATA_FINAL")" || exit $?
-    cp --preserve=mode,timestamps "$MEOW_METADATA" "$ENVIRONMENTAL_METADATA_FINAL"
+    cp --preserve=mode,timestamps "$FINAL_STAGE_METADATA" "$ENVIRONMENTAL_METADATA_FINAL"
     RC=$?
   fi
 fi

@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-19 — Bio-ORACLE surface salinity
+
+- Add independent, accession-preserving extraction of mean surface salinity and
+  mean annual range for the common 2000–2019 reference period.
+- Require both complete decadal layers, verified source caches and explicit
+  evidence for coastal reassignment; retain unresolved samples with missing values.
+- Add optional environmental workflow integration, missingness validation and
+  offline tests without changing historical cohorts or fitted analyses.
+
 ## Functional implementation audit
 
 - Audit 25 upstream repositories with pinned source-file provenance and eight

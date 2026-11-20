@@ -1,6 +1,6 @@
-.PHONY: validate python-check bash-check r-parse r-tests functional-tests portability-tests regional-tests manifest
+.PHONY: validate python-check bash-check r-parse r-tests functional-tests portability-tests regional-tests environmental-tests manifest
 
-validate: python-check bash-check r-parse r-tests functional-tests regional-tests portability-tests
+validate: python-check bash-check r-parse r-tests functional-tests regional-tests portability-tests environmental-tests
 	python tools/validate_repository.py
 
 python-check:
@@ -27,4 +27,7 @@ portability-tests:
 
 manifest:
 	python tools/build_manifest.py
+
+environmental-tests:
+	python -m unittest discover -s tests -p 'test_environmental_*.py'
 

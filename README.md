@@ -38,6 +38,10 @@ methods deferred until compatible sequence or sampling information is available.
 
 The [manuscript guide](docs/MANUSCRIPT_GUIDE.md) maps every result section, supplementary table group and analysis cohort to the code. Existing script names are retained to preserve provenance; the execution guide follows the current manuscript order. This is a read-based/gene-centred workflow, with no MAG-binning stage.
 
+The [Bio-ORACLE salinity extension](docs/BIOORACLE_SALINITY.md) adds two marine
+reference covariates to external restart metadata while preserving all rows and
+keeping coastal review evidence separate from the main table.
+
 ## Prerequisites and installation
 
 Use Bash, Python and R on Linux or a compatible Unix environment. The [installation guide](docs/INSTALLATION.md) separates dependencies for statistical analyses from tools and external databases needed for raw-read processing. Resource requirements depend on the chosen stage; raw-read classification and assembly need substantially more storage and memory than documentation checks.

@@ -151,3 +151,12 @@ The regional plotter requires `--world-map FILE` (the workflow reads `WORLD_MAP`
 Consolidate the input objects and corrected metadata above, exact reference versions/caches, complete statistical outputs and fitted objects, final manuscript figures and supplements, licenses and a checksum inventory. Recover the original iCAMP tree/pairwise objects and the original validated upstream functional scripts before claiming complete end-to-end reproduction. Obtain missing raw-read accession crosswalks and verify the upstream protein-filter rule.
 
 The input inventories/checksums document required assets, not a claim that all assets were available or rerun during the repository update. Once a Zenodo record exists, add its real DOI here and in the manuscript availability statement. `.zenodo.json` describes a possible software archive; it is not a published data deposit or a data DOI.
+
+## Restart metadata: marine salinity extension
+
+The [Bio-ORACLE extraction](docs/BIOORACLE_SALINITY.md) creates an updated external
+`Metadata_reinicio_401_reconciliada.csv`, plus a separate accession-level spatial
+audit, review decisions, dictionary, source metadata and checksummed request cache.
+Archive these together. Two covariates use the 2000–2019 surface baseline; neither
+represents measured porewater salinity. The legacy dataset hashes above remain
+historical reference hashes and are not hashes of the restart metadata.
